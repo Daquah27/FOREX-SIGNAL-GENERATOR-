@@ -378,37 +378,35 @@
   </div>
 </div>
 <script>
-// ===================== LICENSE SYSTEM =====================
-// CIPHER: must match keygen exactly
-const CIPHER_SHIFT = [3, 7, 2, 5, 9, 4, 1, 6, 8, 2, 5, 3, 7, 4, 9, 1];
+// ===================== LICENSE SYSTEM (SECURE) =====================
+// NO CIPHER HERE — validation happens on Cloudflare Worker only
+
+const VALIDATOR_API = 'https://fx-license-validator.yungtromo.workers.dev/validate';
 const TIER_NAMES = { W: "Weekly", M: "Monthly", Q: "Quarterly", Y: "Yearly" };
 const TIER_DAYS = { W: 7, M: 30, Q: 90, Y: 365 };
 
-function decodeKey(key) {
+async function validateKeyWithServer(key) {
   try {
-    const parts = key.split("-");
-    if (parts.length !== 4 || parts[0] !== "FX") return null;
-    const tierCode = parts[1];
-    const urlSafePayload = parts[2];
-    const payload = urlSafePayload.replace(/-/g, "+").replace(/_/g, "/");
-    const checksum = parts[3];
-    // Decode payload
-    const decoded = atob(payload + "=".repeat((4 - payload.length % 4) % 4));
-    let original = "";
-    for (let i = 0; i < decoded.length; i++) {
-      const shift = CIPHER_SHIFT[i % CIPHER_SHIFT.length];
-      original += String.fromCharCode(decoded.charCodeAt(i) - shift);
-    }
-    const [tier, expiryStr] = original.split(":");
-    if (!tier || !expiryStr) return null;
-    // Verify checksum (must use URL-safe payload to match keygen)
-    let hash = 0;
-    const checkStr = urlSafePayload + tier;
-    for (let i = 0; i < checkStr.length; i++) { hash = ((hash << 5) - hash) + checkStr.charCodeAt(i); hash = hash & hash; }
-    const expected = Math.abs(hash).toString(36).toUpperCase().slice(0, 4);
-    if (checksum !== expected) return null;
-    return { tier: TIER_NAMES[tierCode] || tier, tierCode, expiry: parseInt(expiryStr) };
-  } catch (e) { return null; }
+    const res = await fetch(VALIDATOR_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key.trim().toUpperCase() })
+    });
+    const data = await res.json();
+    if (!data.valid) return { valid: false, error: data.error || 'Invalid key' };
+    return { valid: true, tier: data.tier, tierCode: data.tierCode, expiry: data.expiry, token: data.token };
+  } catch (e) {
+    return { valid: false, error: 'Network error. Check connection.' };
+  }
+}
+
+function saveLicense(data) {
+  localStorage.setItem('fx_license', JSON.stringify({
+    token: data.token,
+    tier: data.tier,
+    tierCode: data.tierCode,
+    expiry: data.expiry
+  }));
 }
 
 function validateLicense() {
@@ -420,10 +418,6 @@ function validateLicense() {
     if (now > data.expiry) { localStorage.removeItem('fx_license'); return null; }
     return data;
   } catch (e) { localStorage.removeItem('fx_license'); return null; }
-}
-
-function saveLicense(key, decoded) {
-  localStorage.setItem('fx_license', JSON.stringify({ key, tier: decoded.tier, tierCode: decoded.tierCode, expiry: decoded.expiry }));
 }
 
 function formatTimeRemaining(ms) {
@@ -655,15 +649,29 @@ function updateLicenseBanner(license) {
   if (remaining < 48 * 60 * 60 * 1000) tag.classList.add('expired');
 }
 
-document.getElementById('activateBtn').addEventListener('click', () => {
+document.getElementById('activateBtn').addEventListener('click', async () => {
   const key = document.getElementById('licenseInput').value.trim();
   const err = document.getElementById('gateErr');
-  if (!key) { err.classList.add('visible'); return; }
-  const decoded = decodeKey(key);
-  if (!decoded || Date.now() > decoded.expiry) { err.classList.add('visible'); return; }
+
+  if (!key) { err.textContent = 'Please enter a license key.'; err.classList.add('visible'); return; }
+
   err.classList.remove('visible');
-  saveLicense(key, decoded);
-  updateLicenseBanner(decoded);
+  const btn = document.getElementById('activateBtn');
+  btn.textContent = 'Verifying...'; btn.disabled = true;
+
+  const result = await validateKeyWithServer(key);
+
+  btn.textContent = 'Activate'; btn.disabled = false;
+
+  if (!result.valid) {
+    err.textContent = result.error || 'Invalid or expired license key.';
+    err.classList.add('visible');
+    return;
+  }
+
+  err.classList.remove('visible');
+  saveLicense(result);
+  updateLicenseBanner(result);
   showApiGate();
 });
 
