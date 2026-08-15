@@ -163,6 +163,12 @@
   .log-signal.NONE { color: var(--text-secondary); }
   .error-banner { background: rgba(255,77,109,0.06); border: 1px solid rgba(255,77,109,0.2); color: var(--accent-sell); border-radius: 10px; padding: 11px 14px; font-size: 12px; display: none; align-items: center; gap: 10px; }
   .error-banner.visible { display: flex; }
+  .market-banner { display: none; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; margin-bottom: 2px; }
+  .market-banner.visible { display: flex; }
+  .market-banner.closed { background: rgba(255,77,109,0.06); border: 1px solid rgba(255,77,109,0.2); }
+  .market-banner .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-sell); flex-shrink: 0; box-shadow: 0 0 8px rgba(255,77,109,0.5); animation: blink 2s ease-in-out infinite; }
+  .market-banner .title { font-weight: 700; font-size: 12px; color: var(--accent-sell); }
+  .market-banner .detail { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
   .empty-state { text-align: center; padding: 50px 20px; color: var(--text-secondary); }
   .empty-state .icon { font-size: 44px; margin-bottom: 14px; opacity: 0.25; }
   .countdown-wrap { display: flex; align-items: center; gap: 8px; }
@@ -188,6 +194,13 @@
   .license-banner .tier-badge.yearly { background: rgba(240,180,41,0.1); color: var(--accent-warn); border: 1px solid rgba(240,180,41,0.2); }
   .license-banner .expiry { font-family: 'JetBrains Mono', monospace; }
   .license-banner .expiry.urgent { color: var(--accent-sell); }
+  .world-clocks { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wc-item { background: rgba(13,18,31,0.45); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 8px 12px; min-width: 108px; flex: 1; }
+  .wc-item.primary { border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.05); }
+  .wc-item .wc-city { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
+  .wc-item.primary .wc-city { color: var(--accent-buy); }
+  .wc-item .wc-time { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .wc-item .wc-date { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
   .gate-card { max-width: 480px; margin: 80px auto; text-align: center; }
   .gate-card .lock-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
   .gate-card h2 { font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 6px; }
@@ -276,6 +289,16 @@
 
   <!-- MAIN PANEL -->
   <div id="mainPanel" style="display:none;">
+    <div class="market-banner" id="marketBanner">
+      <div class="dot"></div>
+      <div>
+        <div class="title" id="marketBannerTitle">Market Closed</div>
+        <div class="detail" id="marketBannerDetail">--</div>
+      </div>
+    </div>
+    <div class="card" style="padding:12px 16px;">
+      <div class="world-clocks" id="worldClocks"></div>
+    </div>
     <div class="card" style="padding:12px 16px;">
       <div class="toolbar">
         <select id="pairSelect" style="min-width:110px;"></select>
@@ -441,6 +464,86 @@ const SESSIONS = [
   {name:"New York", start:13, end:22, color:"#f59e0b"}
 ];
 
+// ===================== MARKET HOURS =====================
+// Crypto pairs trade 24/7. Everything else here (forex + XAU/USD) follows
+// the standard weekly forex session: closed from Friday 22:00 UTC to
+// Sunday 22:00 UTC. This is a weekly-close approximation only — it doesn't
+// account for holidays or the brief daily rollover gap.
+const CRYPTO_PAIRS = ["BTC/USD"];
+
+function isCryptoPair(p) {
+  return CRYPTO_PAIRS.includes(p);
+}
+
+function getNextForexOpen(now) {
+  const next = new Date(now);
+  next.setUTCHours(22, 0, 0, 0);
+  const day = next.getUTCDay();
+  let daysToAdd = (7 - day) % 7; // days forward to the next Sunday
+  next.setUTCDate(next.getUTCDate() + daysToAdd);
+  if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
+  return next;
+}
+
+function getMarketStatus(p) {
+  if (isCryptoPair(p)) return { open: true };
+  const now = new Date();
+  const day = now.getUTCDay(); // 0 = Sun, 5 = Fri, 6 = Sat
+  const totalMin = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const closed = (day === 5 && totalMin >= 22 * 60) || day === 6 || (day === 0 && totalMin < 22 * 60);
+  if (!closed) return { open: true };
+  return { open: false, reopens: getNextForexOpen(now) };
+}
+
+function formatCountdown(ms) {
+  const totalMinutes = Math.max(0, Math.floor(ms / 60000));
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+  const parts = [];
+  if (days > 0) parts.push(days + 'd');
+  if (days > 0 || hours > 0) parts.push(hours + 'h');
+  parts.push(minutes + 'm');
+  return parts.join(' ');
+}
+
+function updateMarketBanner() {
+  const banner = document.getElementById('marketBanner');
+  if (!banner) return;
+  const title = document.getElementById('marketBannerTitle');
+  const detail = document.getElementById('marketBannerDetail');
+  const status = getMarketStatus(pair);
+  if (status.open) {
+    banner.classList.remove('visible', 'closed');
+    return;
+  }
+  banner.classList.add('visible', 'closed');
+  const remaining = status.reopens - new Date();
+  title.textContent = 'Market Closed — ' + pair;
+  detail.textContent = 'Signals suppressed. Reopens in ' + formatCountdown(remaining) + ' (Sun 22:00 UTC)';
+}
+
+// Kingston listed first/highlighted since most clients are based there.
+// Jamaica runs America/Jamaica (EST, UTC-5) year-round — it does not observe DST.
+const WORLD_CLOCKS = [
+  { city: 'Kingston', country: 'JM', tz: 'America/Jamaica', primary: true },
+  { city: 'New York', country: 'US', tz: 'America/New_York' },
+  { city: 'London', country: 'UK', tz: 'Europe/London' },
+  { city: 'Tokyo', country: 'JP', tz: 'Asia/Tokyo' },
+  { city: 'Sydney', country: 'AU', tz: 'Australia/Sydney' }
+];
+
+function renderWorldClocks() {
+  const el = document.getElementById('worldClocks');
+  if (!el) return;
+  const now = new Date();
+  el.innerHTML = WORLD_CLOCKS.map(w => {
+    const timeStr = new Intl.DateTimeFormat('en-US', { timeZone: w.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now);
+    const dateStr = new Intl.DateTimeFormat('en-US', { timeZone: w.tz, weekday: 'short', month: 'short', day: 'numeric' }).format(now);
+    return '<div class="wc-item' + (w.primary ? ' primary' : '') + '"><div class="wc-city">' + (w.primary ? '★ ' : '') + w.city + ', ' + w.country + '</div><div class="wc-time">' + timeStr + '</div><div class="wc-date">' + dateStr + '</div></div>';
+  }).join('');
+}
+
 let apiKey = localStorage.getItem('fx_api_key') || "";
 let pair = "EUR/USD";
 let timeframe = "5min";
@@ -593,7 +696,7 @@ function initSelectors() {
   const pairSelect = document.getElementById('pairSelect');
   PAIRS.forEach(p => { const opt = document.createElement('option'); opt.value = p; opt.textContent = p; pairSelect.appendChild(opt); });
   pairSelect.value = pair;
-  pairSelect.addEventListener('change', e => { pair = e.target.value; prevClose = null; prevSignal = null; });
+  pairSelect.addEventListener('change', e => { pair = e.target.value; prevClose = null; prevSignal = null; updateMarketBanner(); });
 
   const tfWrap = document.getElementById('tfWrap');
   TIMEFRAMES.forEach((tf) => {
@@ -684,6 +787,15 @@ document.getElementById('logoutLicenseBtn').addEventListener('click', () => {
 async function fetchData() {
   const errBox = document.getElementById('errBox');
   errBox.classList.remove('visible');
+  updateMarketBanner();
+
+  const marketStatus = getMarketStatus(pair);
+  if (!marketStatus.open) {
+    showError('Market is closed for ' + pair + '. Reopens in ' + formatCountdown(marketStatus.reopens - new Date()) + '.');
+    setStatus(false, 'Market Closed');
+    return;
+  }
+
   const refreshBtn = document.getElementById('refreshBtn');
   refreshBtn.textContent = 'Syncing...'; refreshBtn.disabled = true;
   document.getElementById('scanline').classList.add('active');
@@ -866,6 +978,9 @@ function render() {
   }
   if (signal === 'NONE' && score >= 60 && emaBull && lastRsi > 50 && lastMacdHist > 0 && htfTrendUp) signal = 'BUY';
   if (signal === 'NONE' && score <= 40 && emaBear && lastRsi < 50 && lastMacdHist < 0 && htfTrendDown) signal = 'SELL';
+
+  const marketStatusNow = getMarketStatus(pair);
+  if (!marketStatusNow.open) signal = 'NONE';
 
   const decimals = pair.includes('JPY') || pair.includes('XAU') ? 3 : pair.includes('BTC') ? 2 : 5;
 
@@ -1138,11 +1253,15 @@ setInterval(() => {
   // Update license banner countdown
   const license = validateLicense();
   if (license) updateLicenseBanner(license);
+  updateMarketBanner();
+  renderWorldClocks();
 }, 1000);
 
 // ===================== BOOT =====================
 initSelectors();
 updateApiUsage();
+updateMarketBanner();
+renderWorldClocks();
 
 const license = validateLicense();
 if (license) {
