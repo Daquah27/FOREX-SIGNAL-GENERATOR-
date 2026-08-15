@@ -390,7 +390,7 @@ async function validateKeyWithServer(key) {
     const res = await fetch(VALIDATOR_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: key.trim().toUpperCase() })
+      body: JSON.stringify({ key: key.trim() })
     });
     const data = await res.json();
     if (!data.valid) return { valid: false, error: data.error || 'Invalid key' };
