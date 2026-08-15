@@ -6,239 +6,388 @@
 <title>FX Signal Desk // Secure</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
   :root {
-    --bg-primary: #030508; --bg-secondary: #080c14; --bg-tertiary: #0d121f;
-    --bg-glass: rgba(8,12,20,0.78); --border-subtle: rgba(148,163,184,0.06);
-    --text-primary: #e2e8f0; --text-secondary: #64748b; --text-muted: #334155;
-    --accent-buy: #00d4aa; --accent-sell: #ff4d6d; --accent-warn: #f0b429;
-    --accent-info: #38bdf8; --accent-purple: #a78bfa;
-    --grid-color: rgba(0,212,170,0.025);
+    --bg-primary:#030508;--bg-secondary:#080c14;--bg-tertiary:#0d121f;
+    --bg-glass:rgba(8,12,20,0.78);--border-subtle:rgba(148,163,184,0.06);
+    --text-primary:#e2e8f0;--text-secondary:#64748b;--text-muted:#334155;
+    --accent-buy:#00d4aa;--accent-sell:#ff4d6d;--accent-warn:#f0b429;
+    --accent-info:#38bdf8;--accent-purple:#a78bfa;
+    --grid-color:rgba(0,212,170,0.025);
+    --font-display:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+    --card-glow:rgba(0,212,170,0.08);--scanline-color:rgba(0,212,170,0.05);
+    --particle-color:rgba(0,212,170,0.4);--holo-tint:rgba(0,212,170,0.02);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background-color: var(--bg-primary); color: var(--text-primary);
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.5;
-    min-height: 100vh; overflow-x: hidden; position: relative;
+  [data-theme="cyberpunk"]{
+    --bg-primary:#0a0014;--bg-secondary:#120020;--bg-tertiary:#1a0030;
+    --bg-glass:rgba(18,0,32,0.85);--border-subtle:rgba(255,0,128,0.12);
+    --text-primary:#ffe4f0;--text-secondary:#b088a8;--text-muted:#5a3a5a;
+    --accent-buy:#ff00ff;--accent-sell:#00ffff;--accent-warn:#ffee00;
+    --accent-info:#ff66cc;--accent-purple:#aa00ff;
+    --grid-color:rgba(255,0,255,0.04);--card-glow:rgba(255,0,255,0.12);
+    --scanline-color:rgba(255,0,255,0.06);--particle-color:rgba(255,0,255,0.5);
+    --holo-tint:rgba(255,0,255,0.03);--font-display:'Orbitron',sans-serif;
   }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 48px 48px; pointer-events: none; z-index: 0;
+  [data-theme="ocean"]{
+    --bg-primary:#001020;--bg-secondary:#001830;--bg-tertiary:#002040;
+    --bg-glass:rgba(0,24,48,0.82);--border-subtle:rgba(0,180,255,0.1);
+    --text-primary:#d0f0ff;--text-secondary:#6090b0;--text-muted:#304860;
+    --accent-buy:#00e5ff;--accent-sell:#ff6b9d;--accent-warn:#ffd700;
+    --accent-info:#4fc3f7;--accent-purple:#7c4dff;
+    --grid-color:rgba(0,180,255,0.03);--card-glow:rgba(0,180,255,0.1);
+    --scanline-color:rgba(0,180,255,0.05);--particle-color:rgba(0,180,255,0.4);
+    --holo-tint:rgba(0,180,255,0.02);
   }
-  body::after {
-    content: ''; position: fixed; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
-    pointer-events: none; z-index: 9999; opacity: 0.35;
+  [data-theme="anime"]{
+    --bg-primary:#0d0612;--bg-secondary:#150a1e;--bg-tertiary:#1e0f2e;
+    --bg-glass:rgba(21,10,30,0.85);--border-subtle:rgba(255,105,180,0.12);
+    --text-primary:#ffe6f2;--text-secondary:#c080a0;--text-muted:#6a4060;
+    --accent-buy:#ff69b4;--accent-sell:#ff4757;--accent-warn:#ffa502;
+    --accent-info:#ff9ff3;--accent-purple:#c56cf0;
+    --grid-color:rgba(255,105,180,0.03);--card-glow:rgba(255,105,180,0.1);
+    --scanline-color:rgba(255,105,180,0.04);--particle-color:rgba(255,105,180,0.4);
+    --holo-tint:rgba(255,105,180,0.02);
   }
-  .app { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-  .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 4px; }
-  .brand { display: flex; align-items: baseline; gap: 12px; }
-  .brand h1 { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .brand .tag { font-size: 9px; color: var(--accent-buy); border: 1px solid rgba(0,212,170,0.25); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.8px; text-transform: uppercase; animation: pulse-border 3s ease-in-out infinite; }
-  .brand .tag.expired { color: var(--accent-sell); border-color: rgba(255,77,109,0.4); animation: none; }
-  @keyframes pulse-border { 0%,100%{border-color:rgba(0,212,170,0.25);box-shadow:0 0 0 rgba(0,212,170,0);} 50%{border-color:rgba(0,212,170,0.5);box-shadow:0 0 10px rgba(0,212,170,0.1);} }
-  .status-bar { display: flex; align-items: center; gap: 16px; font-size: 11px; color: var(--text-secondary); }
-  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); position: relative; }
-  .status-dot.online { background: var(--accent-buy); box-shadow: 0 0 8px rgba(0,212,170,0.5); animation: blink 2s ease-in-out infinite; }
-  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-  .card {
-    background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px;
-    position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  [data-theme="matrix"]{
+    --bg-primary:#000500;--bg-secondary:#001000;--bg-tertiary:#001800;
+    --bg-glass:rgba(0,16,0,0.85);--border-subtle:rgba(0,255,65,0.1);
+    --text-primary:#ccffcc;--text-secondary:#44aa44;--text-muted:#226622;
+    --accent-buy:#00ff41;--accent-sell:#ff3333;--accent-warn:#ffff00;
+    --accent-info:#55ff55;--accent-purple:#88ff88;
+    --grid-color:rgba(0,255,65,0.03);--card-glow:rgba(0,255,65,0.1);
+    --scanline-color:rgba(0,255,65,0.05);--particle-color:rgba(0,255,65,0.5);
+    --holo-tint:rgba(0,255,65,0.02);--font-display:'JetBrains Mono',monospace;
   }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); }
-  .card:hover { border-color: rgba(148,163,184,0.12); transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,0,0,0.35); }
-  .card.enter { animation: cardReveal 0.6s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; }
-  @keyframes cardReveal { from{opacity:0;transform:translateY(20px) scale(0.98);} to{opacity:1;transform:translateY(0) scale(1);} }
-  .card-accent { position: absolute; width: 18px; height: 18px; border: 1px solid transparent; }
-  .card-accent.tl { top: -1px; left: -1px; border-top-color: rgba(255,255,255,0.08); border-left-color: rgba(255,255,255,0.08); border-top-left-radius: 12px; }
-  .card-accent.tr { top: -1px; right: -1px; border-top-color: rgba(255,255,255,0.08); border-right-color: rgba(255,255,255,0.08); border-top-right-radius: 12px; }
-  .card-accent.bl { bottom: -1px; left: -1px; border-bottom-color: rgba(255,255,255,0.08); border-left-color: rgba(255,255,255,0.08); border-bottom-left-radius: 12px; }
-  .card-accent.br { bottom: -1px; right: -1px; border-bottom-color: rgba(255,255,255,0.08); border-right-color: rgba(255,255,255,0.08); border-bottom-right-radius: 12px; }
-  .card-title { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-secondary); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
-  .card-title .badge { font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 600; letter-spacing: 0.5px; }
-  .badge-buy { background: rgba(0,212,170,0.12); color: var(--accent-buy); border: 1px solid rgba(0,212,170,0.2); }
-  .badge-sell { background: rgba(255,77,109,0.12); color: var(--accent-sell); border: 1px solid rgba(255,77,109,0.2); }
-  .badge-neutral { background: rgba(100,116,139,0.1); color: var(--text-secondary); border: 1px solid rgba(100,116,139,0.15); }
-  .badge-warn { background: rgba(240,180,41,0.1); color: var(--accent-warn); border: 1px solid rgba(240,180,41,0.2); }
-  input, select, button { font-family: 'JetBrains Mono', monospace; background: rgba(13,18,31,0.8); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 8px; padding: 9px 13px; font-size: 12px; outline: none; transition: all 0.2s ease; }
-  input:focus, select:focus { border-color: var(--accent-buy); box-shadow: 0 0 0 3px rgba(0,212,170,0.08), 0 0 20px rgba(0,212,170,0.04); }
-  select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2364748B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; padding-right: 30px; }
-  button { cursor: pointer; position: relative; overflow: hidden; font-weight: 500; }
-  button::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%); pointer-events: none; }
-  button:hover { border-color: rgba(148,163,184,0.2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
-  button:active { transform: translateY(0) scale(0.98); }
-  button.primary { background: linear-gradient(135deg, rgba(0,212,170,0.14), rgba(0,212,170,0.04)); border-color: rgba(0,212,170,0.25); color: var(--accent-buy); }
-  button.primary:hover { background: linear-gradient(135deg, rgba(0,212,170,0.22), rgba(0,212,170,0.08)); box-shadow: 0 0 20px rgba(0,212,170,0.12); }
-  button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-  .tf-container { display: flex; background: rgba(13,18,31,0.5); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 3px; position: relative; }
-  .tf-btn { background: transparent; border: none; padding: 7px 12px; font-size: 11px; font-weight: 600; color: var(--text-secondary); border-radius: 7px; position: relative; z-index: 2; transition: color 0.3s ease; }
-  .tf-btn:hover { color: var(--text-primary); }
-  .tf-btn.active { color: var(--bg-primary); font-weight: 700; }
-  .tf-highlight { position: absolute; top: 3px; bottom: 3px; background: linear-gradient(135deg, var(--accent-buy), #0d9488); border-radius: 7px; z-index: 1; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 2px 12px rgba(0,212,170,0.2); }
-  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
-  .col-12 { grid-column: span 12; } .col-8 { grid-column: span 8; } .col-6 { grid-column: span 6; }
-  .col-4 { grid-column: span 4; } .col-3 { grid-column: span 3; }
-  @media (max-width: 900px) { .col-8, .col-6, .col-4, .col-3 { grid-column: span 12; } .bento { gap: 12px; } }
-  .chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .chart-title-group h2 { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
-  .chart-title-group .subtitle { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
-  .price-display { text-align: right; }
-  .price-main { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; transition: all 0.3s ease; }
-  .price-main.up { color: var(--accent-buy); text-shadow: 0 0 20px rgba(0,212,170,0.25); }
-  .price-main.down { color: var(--accent-sell); text-shadow: 0 0 20px rgba(255,77,109,0.25); }
-  .price-change { font-size: 11px; margin-top: 2px; }
-  .chart-wrapper { position: relative; height: 300px; }
-  .chart-scanline { position: absolute; top: 0; bottom: 0; width: 120px; background: linear-gradient(90deg, transparent, rgba(0,212,170,0.05), transparent); pointer-events: none; opacity: 0; z-index: 10; }
-  .chart-scanline.active { opacity: 1; animation: scanSlide 1.5s ease-in-out infinite; }
-  @keyframes scanSlide { 0%{left:-120px;} 100%{left:100%;} }
-  .conf-gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .conf-gauge-svg { width: 130px; height: 70px; }
-  .conf-gauge-bg { fill: none; stroke: var(--bg-tertiary); stroke-width: 10; stroke-linecap: round; }
-  .conf-gauge-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dasharray 0.8s cubic-bezier(0.34,1.56,0.64,1), stroke 0.4s ease; }
-  .conf-score { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace; line-height: 1; }
-  .conf-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
-  .confluence-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
-  .conf-item { display: flex; align-items: center; gap: 8px; font-size: 11px; padding: 5px 8px; border-radius: 6px; background: rgba(13,18,31,0.4); }
-  .conf-check { width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
-  .conf-check.pass { background: rgba(0,212,170,0.15); color: var(--accent-buy); }
-  .conf-check.fail { background: rgba(255,77,109,0.1); color: var(--accent-sell); }
-  .conf-check.neutral { background: rgba(100,116,139,0.1); color: var(--text-secondary); }
-  .conf-name { color: var(--text-secondary); }
-  .conf-name strong { color: var(--text-primary); font-weight: 600; }
-  .signal-card { display: flex; flex-direction: column; justify-content: center; min-height: 160px; }
-  .signal-value { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
-  .signal-value.BUY { color: var(--accent-buy); text-shadow: 0 0 30px rgba(0,212,170,0.2); }
-  .signal-value.SELL { color: var(--accent-sell); text-shadow: 0 0 30px rgba(255,77,109,0.2); }
-  .signal-value.NONE { color: var(--text-secondary); }
-  .signal-pulse { position: absolute; inset: -6px; border-radius: 16px; opacity: 0; pointer-events: none; }
-  .signal-pulse.active { animation: signalPulse 1.2s ease-out forwards; }
-  @keyframes signalPulse { 0%{transform:scale(0.96);opacity:0.5;} 100%{transform:scale(1.12);opacity:0;} }
-  .signal-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
-  .level-item { display: flex; flex-direction: column; gap: 3px; }
-  .level-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
-  .level-value { font-size: 13px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
-  .level-value.sl { color: var(--accent-sell); }
-  .level-value.tp { color: var(--accent-warn); }
-  .level-value.neutral { color: var(--text-secondary); }
-  .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .metric { background: rgba(13,18,31,0.45); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 12px; transition: all 0.2s ease; }
-  .metric:hover { border-color: rgba(148,163,184,0.15); transform: translateY(-2px); }
-  .metric-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .metric-name { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
-  .metric-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
-  .metric-badge.bull { background: rgba(0,212,170,0.1); color: var(--accent-buy); }
-  .metric-badge.bear { background: rgba(255,77,109,0.1); color: var(--accent-sell); }
-  .metric-badge.neutral { background: rgba(100,116,139,0.08); color: var(--text-secondary); }
-  .metric-value { font-size: 17px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .sr-list { display: flex; flex-direction: column; gap: 4px; }
-  .sr-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-radius: 6px; background: rgba(13,18,31,0.3); font-size: 11px; }
-  .sr-row .label { color: var(--text-secondary); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .sr-row .value { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-  .sr-row.support { border-left: 2px solid var(--accent-buy); }
-  .sr-row.resistance { border-left: 2px solid var(--accent-sell); }
-  .sr-row.pivot { border-left: 2px solid var(--accent-warn); }
-  .session-timeline { position: relative; height: 72px; margin-top: 6px; }
-  .session-track { position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: var(--bg-tertiary); transform: translateY(-50%); }
-  .session-block { position: absolute; top: 50%; transform: translateY(-50%); height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.4s ease; border: 1px solid transparent; }
-  .session-block.active { box-shadow: 0 0 14px currentColor; border-color: currentColor; z-index: 2; }
-  .session-block.inactive { opacity: 0.25; }
-  .now-marker { position: absolute; top: 6px; bottom: 6px; width: 2px; background: var(--accent-warn); box-shadow: 0 0 10px rgba(240,180,41,0.5); z-index: 5; transform: translateX(-50%); }
-  .now-marker::after { content: ''; position: absolute; top: -4px; left: -3px; width: 8px; height: 8px; background: var(--accent-warn); border-radius: 50%; box-shadow: 0 0 8px rgba(240,180,41,0.7); }
-  .now-label { position: absolute; top: -16px; transform: translateX(-50%); font-size: 9px; color: var(--accent-warn); font-weight: 600; white-space: nowrap; }
-  .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .risk-result { background: rgba(13,18,31,0.5); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px; text-align: center; }
-  .risk-result .label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 4px; }
-  .risk-result .value { font-size: 15px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .log-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  .log-table th { text-align: left; padding: 8px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; font-size: 9px; border-bottom: 1px solid var(--border-subtle); }
-  .log-table td { padding: 8px; border-bottom: 1px solid var(--border-subtle); }
-  .log-table tr:last-child td { border-bottom: none; }
-  .log-table tr:hover td { background: rgba(13,18,31,0.3); }
-  .log-signal { font-weight: 700; }
-  .log-signal.BUY { color: var(--accent-buy); }
-  .log-signal.SELL { color: var(--accent-sell); }
-  .log-signal.NONE { color: var(--text-secondary); }
-  .error-banner { background: rgba(255,77,109,0.06); border: 1px solid rgba(255,77,109,0.2); color: var(--accent-sell); border-radius: 10px; padding: 11px 14px; font-size: 12px; display: none; align-items: center; gap: 10px; }
-  .error-banner.visible { display: flex; }
-  .market-banner { display: none; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; margin-bottom: 2px; }
-  .market-banner.visible { display: flex; }
-  .market-banner.closed { background: rgba(255,77,109,0.06); border: 1px solid rgba(255,77,109,0.2); }
-  .market-banner .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-sell); flex-shrink: 0; box-shadow: 0 0 8px rgba(255,77,109,0.5); animation: blink 2s ease-in-out infinite; }
-  .market-banner .title { font-weight: 700; font-size: 12px; color: var(--accent-sell); }
-  .market-banner .detail { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-  .empty-state { text-align: center; padding: 50px 20px; color: var(--text-secondary); }
-  .empty-state .icon { font-size: 44px; margin-bottom: 14px; opacity: 0.25; }
-  .countdown-wrap { display: flex; align-items: center; gap: 8px; }
-  .countdown-ring { width: 16px; height: 16px; border-radius: 50%; background: conic-gradient(var(--accent-buy) calc(var(--pct,0)*1%), var(--bg-tertiary) 0); transition: background 1s linear; flex-shrink: 0; }
-  .countdown-label { font-size: 11px; color: var(--text-secondary); }
-  .key-card { max-width: 520px; margin: 70px auto; text-align: center; }
-  .key-card h2 { font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .key-card p { color: var(--text-secondary); font-size: 12px; margin-bottom: 22px; line-height: 1.6; }
-  .key-input-group { display: flex; gap: 10px; }
-  .key-input-group input { flex: 1; font-size: 13px; }
-  .htf-card { min-height: 140px; }
-  .htf-status { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
-  .htf-status.BULLISH { color: var(--accent-buy); }
-  .htf-status.BEARISH { color: var(--accent-sell); }
-  .htf-status.NEUTRAL { color: var(--text-secondary); }
-  .htf-detail { font-size: 11px; color: var(--text-secondary); }
-  .api-usage { font-size: 10px; color: var(--text-muted); margin-left: 12px; }
-  .license-banner { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-secondary); }
-  .license-banner .tier-badge { font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-  .license-banner .tier-badge.weekly { background: rgba(56,189,248,0.12); color: var(--accent-info); border: 1px solid rgba(56,189,248,0.2); }
-  .license-banner .tier-badge.monthly { background: rgba(0,212,170,0.12); color: var(--accent-buy); border: 1px solid rgba(0,212,170,0.2); }
-  .license-banner .tier-badge.quarterly { background: rgba(167,139,250,0.12); color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.2); }
-  .license-banner .tier-badge.yearly { background: rgba(240,180,41,0.1); color: var(--accent-warn); border: 1px solid rgba(240,180,41,0.2); }
-  .license-banner .expiry { font-family: 'JetBrains Mono', monospace; }
-  .license-banner .expiry.urgent { color: var(--accent-sell); }
-  .world-clocks { display: flex; flex-wrap: wrap; gap: 8px; }
-  .wc-item { background: rgba(13,18,31,0.45); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 8px 12px; min-width: 108px; flex: 1; }
-  .wc-item.primary { border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.05); }
-  .wc-item .wc-city { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
-  .wc-item.primary .wc-city { color: var(--accent-buy); }
-  .wc-item .wc-time { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .wc-item .wc-date { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
-  .gate-card { max-width: 480px; margin: 80px auto; text-align: center; }
-  .gate-card .lock-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
-  .gate-card h2 { font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-  .gate-card .sub { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; line-height: 1.6; }
-  .gate-card .input-wrap { display: flex; gap: 10px; margin-bottom: 16px; }
-  .gate-card .input-wrap input { flex: 1; font-size: 14px; padding: 12px 14px; }
-  .gate-card .err { color: var(--accent-sell); font-size: 12px; margin-top: 8px; display: none; }
-  .gate-card .err.visible { display: block; }
-  .gate-card .plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 24px; }
-  .plan { background: rgba(13,18,31,0.5); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px; text-align: center; }
-  .plan .name { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 6px; }
-  .plan .price { font-size: 22px; font-weight: 700; font-family: 'Inter', sans-serif; }
-  .plan .period { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .fade-in { animation: fadeIn 0.4s ease forwards; }
-  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg-primary); }
-  ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-  @media (max-width: 600px) {
-    .app { padding: 14px; } .header { flex-direction: column; gap: 10px; align-items: flex-start; }
-    .toolbar { flex-direction: column; align-items: stretch; } .price-main { font-size: 20px; }
-    .signal-value { font-size: 28px; } .risk-grid { grid-template-columns: 1fr; }
-    .signal-levels { grid-template-columns: 1fr; } .gate-card .plans { grid-template-columns: 1fr; }
+  [data-theme="solar"]{
+    --bg-primary:#0f0800;--bg-secondary:#1a0f00;--bg-tertiary:#241600;
+    --bg-glass:rgba(26,15,0,0.85);--border-subtle:rgba(255,170,0,0.1);
+    --text-primary:#fff5e0;--text-secondary:#b09060;--text-muted:#605030;
+    --accent-buy:#ffb700;--accent-sell:#ff4d4d;--accent-warn:#ff8800;
+    --accent-info:#ffd54f;--accent-purple:#ffab40;
+    --grid-color:rgba(255,170,0,0.025);--card-glow:rgba(255,170,0,0.1);
+    --scanline-color:rgba(255,170,0,0.04);--particle-color:rgba(255,170,0,0.4);
+    --holo-tint:rgba(255,170,0,0.02);
   }
+  [data-theme="arctic"]{
+    --bg-primary:#020a10;--bg-secondary:#051018;--bg-tertiary:#0a1824;
+    --bg-glass:rgba(5,16,24,0.85);--border-subtle:rgba(150,220,255,0.1);
+    --text-primary:#e0f4ff;--text-secondary:#7090a8;--text-muted:#405868;
+    --accent-buy:#00ddee;--accent-sell:#ff6b81;--accent-warn:#ffeaa7;
+    --accent-info:#74b9ff;--accent-purple:#a29bfe;
+    --grid-color:rgba(150,220,255,0.025);--card-glow:rgba(150,220,255,0.1);
+    --scanline-color:rgba(150,220,255,0.04);--particle-color:rgba(150,220,255,0.4);
+    --holo-tint:rgba(150,220,255,0.02);
+  }
+  [data-theme="sunset"]{
+    --bg-primary:#0f0508;--bg-secondary:#1a0810;--bg-tertiary:#240c18;
+    --bg-glass:rgba(26,8,16,0.85);--border-subtle:rgba(255,100,100,0.1);
+    --text-primary:#ffe0e0;--text-secondary:#b07070;--text-muted:#684040;
+    --accent-buy:#ff6b6b;--accent-sell:#4ecdc4;--accent-warn:#ffe66d;
+    --accent-info:#ff8b94;--accent-purple:#c44569;
+    --grid-color:rgba(255,100,100,0.025);--card-glow:rgba(255,100,100,0.1);
+    --scanline-color:rgba(255,100,100,0.04);--particle-color:rgba(255,100,100,0.4);
+    --holo-tint:rgba(255,100,100,0.02);
+  }
+  [data-theme="minimalist"]{
+    --bg-primary:#0a0a0c;--bg-secondary:#111114;--bg-tertiary:#18181c;
+    --bg-glass:rgba(17,17,20,0.85);--border-subtle:rgba(255,255,255,0.04);
+    --text-primary:#f0f0f5;--text-secondary:#888899;--text-muted:#444455;
+    --accent-buy:#a0a0ff;--accent-sell:#ff8080;--accent-warn:#ffd700;
+    --accent-info:#b0b0ff;--accent-purple:#c0c0ff;
+    --grid-color:rgba(255,255,255,0.015);--card-glow:rgba(255,255,255,0.04);
+    --scanline-color:rgba(255,255,255,0.02);--particle-color:rgba(255,255,255,0.2);
+    --holo-tint:rgba(255,255,255,0.01);
+  }
+  [data-theme="neon"]{
+    --bg-primary:#000000;--bg-secondary:#050510;--bg-tertiary:#0a0a1a;
+    --bg-glass:rgba(5,5,16,0.85);--border-subtle:rgba(0,255,255,0.12);
+    --text-primary:#ffffff;--text-secondary:#6666aa;--text-muted:#333355;
+    --accent-buy:#00ffff;--accent-sell:#ff00ff;--accent-warn:#ffff00;
+    --accent-info:#00ccff;--accent-purple:#aa00ff;
+    --grid-color:rgba(0,255,255,0.03);--card-glow:rgba(0,255,255,0.12);
+    --scanline-color:rgba(0,255,255,0.06);--particle-color:rgba(0,255,255,0.5);
+    --holo-tint:rgba(0,255,255,0.02);
+  }
+  [data-theme="forest"]{
+    --bg-primary:#051005;--bg-secondary:#0a180a;--bg-tertiary:#0f200f;
+    --bg-glass:rgba(10,24,10,0.85);--border-subtle:rgba(100,255,100,0.08);
+    --text-primary:#e0ffe0;--text-secondary:#60a060;--text-muted:#305030;
+    --accent-buy:#55ff55;--accent-sell:#ff5555;--accent-warn:#ffcc00;
+    --accent-info:#88dd88;--accent-purple:#aaddaa;
+    --grid-color:rgba(100,255,100,0.02);--card-glow:rgba(100,255,100,0.08);
+    --scanline-color:rgba(100,255,100,0.04);--particle-color:rgba(100,255,100,0.4);
+    --holo-tint:rgba(100,255,100,0.02);
+  }
+  [data-theme="royal"]{
+    --bg-primary:#0a0018;--bg-secondary:#120028;--bg-tertiary:#1a0038;
+    --bg-glass:rgba(18,0,40,0.85);--border-subtle:rgba(180,120,255,0.1);
+    --text-primary:#f0e0ff;--text-secondary:#9060b0;--text-muted:#503070;
+    --accent-buy:#c084fc;--accent-sell:#ff6b9d;--accent-warn:#ffd700;
+    --accent-info:#b388ff;--accent-purple:#e040fb;
+    --grid-color:rgba(180,120,255,0.03);--card-glow:rgba(180,120,255,0.1);
+    --scanline-color:rgba(180,120,255,0.04);--particle-color:rgba(180,120,255,0.4);
+    --holo-tint:rgba(180,120,255,0.02);
+  }
+  [data-theme="volcanic"]{
+    --bg-primary:#0f0200;--bg-secondary:#1a0500;--bg-tertiary:#240800;
+    --bg-glass:rgba(26,5,0,0.85);--border-subtle:rgba(255,60,0,0.1);
+    --text-primary:#ffe8e0;--text-secondary:#b06040;--text-muted:#603020;
+    --accent-buy:#ff4500;--accent-sell:#ff1744;--accent-warn:#ffab00;
+    --accent-info:#ff6e40;--accent-purple:#ff3d00;
+    --grid-color:rgba(255,60,0,0.025);--card-glow:rgba(255,60,0,0.1);
+    --scanline-color:rgba(255,60,0,0.04);--particle-color:rgba(255,60,0,0.4);
+    --holo-tint:rgba(255,60,0,0.02);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background-color:var(--bg-primary);color:var(--text-primary);font-family:var(--font-mono);font-size:12px;line-height:1.5;min-height:100vh;overflow-x:hidden;position:relative;transition:background-color .5s ease,color .3s ease}
+  #particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.6}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;transition:background-image .5s ease}
+  body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px);pointer-events:none;z-index:9999;opacity:.35}
+  .app{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+  .header{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--border-subtle);margin-bottom:4px}
+  .brand{display:flex;align-items:baseline;gap:12px}
+  .brand h1{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--text-primary) 0%,var(--text-secondary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .brand .tag{font-size:9px;color:var(--accent-buy);border:1px solid var(--accent-buy);padding:2px 8px;border-radius:4px;letter-spacing:.8px;text-transform:uppercase;animation:pulse-border 3s ease-in-out infinite}
+  .brand .tag.expired{color:var(--accent-sell);border-color:var(--accent-sell);animation:none}
+  @keyframes pulse-border{0%,100%{border-color:var(--accent-buy);box-shadow:0 0 0 var(--card-glow)}50%{border-color:var(--accent-buy);box-shadow:0 0 10px var(--card-glow)}}
+  .status-bar{display:flex;align-items:center;gap:16px;font-size:11px;color:var(--text-secondary)}
+  .status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);position:relative}
+  .status-dot.online{background:var(--accent-buy);box-shadow:0 0 8px var(--accent-buy);animation:blink 2s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+  .profile-wrap{position:relative}
+  .profile-icon{width:36px;height:36px;border-radius:50%;cursor:pointer;border:2px solid var(--border-subtle);overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--bg-tertiary);transition:all .3s ease;font-size:18px;user-select:none}
+  .profile-icon:hover{border-color:var(--accent-buy);box-shadow:0 0 12px var(--card-glow);transform:scale(1.1)}
+  .profile-dropdown{position:absolute;top:44px;right:0;width:280px;background:var(--bg-glass);backdrop-filter:blur(24px);border:1px solid var(--border-subtle);border-radius:12px;padding:16px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:all .3s cubic-bezier(.4,0,.2,1);z-index:100}
+  .profile-dropdown.open{opacity:1;pointer-events:auto;transform:translateY(0)}
+  .profile-dropdown h4{font-family:var(--font-display);font-size:12px;margin-bottom:10px;color:var(--text-primary)}
+  .avatar-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
+  .avatar-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;font-size:16px;display:flex;align-items:center;justify-content:center;background:var(--bg-secondary);transition:all .2s ease}
+  .avatar-opt:hover{border-color:var(--accent-buy);transform:scale(1.15)}
+  .avatar-opt.active{border-color:var(--accent-buy);box-shadow:0 0 8px var(--card-glow)}
+  .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .theme-opt{padding:6px 8px;border-radius:6px;border:1px solid var(--border-subtle);background:var(--bg-secondary);cursor:pointer;font-size:10px;text-align:center;color:var(--text-secondary);transition:all .2s ease}
+  .theme-opt:hover{border-color:var(--accent-buy);color:var(--text-primary)}
+  .theme-opt.active{border-color:var(--accent-buy);background:var(--card-glow);color:var(--accent-buy);font-weight:600}
+  .card{background:var(--bg-glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border-subtle);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1)}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+  .card:hover{border-color:rgba(148,163,184,.12);transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,.35),0 0 40px var(--card-glow)}
+  .card.enter{animation:cardReveal .6s cubic-bezier(.16,1,.3,1) forwards;opacity:0}
+  @keyframes cardReveal{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .card.holo::after{content:'';position:absolute;inset:-1px;border-radius:13px;background:linear-gradient(135deg,transparent 40%,var(--holo-tint) 50%,transparent 60%);background-size:200% 200%;animation:holoShift 3s ease-in-out infinite;pointer-events:none;z-index:-1;opacity:.6}
+  @keyframes holoShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
+  .card-accent{position:absolute;width:18px;height:18px;border:1px solid transparent}
+  .card-accent.tl{top:-1px;left:-1px;border-top-color:rgba(255,255,255,.08);border-left-color:rgba(255,255,255,.08);border-top-left-radius:12px}
+  .card-accent.tr{top:-1px;right:-1px;border-top-color:rgba(255,255,255,.08);border-right-color:rgba(255,255,255,.08);border-top-right-radius:12px}
+  .card-accent.bl{bottom:-1px;left:-1px;border-bottom-color:rgba(255,255,255,.08);border-left-color:rgba(255,255,255,.08);border-bottom-left-radius:12px}
+  .card-accent.br{bottom:-1px;right:-1px;border-bottom-color:rgba(255,255,255,.08);border-right-color:rgba(255,255,255,.08);border-bottom-right-radius:12px}
+  .card-title{font-family:var(--font-display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-secondary);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+  .card-title .badge{font-size:9px;padding:2px 8px;border-radius:4px;font-weight:600;letter-spacing:.5px}
+  .badge-buy{background:var(--card-glow);color:var(--accent-buy);border:1px solid var(--accent-buy)}
+  .badge-sell{background:rgba(255,77,109,.1);color:var(--accent-sell);border:1px solid var(--accent-sell)}
+  .badge-neutral{background:rgba(100,116,139,.1);color:var(--text-secondary);border:1px solid var(--text-muted)}
+  .badge-warn{background:rgba(240,180,41,.1);color:var(--accent-warn);border:1px solid var(--accent-warn)}
+  input,select,button{font-family:var(--font-mono);background:rgba(13,18,31,.8);border:1px solid var(--border-subtle);color:var(--text-primary);border-radius:8px;padding:9px 13px;font-size:12px;outline:none;transition:all .2s ease}
+  input:focus,select:focus{border-color:var(--accent-buy);box-shadow:0 0 0 3px var(--card-glow),0 0 20px var(--card-glow)}
+  select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2364748B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+  button{cursor:pointer;position:relative;overflow:hidden;font-weight:500}
+  button::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,transparent 100%);pointer-events:none}
+  button:hover{border-color:rgba(148,163,184,.2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.25),0 0 20px var(--card-glow)}
+  button:active{transform:translateY(0) scale(.98)}
+  button.primary{background:linear-gradient(135deg,var(--card-glow),rgba(0,0,0,.1));border-color:var(--accent-buy);color:var(--accent-buy)}
+  button.primary:hover{background:linear-gradient(135deg,var(--card-glow),rgba(0,0,0,.2));box-shadow:0 0 20px var(--card-glow)}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .tf-container{display:flex;background:rgba(13,18,31,.5);border:1px solid var(--border-subtle);border-radius:10px;padding:3px;position:relative}
+  .tf-btn{background:transparent;border:none;padding:7px 12px;font-size:11px;font-weight:600;color:var(--text-secondary);border-radius:7px;position:relative;z-index:2;transition:color .3s ease}
+  .tf-btn:hover{color:var(--text-primary)}
+  .tf-btn.active{color:var(--bg-primary);font-weight:700}
+  .tf-highlight{position:absolute;top:3px;bottom:3px;background:linear-gradient(135deg,var(--accent-buy),var(--accent-info));border-radius:7px;z-index:1;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 12px var(--card-glow)}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .bento{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+  .col-12{grid-column:span 12}.col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}
+  @media(max-width:900px){.col-8,.col-6,.col-4,.col-3{grid-column:span 12}.bento{gap:12px}}
+  .chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+  .chart-title-group h2{font-family:var(--font-display);font-size:17px;font-weight:700;letter-spacing:-.3px}
+  .chart-title-group .subtitle{font-size:10px;color:var(--text-secondary);margin-top:2px}
+  .price-display{text-align:right}
+  .price-main{font-size:24px;font-weight:700;font-family:var(--font-mono);letter-spacing:-1px;transition:all .3s ease}
+  .price-main.up{color:var(--accent-buy);text-shadow:0 0 20px var(--card-glow)}
+  .price-main.down{color:var(--accent-sell);text-shadow:0 0 20px rgba(255,77,109,.25)}
+  .price-change{font-size:11px;margin-top:2px}
+  .chart-wrapper{position:relative;height:300px}
+  .chart-scanline{position:absolute;top:0;bottom:0;width:120px;background:linear-gradient(90deg,transparent,var(--scanline-color),transparent);pointer-events:none;opacity:0;z-index:10}
+  .chart-scanline.active{opacity:1;animation:scanSlide 1.5s ease-in-out infinite}
+  @keyframes scanSlide{0%{left:-120px}100%{left:100%}}
+  .conf-gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .conf-gauge-svg{width:130px;height:70px}
+  .conf-gauge-bg{fill:none;stroke:var(--bg-tertiary);stroke-width:10;stroke-linecap:round}
+  .conf-gauge-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dasharray .8s cubic-bezier(.34,1.56,.64,1),stroke .4s ease}
+  .conf-score{font-size:28px;font-weight:700;font-family:var(--font-mono);line-height:1}
+  .conf-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary)}
+  .confluence-list{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+  .conf-item{display:flex;align-items:center;gap:8px;font-size:11px;padding:5px 8px;border-radius:6px;background:rgba(13,18,31,.4)}
+  .conf-check{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+  .conf-check.pass{background:var(--card-glow);color:var(--accent-buy)}
+  .conf-check.fail{background:rgba(255,77,109,.1);color:var(--accent-sell)}
+  .conf-check.neutral{background:rgba(100,116,139,.1);color:var(--text-secondary)}
+  .conf-name{color:var(--text-secondary)}
+  .conf-name strong{color:var(--text-primary);font-weight:600}
+  .signal-card{display:flex;flex-direction:column;justify-content:center;min-height:160px}
+  .signal-value{font-family:var(--font-display);font-size:36px;font-weight:800;letter-spacing:-1px;line-height:1}
+  .signal-value.BUY{color:var(--accent-buy);text-shadow:0 0 30px var(--card-glow)}
+  .signal-value.SELL{color:var(--accent-sell);text-shadow:0 0 30px rgba(255,77,109,.2)}
+  .signal-value.NONE{color:var(--text-secondary)}
+  .signal-pulse{position:absolute;inset:-6px;border-radius:16px;opacity:0;pointer-events:none}
+  .signal-pulse.active{animation:signalPulse 1.2s ease-out forwards}
+  @keyframes signalPulse{0%{transform:scale(.96);opacity:.5}100%{transform:scale(1.12);opacity:0}}
+  .signal-levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-subtle)}
+  .level-item{display:flex;flex-direction:column;gap:3px}
+  .level-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary)}
+  .level-value{font-size:13px;font-weight:600;font-family:var(--font-mono)}
+  .level-value.sl{color:var(--accent-sell)}
+  .level-value.tp{color:var(--accent-warn)}
+  .level-value.neutral{color:var(--text-secondary)}
+  .metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .metric{background:rgba(13,18,31,.45);border:1px solid var(--border-subtle);border-radius:10px;padding:12px;transition:all .2s ease}
+  .metric:hover{border-color:rgba(148,163,184,.15);transform:translateY(-2px);box-shadow:0 4px 16px var(--card-glow)}
+  .metric-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .metric-name{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary)}
+  .metric-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;text-transform:uppercase}
+  .metric-badge.bull{background:var(--card-glow);color:var(--accent-buy)}
+  .metric-badge.bear{background:rgba(255,77,109,.1);color:var(--accent-sell)}
+  .metric-badge.neutral{background:rgba(100,116,139,.08);color:var(--text-secondary)}
+  .metric-value{font-size:17px;font-weight:700;font-family:var(--font-mono)}
+  .sr-list{display:flex;flex-direction:column;gap:4px}
+  .sr-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;background:rgba(13,18,31,.3);font-size:11px}
+  .sr-row .label{color:var(--text-secondary);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+  .sr-row .value{font-family:var(--font-mono);font-weight:600}
+  .sr-row.support{border-left:2px solid var(--accent-buy)}
+  .sr-row.resistance{border-left:2px solid var(--accent-sell)}
+  .sr-row.pivot{border-left:2px solid var(--accent-warn)}
+  .session-timeline{position:relative;height:72px;margin-top:6px}
+  .session-track{position:absolute;left:0;right:0;top:50%;height:2px;background:var(--bg-tertiary);transform:translateY(-50%)}
+  .session-block{position:absolute;top:50%;transform:translateY(-50%);height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;transition:all .4s ease;border:1px solid transparent}
+  .session-block.active{box-shadow:0 0 14px currentColor;border-color:currentColor;z-index:2}
+  .session-block.inactive{opacity:.25}
+  .now-marker{position:absolute;top:6px;bottom:6px;width:2px;background:var(--accent-warn);box-shadow:0 0 10px rgba(240,180,41,.5);z-index:5;transform:translateX(-50%)}
+  .now-marker::after{content:'';position:absolute;top:-4px;left:-3px;width:8px;height:8px;background:var(--accent-warn);border-radius:50%;box-shadow:0 0 8px rgba(240,180,41,.7)}
+  .now-label{position:absolute;top:-16px;transform:translateX(-50%);font-size:9px;color:var(--accent-warn);font-weight:600;white-space:nowrap}
+  .risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .risk-result{background:rgba(13,18,31,.5);border:1px solid var(--border-subtle);border-radius:8px;padding:10px;text-align:center}
+  .risk-result .label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin-bottom:4px}
+  .risk-result .value{font-size:15px;font-weight:700;font-family:var(--font-mono)}
+  .log-table{width:100%;border-collapse:collapse;font-size:11px}
+  .log-table th{text-align:left;padding:8px;color:var(--text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:.5px;font-size:9px;border-bottom:1px solid var(--border-subtle)}
+  .log-table td{padding:8px;border-bottom:1px solid var(--border-subtle)}
+  .log-table tr:last-child td{border-bottom:none}
+  .log-table tr:hover td{background:rgba(13,18,31,.3)}
+  .log-signal{font-weight:700}
+  .log-signal.BUY{color:var(--accent-buy)}
+  .log-signal.SELL{color:var(--accent-sell)}
+  .log-signal.NONE{color:var(--text-secondary)}
+  .error-banner{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:var(--accent-sell);border-radius:10px;padding:11px 14px;font-size:12px;display:none;align-items:center;gap:10px}
+  .error-banner.visible{display:flex}
+  .market-banner{display:none;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;margin-bottom:2px}
+  .market-banner.visible{display:flex}
+  .market-banner.closed{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2)}
+  .market-banner .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-sell);flex-shrink:0;box-shadow:0 0 8px rgba(255,77,109,.5);animation:blink 2s ease-in-out infinite}
+  .market-banner .title{font-weight:700;font-size:12px;color:var(--accent-sell)}
+  .market-banner .detail{font-size:11px;color:var(--text-secondary);margin-top:2px}
+  .empty-state{text-align:center;padding:50px 20px;color:var(--text-secondary)}
+  .empty-state .icon{font-size:44px;margin-bottom:14px;opacity:.25}
+  .countdown-wrap{display:flex;align-items:center;gap:8px}
+  .countdown-ring{width:16px;height:16px;border-radius:50%;background:conic-gradient(var(--accent-buy) calc(var(--pct,0)*1%),var(--bg-tertiary) 0);transition:background 1s linear;flex-shrink:0}
+  .countdown-label{font-size:11px;color:var(--text-secondary)}
+  .key-card{max-width:520px;margin:70px auto;text-align:center}
+  .key-card h2{font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:8px}
+  .key-card p{color:var(--text-secondary);font-size:12px;margin-bottom:22px;line-height:1.6}
+  .key-input-group{display:flex;gap:10px}
+  .key-input-group input{flex:1;font-size:13px}
+  .gate-card{max-width:480px;margin:80px auto;text-align:center}
+  .gate-card .lock-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+  .gate-card h2{font-family:var(--font-display);font-size:24px;font-weight:700;margin-bottom:6px}
+  .gate-card .sub{color:var(--text-secondary);font-size:13px;margin-bottom:24px;line-height:1.6}
+  .gate-card .input-wrap{display:flex;gap:10px;margin-bottom:16px}
+  .gate-card .input-wrap input{flex:1;font-size:14px;padding:12px 14px}
+  .gate-card .err{color:var(--accent-sell);font-size:12px;margin-top:8px;display:none}
+  .gate-card .err.visible{display:block}
+  .gate-card .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:24px}
+  .plan{background:rgba(13,18,31,.5);border:1px solid var(--border-subtle);border-radius:10px;padding:16px;text-align:center;transition:all .3s ease}
+  .plan:hover{border-color:var(--accent-buy);transform:translateY(-2px);box-shadow:0 4px 20px var(--card-glow)}
+  .plan .name{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);margin-bottom:6px}
+  .plan .price{font-size:22px;font-weight:700;font-family:var(--font-display)}
+  .plan .period{font-size:11px;color:var(--text-muted);margin-top:2px}
+  .htf-card{min-height:140px}
+  .htf-status{font-size:24px;font-weight:700;font-family:var(--font-mono);margin-bottom:4px}
+  .htf-status.BULLISH{color:var(--accent-buy)}
+  .htf-status.BEARISH{color:var(--accent-sell)}
+  .htf-status.NEUTRAL{color:var(--text-secondary)}
+  .htf-detail{font-size:11px;color:var(--text-secondary)}
+  .api-usage{font-size:10px;color:var(--text-muted);margin-left:12px}
+  .license-banner{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-secondary)}
+  .license-banner .tier-badge{font-size:9px;padding:2px 8px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .license-banner .tier-badge.weekly{background:rgba(56,189,248,.12);color:var(--accent-info);border:1px solid rgba(56,189,248,.2)}
+  .license-banner .tier-badge.monthly{background:var(--card-glow);color:var(--accent-buy);border:1px solid var(--accent-buy)}
+  .license-banner .tier-badge.quarterly{background:rgba(167,139,250,.12);color:var(--accent-purple);border:1px solid rgba(167,139,250,.2)}
+  .license-banner .tier-badge.yearly{background:rgba(240,180,41,.1);color:var(--accent-warn);border:1px solid rgba(240,180,41,.2)}
+  .license-banner .expiry{font-family:var(--font-mono)}
+  .license-banner .expiry.urgent{color:var(--accent-sell)}
+  .world-clocks{display:flex;flex-wrap:wrap;gap:8px}
+  .wc-item{background:rgba(13,18,31,.45);border:1px solid var(--border-subtle);border-radius:8px;padding:8px 12px;min-width:108px;flex:1;transition:all .3s ease}
+  .wc-item.primary{border-color:var(--accent-buy);background:var(--card-glow)}
+  .wc-item .wc-city{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-secondary);margin-bottom:3px;display:flex;align-items:center;gap:4px}
+  .wc-item.primary .wc-city{color:var(--accent-buy)}
+  .wc-item .wc-time{font-size:14px;font-weight:700;font-family:var(--font-mono)}
+  .wc-item .wc-date{font-size:9px;color:var(--text-muted);margin-top:2px}
+  .typing-cursor::after{content:'|';animation:blink 1s step-end infinite}
+  .glow-text{text-shadow:0 0 10px var(--card-glow),0 0 20px var(--card-glow)}
+  .ai-assistant{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent-buy),var(--accent-info));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 24px var(--card-glow),0 0 40px var(--card-glow);z-index:1000;transition:all .3s ease;font-size:22px;border:2px solid rgba(255,255,255,.1)}
+  .ai-assistant:hover{transform:scale(1.1) rotate(5deg)}
+  .ai-assistant.pulse{animation:aiPulse 2s ease-in-out infinite}
+  @keyframes aiPulse{0%,100%{box-shadow:0 4px 24px var(--card-glow)}50%{box-shadow:0 4px 40px var(--card-glow),0 0 60px var(--card-glow)}}
+  .ai-panel{position:fixed;bottom:88px;right:24px;width:320px;max-height:400px;background:var(--bg-glass);backdrop-filter:blur(24px);border:1px solid var(--border-subtle);border-radius:16px;padding:16px;z-index:1000;opacity:0;pointer-events:none;transform:translateY(16px) scale(.95);transition:all .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;gap:10px}
+  .ai-panel.open{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+  .ai-panel h4{font-family:var(--font-display);font-size:12px;display:flex;align-items:center;gap:6px}
+  .ai-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;max-height:280px}
+  .ai-msg{padding:8px 12px;border-radius:10px;font-size:11px;line-height:1.5}
+  .ai-msg.bot{background:var(--bg-secondary);border:1px solid var(--border-subtle);color:var(--text-secondary)}
+  .ai-msg.user{background:var(--card-glow);color:var(--accent-buy);align-self:flex-end}
+  .ai-input-wrap{display:flex;gap:6px}
+  .ai-input-wrap input{flex:1;font-size:11px;padding:7px 10px}
+  .ai-input-wrap button{padding:7px 12px;font-size:11px}
+  .kbd{display:inline-block;padding:1px 5px;border-radius:4px;background:var(--bg-tertiary);border:1px solid var(--border-subtle);font-size:10px;font-family:var(--font-mono);color:var(--text-secondary)}
+  .news-ticker{overflow:hidden;white-space:nowrap;position:relative;background:var(--bg-secondary);border:1px solid var(--border-subtle);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--text-secondary)}
+  .news-ticker-inner{display:inline-block;animation:tickerScroll 20s linear infinite}
+  @keyframes tickerScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+  .fade-in{animation:fadeIn .4s ease forwards}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-track{background:var(--bg-primary)}
+  ::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+  @media(max-width:600px){.app{padding:14px}.header{flex-direction:column;gap:10px;align-items:flex-start}.toolbar{flex-direction:column;align-items:stretch}.price-main{font-size:20px}.signal-value{font-size:28px}.risk-grid{grid-template-columns:1fr}.signal-levels{grid-template-columns:1fr}.gate-card .plans{grid-template-columns:1fr}.ai-panel{width:calc(100vw - 48px);right:24px}.avatar-grid{grid-template-columns:repeat(5,1fr)}}
 </style>
+<base target="_blank">
 </head>
 <body>
+<canvas id="particleCanvas"></canvas>
 <div class="app">
   <header class="header">
     <div class="brand"><h1>FX Signal Desk</h1><span class="tag" id="tierTag">Secure</span></div>
     <div class="status-bar">
-      <div style="display:flex;align-items:center;gap:8px;"><div class="status-dot" id="statusDot"></div><span id="statusText">Disconnected</span></div>
-      <span id="utcClock" style="font-family:'JetBrains Mono',monospace;">--:--:-- UTC</span>
+      <div style="display:flex;align-items:center;gap:8px"><div class="status-dot" id="statusDot"></div><span id="statusText">Disconnected</span></div>
+      <span id="utcClock" style="font-family:var(--font-mono)">--:--:-- UTC</span>
+      <div class="profile-wrap">
+        <div class="profile-icon" id="profileIcon">&#128104;</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <h4>Choose Avatar</h4>
+          <div class="avatar-grid" id="avatarGrid"></div>
+          <h4 style="margin-top:12px">Theme</h4>
+          <div class="theme-grid" id="themeGrid"></div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- LICENSE GATE -->
   <div class="card gate-card" id="gateCard">
     <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
     <div class="lock-icon">&#128274;</div>
@@ -250,31 +399,14 @@
     </div>
     <div class="err" id="gateErr">Invalid or expired license key.</div>
     <div class="plans">
-      <div class="plan">
-        <div class="name">Pro Weekly</div>
-        <div class="price" style="color:var(--accent-info);">$19</div>
-        <div class="period">7 days access</div>
-      </div>
-      <div class="plan">
-        <div class="name">Pro Monthly</div>
-        <div class="price" style="color:var(--accent-buy);">$49</div>
-        <div class="period">30 days access</div>
-      </div>
-      <div class="plan">
-        <div class="name">Pro Quarterly</div>
-        <div class="price" style="color:var(--accent-purple);">$129</div>
-        <div class="period">90 days access</div>
-      </div>
-      <div class="plan">
-        <div class="name">Pro Yearly</div>
-        <div class="price" style="color:var(--accent-warn);">$399</div>
-        <div class="period">365 days access</div>
-      </div>
+      <div class="plan"><div class="name">Pro Weekly</div><div class="price" style="color:var(--accent-info)">$19</div><div class="period">7 days access</div></div>
+      <div class="plan"><div class="name">Pro Monthly</div><div class="price" style="color:var(--accent-buy)">$49</div><div class="period">30 days access</div></div>
+      <div class="plan"><div class="name">Pro Quarterly</div><div class="price" style="color:var(--accent-purple)">$129</div><div class="period">90 days access</div></div>
+      <div class="plan"><div class="name">Pro Yearly</div><div class="price" style="color:var(--accent-warn)">$399</div><div class="period">365 days access</div></div>
     </div>
   </div>
 
-  <!-- API KEY GATE (shown after license validated) -->
-  <div class="card key-card" id="keyCard" style="display:none;">
+  <div class="card key-card" id="keyCard" style="display:none">
     <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
     <h2>Initialize Terminal</h2>
     <p>Enter your Twelve Data API key to activate the multi-timeframe confluence engine.<br>Free tier: ~800 requests/day. Each refresh uses 2 API calls with MTF enabled.</p>
@@ -282,72 +414,60 @@
       <input id="keyInput" placeholder="td_api_xxxxxxxxxxxx" autocomplete="off" />
       <button class="primary" id="connectBtn">Connect</button>
     </div>
-    <div style="margin-top:16px;">
-      <button id="logoutLicenseBtn" style="font-size:11px;color:var(--text-secondary);background:transparent;border:none;">Log out license</button>
+    <div style="margin-top:16px">
+      <button id="logoutLicenseBtn" style="font-size:11px;color:var(--text-secondary);background:transparent;border:none">Log out license</button>
     </div>
   </div>
 
-  <!-- MAIN PANEL -->
-  <div id="mainPanel" style="display:none;">
+  <div id="mainPanel" style="display:none">
+    <div class="news-ticker" id="newsTicker" style="display:none">
+      <div class="news-ticker-inner" id="newsTickerInner">&#9679; FX Signal Desk v2.0 // Multi-timeframe confluence engine active // Press <span class="kbd">R</span> to refresh // <span class="kbd">T</span> for themes // <span class="kbd">A</span> for AI assistant // Market data powered by Twelve Data</div>
+    </div>
     <div class="market-banner" id="marketBanner">
       <div class="dot"></div>
-      <div>
-        <div class="title" id="marketBannerTitle">Market Closed</div>
-        <div class="detail" id="marketBannerDetail">--</div>
-      </div>
+      <div><div class="title" id="marketBannerTitle">Market Closed</div><div class="detail" id="marketBannerDetail">--</div></div>
     </div>
-    <div class="card" style="padding:12px 16px;">
-      <div class="world-clocks" id="worldClocks"></div>
-    </div>
-    <div class="card" style="padding:12px 16px;">
+    <div class="card" style="padding:12px 16px"><div class="world-clocks" id="worldClocks"></div></div>
+    <div class="card" style="padding:12px 16px">
       <div class="toolbar">
-        <select id="pairSelect" style="min-width:110px;"></select>
+        <select id="pairSelect" style="min-width:110px"></select>
         <div class="tf-container" id="tfWrap"><div class="tf-highlight" id="tfHighlight"></div></div>
-        <button id="refreshBtn" style="min-width:90px;">Refresh</button>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text-secondary);">
-          <input type="checkbox" id="autoRefresh" style="width:14px;height:14px;accent-color:var(--accent-buy);" /> Auto
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text-secondary);">
-          <input type="checkbox" id="useMtf" checked style="width:14px;height:14px;accent-color:var(--accent-buy);" /> MTF
-        </label>
-        <div class="countdown-wrap" id="countdownWrap" style="display:none;">
-          <div class="countdown-ring" id="countdownRing"></div><span class="countdown-label" id="countdownLabel">60s</span>
-        </div>
+        <button id="refreshBtn" style="min-width:90px">Refresh</button>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text-secondary)"><input type="checkbox" id="autoRefresh" style="width:14px;height:14px;accent-color:var(--accent-buy)" /> Auto</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text-secondary)"><input type="checkbox" id="useMtf" checked style="width:14px;height:14px;accent-color:var(--accent-buy)" /> MTF</label>
+        <div class="countdown-wrap" id="countdownWrap" style="display:none"><div class="countdown-ring" id="countdownRing"></div><span class="countdown-label" id="countdownLabel">60s</span></div>
         <span class="api-usage" id="apiUsage"></span>
-        <div class="license-banner" id="licenseBanner" style="margin-left:auto;">
-          <span class="tier-badge" id="tierBadge">--</span>
-          <span class="expiry" id="expiryDisplay">--</span>
-        </div>
-        <button id="changeKeyBtn" style="font-size:11px;color:var(--text-secondary);">Change Key</button>
+        <div class="license-banner" id="licenseBanner" style="margin-left:auto"><span class="tier-badge" id="tierBadge">--</span><span class="expiry" id="expiryDisplay">--</span></div>
+        <button id="changeKeyBtn" style="font-size:11px;color:var(--text-secondary)">Change Key</button>
       </div>
     </div>
     <div class="error-banner" id="errBox">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 4V8M8 12H8.01M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span id="errText"></span>
     </div>
-    <div class="empty-state" id="emptyState"><div class="icon">&#9670;</div><div>Ready. Select pair and hit Refresh to run MTF confluence analysis.</div></div>
-    <div id="results" style="display:none;">
+    <div class="empty-state" id="emptyState"><div class="icon">&#9670;</div><div>Ready. Select pair and hit Refresh to run MTF confluence analysis.<br><span style="font-size:10px;color:var(--text-muted)">Tip: Press <span class="kbd">R</span> to refresh, <span class="kbd">T</span> for themes</span></div></div>
+    <div id="results" style="display:none">
       <div class="bento">
-        <div class="card col-8" id="chartCard">
+        <div class="card col-8 holo" id="chartCard">
           <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
           <div class="chart-header">
             <div class="chart-title-group"><h2 id="chartTitle">EUR/USD</h2><div class="subtitle" id="chartSubtitle">5m // EMA 9&middot;21&middot;50 | Bollinger | ATR</div></div>
-            <div class="price-display"><div class="price-main" id="chartPrice">0.00000</div><div class="price-change" id="priceChange" style="color:var(--text-secondary);">Waiting...</div></div>
+            <div class="price-display"><div class="price-main" id="chartPrice">0.00000</div><div class="price-change" id="priceChange" style="color:var(--text-secondary)">Waiting...</div></div>
           </div>
           <div class="chart-wrapper"><div class="chart-scanline" id="scanline"></div><canvas id="priceChart"></canvas></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:10px;color:var(--text-secondary);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:10px;color:var(--text-secondary)">
             <span id="lastUpdated">--</span>
-            <span style="display:flex;align-items:center;gap:6px;">
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-buy);display:inline-block;"></span> EMA9
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-warn);display:inline-block;margin-left:6px;"></span> EMA21
-              <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-purple);display:inline-block;margin-left:6px;"></span> EMA50
+            <span style="display:flex;align-items:center;gap:6px">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-buy);display:inline-block"></span> EMA9
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-warn);display:inline-block;margin-left:6px"></span> EMA21
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-purple);display:inline-block;margin-left:6px"></span> EMA50
             </span>
           </div>
         </div>
-        <div class="card col-4 signal-card" id="signalCard">
+        <div class="card col-4 signal-card holo" id="signalCard">
           <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
           <div class="card-title">Signal Engine <span class="badge badge-neutral" id="regimeBadge">--</span></div>
-          <div style="display:flex;align-items:center;gap:16px;">
+          <div style="display:flex;align-items:center;gap:16px">
             <div><div class="signal-value NONE" id="signalValue">NONE</div><div class="signal-pulse" id="signalPulse"></div></div>
             <div class="conf-gauge-wrap">
               <svg class="conf-gauge-svg" viewBox="0 0 130 70"><path class="conf-gauge-bg" d="M 15 65 A 50 50 0 0 1 115 65"/><path class="conf-gauge-fill" id="confGaugeFill" d="M 15 65 A 50 50 0 0 1 115 65" stroke="var(--text-muted)" stroke-dasharray="0 157"/></svg>
@@ -362,7 +482,7 @@
           <div class="card-title">HTF Bias <span class="badge badge-neutral" id="htfTfBadge">--</span></div>
           <div class="htf-status NEUTRAL" id="htfStatus">NEUTRAL</div>
           <div class="htf-detail" id="htfDetail">Enable MTF for higher timeframe analysis</div>
-          <div class="metrics-grid" style="margin-top:12px;" id="htfMetrics"></div>
+          <div class="metrics-grid" style="margin-top:12px" id="htfMetrics"></div>
         </div>
         <div class="card col-3">
           <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
@@ -376,11 +496,11 @@
           <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
           <div class="card-title">Position Size</div>
           <div class="risk-grid">
-            <div><div style="font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Balance ($)</div><input id="riskBalance" type="number" value="10000" style="width:100%;padding:7px 9px;font-size:12px;" /></div>
-            <div><div style="font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Risk %</div><input id="riskPercent" type="number" value="1" step="0.1" style="width:100%;padding:7px 9px;font-size:12px;" /></div>
+            <div><div style="font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Balance ($)</div><input id="riskBalance" type="number" value="10000" style="width:100%;padding:7px 9px;font-size:12px" /></div>
+            <div><div style="font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Risk %</div><input id="riskPercent" type="number" value="1" step="0.1" style="width:100%;padding:7px 9px;font-size:12px" /></div>
           </div>
-          <div class="risk-result"><div class="label">Recommended Lot</div><div class="value" id="lotSizeResult" style="color:var(--accent-info);">--</div></div>
-          <div style="margin-top:8px;font-size:10px;color:var(--text-muted);text-align:center;">Based on ATR x1.5 stop distance</div>
+          <div class="risk-result"><div class="label">Recommended Lot</div><div class="value" id="lotSizeResult" style="color:var(--accent-info)">--</div></div>
+          <div style="margin-top:8px;font-size:10px;color:var(--text-muted);text-align:center">Based on ATR x1.5 stop distance</div>
         </div>
         <div class="card col-3">
           <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
@@ -388,11 +508,11 @@
         </div>
         <div class="card col-12">
           <div class="card-accent tl"></div><div class="card-accent tr"></div><div class="card-accent bl"></div><div class="card-accent br"></div>
-          <div class="card-title">Signal History <span style="font-size:10px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">(this session)</span></div>
-          <div style="overflow-x:auto;">
+          <div class="card-title">Signal History <span style="font-size:10px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(this session)</span></div>
+          <div style="overflow-x:auto">
             <table class="log-table" id="logTable">
               <thead><tr><th>Time</th><th>Pair</th><th>TF</th><th>HTF</th><th>Signal</th><th>Conf</th><th>Entry</th><th>SL</th><th>TP1</th><th>TP2</th><th>Regime</th></tr></thead>
-              <tbody id="logBody"><tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:16px;">No signals generated yet</td></tr></tbody>
+              <tbody id="logBody"><tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:16px">No signals generated yet</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -400,101 +520,239 @@
     </div>
   </div>
 </div>
+
+<!-- AI Assistant -->
+<div class="ai-assistant pulse" id="aiAssistant">&#129302;</div>
+<div class="ai-panel" id="aiPanel">
+  <h4>&#129302; FX Assistant</h4>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg bot">Welcome to FX Signal Desk v2.0. I can help interpret signals, explain indicators, or give trading tips. What would you like to know?</div>
+  </div>
+  <div class="ai-input-wrap">
+    <input id="aiInput" placeholder="Ask about signals, indicators..." />
+    <button class="primary" id="aiSend">Send</button>
+  </div>
+</div>
+
 <script>
-// ===================== LICENSE SYSTEM (SECURE) =====================
-// NO CIPHER HERE — validation happens on Cloudflare Worker only
+// ===================== THEME SYSTEM =====================
+const THEMES = [
+  {id:'default',name:'Default'},{id:'cyberpunk',name:'Cyberpunk'},{id:'ocean',name:'Ocean'},
+  {id:'anime',name:'Sakura'},{id:'matrix',name:'Matrix'},{id:'solar',name:'Solar'},
+  {id:'arctic',name:'Arctic'},{id:'sunset',name:'Sunset'},{id:'minimalist',name:'Minimal'},
+  {id:'neon',name:'Neon Night'},{id:'forest',name:'Forest'},{id:'royal',name:'Royal'},
+  {id:'volcanic',name:'Volcanic'}
+];
+const AVATARS = ['&#128104;','&#128105;','&#128100;','&#128115;','&#128123;','&#128126;','&#128163;','&#128293;','&#128640;','&#128171;','&#127752;','&#127794;','&#128009;','&#128050;','&#128048;','&#129302;','&#128302;','&#127876;'];
 
+function initThemeSystem() {
+  const savedTheme = localStorage.getItem('fx_theme') || 'default';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  const grid = document.getElementById('themeGrid');
+  THEMES.forEach(t => {
+    const btn = document.createElement('div');
+    btn.className = 'theme-opt' + (t.id === savedTheme ? ' active' : '');
+    btn.textContent = t.name;
+    btn.addEventListener('click', () => {
+      document.documentElement.setAttribute('data-theme', t.id);
+      localStorage.setItem('fx_theme', t.id);
+      document.querySelectorAll('.theme-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function initAvatarSystem() {
+  const savedAvatar = localStorage.getItem('fx_avatar') || AVATARS[0];
+  document.getElementById('profileIcon').innerHTML = savedAvatar;
+  const grid = document.getElementById('avatarGrid');
+  AVATARS.forEach(a => {
+    const btn = document.createElement('div');
+    btn.className = 'avatar-opt' + (a === savedAvatar ? ' active' : '');
+    btn.innerHTML = a;
+    btn.addEventListener('click', () => {
+      document.getElementById('profileIcon').innerHTML = a;
+      localStorage.setItem('fx_avatar', a);
+      document.querySelectorAll('.avatar-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    grid.appendChild(btn);
+  });
+  document.getElementById('profileIcon').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('profileDropdown').classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.profile-wrap')) {
+      document.getElementById('profileDropdown').classList.remove('open');
+    }
+  });
+}
+
+// ===================== PARTICLE SYSTEM =====================
+function initParticles() {
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let w, h;
+  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+      size: Math.random() * 2 + 0.5, alpha: Math.random() * 0.5 + 0.2
+    });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--particle-color').trim() || 'rgba(0,212,170,0.4)';
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = color.replace(/[\d.]+\)$/, p.alpha + ')');
+      ctx.fill();
+    });
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = color.replace(/[\d.]+\)$/, (0.08 * (1 - dist / 120)) + ')');
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ===================== AI ASSISTANT =====================
+function initAI() {
+  const assistant = document.getElementById('aiAssistant');
+  const panel = document.getElementById('aiPanel');
+  const input = document.getElementById('aiInput');
+  const sendBtn = document.getElementById('aiSend');
+  const messages = document.getElementById('aiMessages');
+
+  assistant.addEventListener('click', () => panel.classList.toggle('open'));
+
+  const responses = {
+    'signal': 'Signals are generated using a multi-timeframe confluence engine. A BUY requires score >=70, HTF bullish, and EMA alignment. SELL is the inverse.',
+    'atr': 'ATR (Average True Range) measures volatility. We use it to set dynamic stop losses at 1.5x ATR from entry.',
+    'ema': 'EMA 9, 21, and 50 form our trend structure. Bullish alignment is 9>21>50 with price above all three.',
+    'rsi': 'RSI 14 measures momentum. We look for RSI between 45-68 and rising for BUY signals, or 32-55 and falling for SELL.',
+    'macd': 'MACD histogram shows momentum direction. Expanding positive histogram = bullish momentum.',
+    'adx': 'ADX above 25 indicates a trending market. Below 20 suggests ranging conditions.',
+    'mtf': 'MTF (Multi-Timeframe) compares the current timeframe against a higher timeframe bias for confirmation.',
+    'risk': 'Position sizing uses your balance and risk % to calculate lot size based on ATR-derived stop distance.',
+    'tip': 'Always wait for confluence across multiple indicators. Never trade on a single signal alone.',
+    'help': 'I can explain: signal logic, ATR, EMA, RSI, MACD, ADX, MTF, risk management, or give trading tips. Just ask!'
+  };
+
+  function addMsg(text, isUser) {
+    const div = document.createElement('div');
+    div.className = 'ai-msg ' + (isUser ? 'user' : 'bot');
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function getResponse(text) {
+    const lower = text.toLowerCase();
+    for (const key in responses) {
+      if (lower.includes(key)) return responses[key];
+    }
+    if (lower.includes('hello') || lower.includes('hi')) return 'Hello! I am your FX Signal Desk assistant. Ask me about any indicator or trading concept.';
+    if (lower.includes('theme')) return 'Click your profile icon in the top right to change themes. We have 13 unique themes including Cyberpunk, Ocean, Anime, Matrix, and more!';
+    if (lower.includes('shortcut') || lower.includes('keyboard')) return 'Keyboard shortcuts: R = Refresh, T = Open themes, A = Toggle AI assistant, Escape = Close panels.';
+    return 'I am not sure about that. Try asking about signals, ATR, EMA, RSI, MACD, ADX, MTF, risk management, or type "help" for options.';
+  }
+
+  function handleSend() {
+    const text = input.value.trim();
+    if (!text) return;
+    addMsg(text, true);
+    input.value = '';
+    setTimeout(() => addMsg(getResponse(text), false), 400);
+  }
+
+  sendBtn.addEventListener('click', handleSend);
+  input.addEventListener('keypress', e => { if (e.key === 'Enter') handleSend(); });
+}
+
+// ===================== LICENSE SYSTEM =====================
 const VALIDATOR_API = 'https://fx-license-validator.yungtromo.workers.dev/validate';
-const TIER_NAMES = { W: "Weekly", M: "Monthly", Q: "Quarterly", Y: "Yearly" };
-const TIER_DAYS = { W: 7, M: 30, Q: 90, Y: 365 };
-
 async function validateKeyWithServer(key) {
   try {
     const res = await fetch(VALIDATOR_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key: key.trim() })
     });
     const data = await res.json();
     if (!data.valid) return { valid: false, error: data.error || 'Invalid key' };
     return { valid: true, tier: data.tier, tierCode: data.tierCode, expiry: data.expiry, token: data.token };
-  } catch (e) {
-    return { valid: false, error: 'Network error. Check connection.' };
-  }
+  } catch (e) { return { valid: false, error: 'Network error. Check connection.' }; }
 }
-
 function saveLicense(data) {
-  localStorage.setItem('fx_license', JSON.stringify({
-    token: data.token,
-    tier: data.tier,
-    tierCode: data.tierCode,
-    expiry: data.expiry
-  }));
+  localStorage.setItem('fx_license', JSON.stringify({ token: data.token, tier: data.tier, tierCode: data.tierCode, expiry: data.expiry }));
 }
-
 function validateLicense() {
   const saved = localStorage.getItem('fx_license');
   if (!saved) return null;
   try {
     const data = JSON.parse(saved);
-    const now = Date.now();
-    if (now > data.expiry) { localStorage.removeItem('fx_license'); return null; }
+    if (Date.now() > data.expiry) { localStorage.removeItem('fx_license'); return null; }
     return data;
   } catch (e) { localStorage.removeItem('fx_license'); return null; }
 }
-
 function formatTimeRemaining(ms) {
   const days = Math.floor(ms / (24 * 60 * 60 * 1000));
   const hours = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-  if (days > 0) return days + "d " + hours + "h left";
-  return hours + "h left";
+  if (days > 0) return days + 'd ' + hours + 'h left';
+  return hours + 'h left';
 }
 
 // ===================== APP STATE =====================
 const PAIRS = ["EUR/USD","GBP/USD","USD/JPY","USD/CHF","AUD/USD","USD/CAD","NZD/USD","EUR/GBP","EUR/JPY","GBP/JPY","XAU/USD","BTC/USD"];
 const TIMEFRAMES = [
-  {label:"1m", value:"1min"}, {label:"5m", value:"5min"}, {label:"15m", value:"15min"},
-  {label:"30m", value:"30min"}, {label:"1H", value:"1h"}, {label:"4H", value:"4h"}, {label:"1D", value:"1day"}
+  {label:"1m",value:"1min"},{label:"5m",value:"5min"},{label:"15m",value:"15min"},
+  {label:"30m",value:"30min"},{label:"1H",value:"1h"},{label:"4H",value:"4h"},{label:"1D",value:"1day"}
 ];
 const HTF_MAP = {"1min":"5min","5min":"15min","15min":"1h","30min":"4h","1h":"4h","4h":"1day","1day":"1day"};
 const SESSIONS = [
-  {name:"Sydney", start:22, end:7, color:"#8b5cf6"},
-  {name:"Tokyo", start:0, end:9, color:"#10b981"},
-  {name:"London", start:8, end:17, color:"#3b82f6"},
-  {name:"New York", start:13, end:22, color:"#f59e0b"}
+  {name:"Sydney",start:22,end:7,color:"#8b5cf6"},{name:"Tokyo",start:0,end:9,color:"#10b981"},
+  {name:"London",start:8,end:17,color:"#3b82f6"},{name:"New York",start:13,end:22,color:"#f59e0b"}
 ];
-
-// ===================== MARKET HOURS =====================
-// Crypto pairs trade 24/7. Everything else here (forex + XAU/USD) follows
-// the standard weekly forex session: closed from Friday 22:00 UTC to
-// Sunday 22:00 UTC. This is a weekly-close approximation only — it doesn't
-// account for holidays or the brief daily rollover gap.
 const CRYPTO_PAIRS = ["BTC/USD"];
-
-function isCryptoPair(p) {
-  return CRYPTO_PAIRS.includes(p);
-}
-
+function isCryptoPair(p) { return CRYPTO_PAIRS.includes(p); }
 function getNextForexOpen(now) {
-  const next = new Date(now);
-  next.setUTCHours(22, 0, 0, 0);
-  const day = next.getUTCDay();
-  let daysToAdd = (7 - day) % 7; // days forward to the next Sunday
+  const next = new Date(now); next.setUTCHours(22,0,0,0);
+  const day = next.getUTCDay(); let daysToAdd = (7 - day) % 7;
   next.setUTCDate(next.getUTCDate() + daysToAdd);
   if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
   return next;
 }
-
 function getMarketStatus(p) {
   if (isCryptoPair(p)) return { open: true };
-  const now = new Date();
-  const day = now.getUTCDay(); // 0 = Sun, 5 = Fri, 6 = Sat
+  const now = new Date(); const day = now.getUTCDay();
   const totalMin = now.getUTCHours() * 60 + now.getUTCMinutes();
   const closed = (day === 5 && totalMin >= 22 * 60) || day === 6 || (day === 0 && totalMin < 22 * 60);
   if (!closed) return { open: true };
   return { open: false, reopens: getNextForexOpen(now) };
 }
-
 function formatCountdown(ms) {
   const totalMinutes = Math.max(0, Math.floor(ms / 60000));
   const days = Math.floor(totalMinutes / 1440);
@@ -506,25 +764,19 @@ function formatCountdown(ms) {
   parts.push(minutes + 'm');
   return parts.join(' ');
 }
-
 function updateMarketBanner() {
   const banner = document.getElementById('marketBanner');
   if (!banner) return;
   const title = document.getElementById('marketBannerTitle');
   const detail = document.getElementById('marketBannerDetail');
   const status = getMarketStatus(pair);
-  if (status.open) {
-    banner.classList.remove('visible', 'closed');
-    return;
-  }
-  banner.classList.add('visible', 'closed');
+  if (status.open) { banner.classList.remove('visible','closed'); return; }
+  banner.classList.add('visible','closed');
   const remaining = status.reopens - new Date();
-  title.textContent = 'Market Closed — ' + pair;
+  title.textContent = 'Market Closed \u2014 ' + pair;
   detail.textContent = 'Signals suppressed. Reopens in ' + formatCountdown(remaining) + ' (Sun 22:00 UTC)';
 }
 
-// Kingston listed first/highlighted since most clients are based there.
-// Jamaica runs America/Jamaica (EST, UTC-5) year-round — it does not observe DST.
 const WORLD_CLOCKS = [
   { city: 'Kingston', country: 'JM', tz: 'America/Jamaica', primary: true },
   { city: 'New York', country: 'US', tz: 'America/New_York' },
@@ -532,7 +784,6 @@ const WORLD_CLOCKS = [
   { city: 'Tokyo', country: 'JP', tz: 'Asia/Tokyo' },
   { city: 'Sydney', country: 'AU', tz: 'Australia/Sydney' }
 ];
-
 function renderWorldClocks() {
   const el = document.getElementById('worldClocks');
   if (!el) return;
@@ -540,7 +791,7 @@ function renderWorldClocks() {
   el.innerHTML = WORLD_CLOCKS.map(w => {
     const timeStr = new Intl.DateTimeFormat('en-US', { timeZone: w.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now);
     const dateStr = new Intl.DateTimeFormat('en-US', { timeZone: w.tz, weekday: 'short', month: 'short', day: 'numeric' }).format(now);
-    return '<div class="wc-item' + (w.primary ? ' primary' : '') + '"><div class="wc-city">' + (w.primary ? '★ ' : '') + w.city + ', ' + w.country + '</div><div class="wc-time">' + timeStr + '</div><div class="wc-date">' + dateStr + '</div></div>';
+    return '<div class="wc-item' + (w.primary ? ' primary' : '') + '"><div class="wc-city">' + (w.primary ? '\u2605 ' : '') + w.city + ', ' + w.country + '</div><div class="wc-time">' + timeStr + '</div><div class="wc-date">' + dateStr + '</div></div>';
   }).join('');
 }
 
@@ -599,18 +850,6 @@ function rsi(values, period) {
     out[i] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
   }
   return out;
-}
-function stochRsi(values, period) {
-  const r = rsi(values, period);
-  const stoch = new Array(values.length).fill(null);
-  for (let i = period; i < values.length; i++) {
-    const window = r.slice(i - period + 1, i + 1).filter(v => v !== null);
-    if (window.length < 2) continue;
-    const minR = Math.min(...window), maxR = Math.max(...window);
-    const range = maxR - minR;
-    stoch[i] = range === 0 ? 50 : (r[i] - minR) / range * 100;
-  }
-  return { stoch };
 }
 function macdCalc(values, fast, slow, signal) {
   const emaFast = ema(values, fast);
@@ -716,7 +955,7 @@ function initSelectors() {
 function positionHighlight(btn) {
   const highlight = document.getElementById('tfHighlight');
   highlight.style.width = btn.offsetWidth + 'px';
-  highlight.style.transform = `translateX(${btn.offsetLeft - 3}px)`;
+  highlight.style.transform = 'translateX(' + (btn.offsetLeft - 3) + 'px)';
 }
 
 // ===================== LICENSE GATE =====================
@@ -734,6 +973,7 @@ function showMainPanel() {
   document.getElementById('gateCard').style.display = 'none';
   document.getElementById('keyCard').style.display = 'none';
   document.getElementById('mainPanel').style.display = 'block';
+  document.getElementById('newsTicker').style.display = 'block';
 }
 
 function updateLicenseBanner(license) {
@@ -755,23 +995,17 @@ function updateLicenseBanner(license) {
 document.getElementById('activateBtn').addEventListener('click', async () => {
   const key = document.getElementById('licenseInput').value.trim();
   const err = document.getElementById('gateErr');
-
   if (!key) { err.textContent = 'Please enter a license key.'; err.classList.add('visible'); return; }
-
   err.classList.remove('visible');
   const btn = document.getElementById('activateBtn');
   btn.textContent = 'Verifying...'; btn.disabled = true;
-
   const result = await validateKeyWithServer(key);
-
   btn.textContent = 'Activate'; btn.disabled = false;
-
   if (!result.valid) {
     err.textContent = result.error || 'Invalid or expired license key.';
     err.classList.add('visible');
     return;
   }
-
   err.classList.remove('visible');
   saveLicense(result);
   updateLicenseBanner(result);
@@ -803,7 +1037,7 @@ async function fetchData() {
   const htf = HTF_MAP[timeframe];
 
   try {
-    const url1 = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(pair)}&interval=${timeframe}&outputsize=200&apikey=${encodeURIComponent(apiKey)}`;
+    const url1 = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair) + '&interval=' + timeframe + '&outputsize=200&apikey=' + encodeURIComponent(apiKey);
     const res1 = await fetch(url1);
     const data1 = await res1.json();
     trackApiCall(1);
@@ -817,7 +1051,7 @@ async function fetchData() {
 
     htfCandles = [];
     if (useMtf && htf !== timeframe) {
-      const url2 = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(pair)}&interval=${htf}&outputsize=100&apikey=${encodeURIComponent(apiKey)}`;
+      const url2 = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair) + '&interval=' + htf + '&outputsize=100&apikey=' + encodeURIComponent(apiKey);
       const res2 = await fetch(url2);
       const data2 = await res2.json();
       trackApiCall(1);
@@ -1007,7 +1241,7 @@ function render() {
 
   // Chart header
   document.getElementById('chartTitle').textContent = pair;
-  document.getElementById('chartSubtitle').textContent = TIMEFRAMES.find(t => t.value === timeframe).label + ' // EMA 9·21·50 | Bollinger | ATR' + (useMtf ? ' | MTF: ' + htfName : '');
+  document.getElementById('chartSubtitle').textContent = TIMEFRAMES.find(t => t.value === timeframe).label + ' // EMA 9\u00b721\u00b750 | Bollinger | ATR' + (useMtf ? ' | MTF: ' + htfName : '');
   const priceEl = document.getElementById('chartPrice');
   priceEl.textContent = lastClose.toFixed(decimals);
   priceEl.classList.remove('up', 'down');
@@ -1015,7 +1249,7 @@ function render() {
   if (prevClose !== null && lastClose !== prevClose) {
     const diff = lastClose - prevClose;
     const pct = (diff / prevClose * 100).toFixed(3);
-    changeEl.textContent = (diff > 0 ? '▲ ' : '▼ ') + Math.abs(diff).toFixed(decimals) + ' (' + pct + '%)';
+    changeEl.textContent = (diff > 0 ? '\u25b2 ' : '\u25bc ') + Math.abs(diff).toFixed(decimals) + ' (' + pct + '%)';
     changeEl.style.color = diff > 0 ? 'var(--accent-buy)' : 'var(--accent-sell)';
     priceEl.classList.add(diff > 0 ? 'up' : 'down');
     setTimeout(() => priceEl.classList.remove('up', 'down'), 800);
@@ -1051,7 +1285,7 @@ function render() {
 
   // Confluence
   document.getElementById('confluenceList').innerHTML = checks.map(c => {
-    const icon = c.pass === true ? '✓' : c.pass === false ? '✗' : '○';
+    const icon = c.pass === true ? '\u2713' : c.pass === false ? '\u2717' : '\u25cb';
     const cls = c.pass === true ? 'pass' : c.pass === false ? 'fail' : 'neutral';
     return '<div class="conf-item"><div class="conf-check ' + cls + '">' + icon + '</div><div class="conf-name"><strong>' + c.name + '</strong> &mdash; ' + c.detail + '</div></div>';
   }).join('');
@@ -1136,7 +1370,7 @@ function render() {
 
 function renderLog() {
   const tbody = document.getElementById('logBody');
-  if (signalLog.length === 0) { tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:16px;">No signals generated yet</td></tr>'; return; }
+  if (signalLog.length === 0) { tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:16px">No signals generated yet</td></tr>'; return; }
   tbody.innerHTML = signalLog.map(e =>
     '<tr><td>' + e.time + '</td><td>' + e.pair + '</td><td>' + e.tf + '</td><td>' + e.htf + '</td><td class="log-signal ' + e.signal + '">' + e.signal + '</td><td>' + e.score + '</td><td>' + e.entry + '</td><td>' + e.sl + '</td><td>' + e.tp1 + '</td><td>' + e.tp2 + '</td><td>' + e.regime + '</td></tr>'
   ).join('');
@@ -1151,9 +1385,9 @@ function renderChart(closeSlice, fastSlice, slowSlice, trendSlice, labels) {
       labels: labels,
       datasets: [
         { label: 'Price', data: closeSlice, borderColor: '#e2e8f0', borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 4, tension: 0.1, fill: { target: 'origin', above: (ctx) => { const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300); g.addColorStop(0, 'rgba(226,232,240,0.03)'); g.addColorStop(1, 'rgba(226,232,240,0)'); return g; } } },
-        { label: 'EMA 9', data: fastSlice, borderColor: '#00d4aa', borderWidth: 1.5, pointRadius: 0, tension: 0.1 },
-        { label: 'EMA 21', data: slowSlice, borderColor: '#f0b429', borderWidth: 1.5, pointRadius: 0, tension: 0.1, borderDash: [4, 4] },
-        { label: 'EMA 50', data: trendSlice, borderColor: '#a78bfa', borderWidth: 1, pointRadius: 0, tension: 0.1 }
+        { label: 'EMA 9', data: fastSlice, borderColor: 'var(--accent-buy)', borderWidth: 1.5, pointRadius: 0, tension: 0.1 },
+        { label: 'EMA 21', data: slowSlice, borderColor: 'var(--accent-warn)', borderWidth: 1.5, pointRadius: 0, tension: 0.1, borderDash: [4, 4] },
+        { label: 'EMA 50', data: trendSlice, borderColor: 'var(--accent-purple)', borderWidth: 1, pointRadius: 0, tension: 0.1 }
       ]
     },
     options: {
@@ -1246,11 +1480,32 @@ document.getElementById('useMtf').addEventListener('change', () => { if (candles
 document.getElementById('riskBalance').addEventListener('input', () => { if (candles.length) render(); });
 document.getElementById('riskPercent').addEventListener('input', () => { if (candles.length) render(); });
 
+// ===================== KEYBOARD SHORTCUTS =====================
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'r' || e.key === 'R') {
+    e.preventDefault();
+    fetchData();
+  }
+  if (e.key === 't' || e.key === 'T') {
+    e.preventDefault();
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.classList.toggle('open');
+  }
+  if (e.key === 'a' || e.key === 'A') {
+    e.preventDefault();
+    document.getElementById('aiPanel').classList.toggle('open');
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('profileDropdown').classList.remove('open');
+    document.getElementById('aiPanel').classList.remove('open');
+  }
+});
+
 setInterval(() => {
   const now = new Date();
   document.getElementById('utcClock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
   if (candles.length) renderSessionTimeline();
-  // Update license banner countdown
   const license = validateLicense();
   if (license) updateLicenseBanner(license);
   updateMarketBanner();
@@ -1259,6 +1514,10 @@ setInterval(() => {
 
 // ===================== BOOT =====================
 initSelectors();
+initThemeSystem();
+initAvatarSystem();
+initParticles();
+initAI();
 updateApiUsage();
 updateMarketBanner();
 renderWorldClocks();
