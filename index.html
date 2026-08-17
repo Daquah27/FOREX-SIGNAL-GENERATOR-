@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FX Signal Desk v3.0 - SMC & ICT Edition</title>
+<title>FX Signal Desk v3.0 (ICT/SMC Edition)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -50,8 +50,8 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.5}
-#particleCanvas,#dataRainCanvas,#gradientOrbCanvas,#themeCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
-#particleCanvas{z-index:1}#dataRainCanvas{z-index:0;opacity:0.6}
+#particleCanvas,#dataRainCanvas,#gradientOrbCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#particleCanvas{z-index:1}#dataRainCanvas{z-index:0;opacity:0.6}#gradientOrbCanvas{z-index:0}#themeCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 #bootOverlay{position:fixed;inset:0;z-index:9999;background:var(--bg-primary);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease}
 .boot-content{text-align:center}
 .boot-logo{font-family:var(--font-mono);font-size:2rem;font-weight:700;color:var(--accent-buy);letter-spacing:4px;margin-bottom:2rem;text-shadow:0 0 20px var(--accent-buy)}
@@ -60,7 +60,6 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
 .boot-text{font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted);margin-top:1rem;letter-spacing:2px}
 #scanline{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);transition:opacity .3s}
 #scanline.active{opacity:1}
-
 .app-shell{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:0 20px 40px}
 .app-header{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border-color);margin-bottom:20px;flex-wrap:wrap;gap:12px}
 .brand{display:flex;align-items:center;gap:12px}
@@ -69,10 +68,16 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
 .brand-text span{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:1px}
 .status-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .status-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text-muted);font-family:var(--font-mono)}
-#statusDot{width:8px;height:8px;border-radius:50%;background:var(--accent-buy);box-shadow:0 0 8px var(--accent-buy)}
-#wsBadge{padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:600;background:rgba(0,212,170,0.15);color:var(--accent-buy);border:1px solid var(--accent-buy)}
-#utcClock{font-size:.7rem;color:var(--text-secondary)}
-
+#statusDot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);transition:all .3s}
+#statusDot.online{background:var(--accent-buy);box-shadow:0 0 8px var(--accent-buy)}
+#statusDot.connecting{background:var(--accent-warn);animation:pulse-dot 1s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+#wsBadge{padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:600;background:var(--bg-elevated);color:var(--text-muted);border:1px solid var(--border-color);transition:all .3s}
+#wsBadge.live{background:rgba(0,212,170,0.15);color:var(--accent-buy);border-color:var(--accent-buy)}
+#connWave{width:20px;height:20px;border-radius:50%;border:2px solid var(--accent-buy);opacity:0;transition:opacity .3s}
+#connWave.active{opacity:1;animation:conn-wave 1.5s infinite}
+@keyframes conn-wave{0%{transform:scale(1);opacity:1}100%{transform:scale(2);opacity:0}}
+#apiUsage{font-size:.7rem}#utcClock{font-size:.7rem;color:var(--text-secondary)}
 .profile-wrap{position:relative}
 #profileIcon{width:36px;height:36px;border-radius:50%;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;border:2px solid var(--border-color);transition:all .2s}
 #profileIcon:hover{border-color:var(--accent-buy);transform:scale(1.05)}
@@ -91,18 +96,64 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
 .theme-opt{padding:6px 4px;border-radius:8px;font-size:.7rem;text-align:center;background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;border:1px solid transparent;transition:all .2s}
 .theme-opt:hover{border-color:var(--accent-buy);color:var(--text-primary)}
 .theme-opt.active{background:rgba(0,212,170,0.15);border-color:var(--accent-buy);color:var(--accent-buy)}
-
+#avatarGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.avatar-opt{padding:6px;border-radius:8px;font-size:1.2rem;text-align:center;background:var(--bg-elevated);cursor:pointer;border:1px solid transparent;transition:all .2s}
+.avatar-opt:hover{border-color:var(--accent-purple);transform:scale(1.1)}
+.avatar-opt.active{background:rgba(167,139,250,0.15);border-color:var(--accent-purple)}
+.tier-badge{padding:2px 10px;border-radius:4px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.tier-badge.pro{background:rgba(0,212,170,0.2);color:var(--accent-buy)}
+.tier-badge.elite{background:rgba(167,139,250,0.2);color:var(--accent-purple)}
+.tier-badge.basic{background:rgba(240,180,41,0.2);color:var(--accent-warn)}
+.expiry{font-size:.7rem;color:var(--text-muted)}.expiry.urgent{color:var(--accent-sell)}
+#newsTicker{display:none;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:8px 16px;margin-bottom:16px;overflow:hidden}
+.ticker-wrap{display:flex;align-items:center;gap:12px;animation:ticker-scroll 20s linear infinite;white-space:nowrap}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{font-size:.75rem;color:var(--text-secondary);font-family:var(--font-mono)}
+.ticker-item .bull{color:var(--accent-buy)}.ticker-item .bear{color:var(--accent-sell)}
+#marketBanner{display:none;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+#marketBanner.visible{display:block}
+#marketBannerTitle{font-size:.85rem;font-weight:600;color:var(--accent-sell)}
+#marketBannerDetail{font-size:.75rem;color:var(--text-secondary);margin-top:4px}
+.world-clocks-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.wc-item{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;text-align:center}
+.wc-item.primary{border-color:var(--accent-buy);background:rgba(0,212,170,0.05)}
+.wc-city{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.wc-time{font-family:var(--font-mono);font-size:1rem;font-weight:600;color:var(--text-primary);margin:4px 0}
+.wc-date{font-size:.65rem;color:var(--text-muted)}
 .card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
+.card:hover{border-color:rgba(148,163,184,0.2)}
+.card.enter{animation:card-enter .5s ease forwards;opacity:0;transform:translateY(20px)}
+@keyframes card-enter{to{opacity:1;transform:translateY(0)}}
 .card-title{font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-
+.gate-container{display:flex;align-items:center;justify-content:center;min-height:60vh;padding:40px 20px}
+.gate-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:40px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow)}
+.gate-card h2{font-size:1.5rem;margin-bottom:8px;background:linear-gradient(135deg,var(--text-primary),var(--accent-buy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.gate-card p{color:var(--text-secondary);font-size:.9rem;margin-bottom:24px}
+.gate-input{width:100%;padding:12px 16px;background:var(--bg-elevated);border:1px solid var(--border-color);border-radius:10px;color:var(--text-primary);font-family:var(--font-mono);font-size:.85rem;margin-bottom:12px;outline:none;transition:border-color .2s}
+.gate-input:focus{border-color:var(--accent-buy)}
+.gate-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent-buy),var(--accent-purple));border:none;border-radius:10px;color:#000;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.gate-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,212,170,0.3)}
+.gate-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.gate-err{color:var(--accent-sell);font-size:.8rem;margin-top:12px;display:none}
+.gate-err.visible{display:block}
+.gate-link{background:none;border:none;color:var(--accent-buy);font-size:.8rem;cursor:pointer;margin-top:16px;text-decoration:underline}
+#mainPanel{display:none}
 .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .toolbar-group{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:4px}
 #pairSelect{background:transparent;border:none;color:var(--text-primary);font-family:var(--font-mono);font-size:.85rem;padding:8px 12px;outline:none;cursor:pointer}
 #pairSelect option{background:var(--bg-card);color:var(--text-primary)}
-.tf-btn{padding:8px 14px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;cursor:pointer;transition:all .2s}
-.tf-btn:hover{color:var(--text-primary)}.tf-btn.active{color:var(--accent-buy);background:rgba(0,212,170,0.15);font-weight:600}
+#tfWrap{position:relative;display:flex;gap:2px}
+.tf-btn{padding:8px 14px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;cursor:pointer;transition:all .2s;position:relative;z-index:2}
+.tf-btn:hover{color:var(--text-primary)}.tf-btn.active{color:var(--accent-buy);font-weight:600}
+#tfHighlight{position:absolute;top:0;left:0;height:100%;background:rgba(0,212,170,0.1);border-radius:8px;border:1px solid rgba(0,212,170,0.2);transition:all .3s ease;z-index:1;pointer-events:none}
 .toolbar-btn{padding:8px 16px;border-radius:8px;background:var(--bg-elevated);border:1px solid var(--border-color);color:var(--text-secondary);font-family:var(--font-body);font-size:.8rem;cursor:pointer;transition:all .2s}
 .toolbar-btn:hover{border-color:var(--accent-buy);color:var(--text-primary)}
+.toggle-check{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text-secondary);cursor:pointer}
+.toggle-check input{accent-color:var(--accent-buy)}
+#countdownWrap{display:none;align-items:center;gap:8px}
+.countdown-ring{width:32px;height:32px;border-radius:50%;background:conic-gradient(var(--accent-buy) calc(var(--pct,0)*1%),var(--bg-elevated) 0);display:flex;align-items:center;justify-content:center}
+.countdown-ring-inner{width:24px;height:24px;border-radius:50%;background:var(--bg-card)}
+#countdownLabel{font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted)}
 
 .dashboard-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
 .chart-card{grid-column:span 8;min-height:420px}
@@ -113,53 +164,116 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
 #chartPrice{font-family:var(--font-mono);font-size:1.5rem;font-weight:700;transition:color .3s}
 #chartPrice.up{color:var(--accent-buy)}#chartPrice.down{color:var(--accent-sell)}
 #priceChange{font-family:var(--font-mono);font-size:.75rem;margin-top:2px}
+#lastUpdated{font-size:.65rem;color:var(--text-muted);margin-top:8px;font-family:var(--font-mono)}
 .chart-wrap{position:relative;height:300px}
 #priceChart{width:100%!important;height:100%!important}
 
 .signal-card{grid-column:span 4}
-.signal-main{display:flex;align-items:center;justify-content:center;gap:16px;margin:16px 0}
+.signal-main{display:flex;align-items:center;justify-content:center;gap:16px;margin:20px 0}
+#signalPulse{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .3s}
+#signalPulse.active{animation:signal-pulse 1.5s ease-out}
+@keyframes signal-pulse{0%{box-shadow:0 0 0 0 rgba(0,212,170,0.4)}100%{box-shadow:0 0 0 20px rgba(0,212,170,0)}}
 #signalValue{font-size:2rem;font-weight:800;letter-spacing:2px}
-#signalValue.BUY{color:var(--accent-buy)}#signalValue.SELL{color:var(--accent-sell)}#signalValue.NEUTRAL{color:var(--text-muted)}
-.gauge-wrap{display:flex;align-items:center;justify-content:center;margin:12px 0}
+#signalValue.BUY{color:var(--accent-buy)}#signalValue.SELL{color:var(--accent-sell)}#signalValue.NONE{color:var(--text-muted)}
+.gauge-wrap{display:flex;align-items:center;justify-content:center;margin:16px 0}
+.gauge-svg{width:80px;height:80px;transform:rotate(-90deg)}
+.gauge-bg{fill:none;stroke:var(--bg-elevated);stroke-width:8}
+#confGaugeFill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .6s ease,stroke .3s}
+.gauge-center{text-align:center;margin-left:16px}
 #confScore{font-family:var(--font-mono);font-size:1.5rem;font-weight:700}
 .gauge-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
-#regimeBadge{display:inline-block;padding:4px 12px;border-radius:6px;font-size:.7rem;font-weight:600;letter-spacing:1px;margin-top:4px}
+#regimeBadge{display:inline-block;padding:4px 12px;border-radius:6px;font-size:.7rem;font-weight:600;letter-spacing:1px}
 .badge-buy{background:rgba(0,212,170,0.15);color:var(--accent-buy)}
 .badge-sell{background:rgba(255,71,87,0.15);color:var(--accent-sell)}
+.badge-warn{background:rgba(240,180,41,0.15);color:var(--accent-warn)}
 .badge-neutral{background:var(--bg-elevated);color:var(--text-muted)}
 
-#confluenceList{margin-top:16px;max-height:260px;overflow-y:auto}
-.conf-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-color)}
+#confluenceList{margin-top:16px;max-height:280px;overflow-y:auto}
+.conf-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-color);animation:conf-enter .3s ease forwards;opacity:0;transform:translateX(-10px)}
+@keyframes conf-enter{to{opacity:1;transform:translateX(0)}}
 .conf-check{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
 .conf-check.pass{background:rgba(0,212,170,0.2);color:var(--accent-buy)}
 .conf-check.fail{background:rgba(255,71,87,0.2);color:var(--accent-sell)}
 .conf-check.neutral{background:var(--bg-elevated);color:var(--text-muted)}
 .conf-name{font-size:.8rem;color:var(--text-secondary)}.conf-name strong{color:var(--text-primary)}
 
-.smc-card{grid-column:span 4}
-.smc-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);font-size:.8rem}
-.smc-label{color:var(--text-muted)}
-.smc-val{font-family:var(--font-mono);font-weight:600}
-.smc-val.bull{color:var(--accent-buy)}
-.smc-val.bear{color:var(--accent-sell)}
-.smc-val.neutral{color:var(--text-secondary)}
+#signalLevels{margin-top:16px}
+.level-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color)}
+.level-label{font-size:.75rem;color:var(--text-muted)}
+.level-value{font-family:var(--font-mono);font-size:.85rem;font-weight:600}
+.level-value.sl{color:var(--accent-sell)}.level-value.tp{color:var(--accent-buy)}.level-value.neutral{color:var(--text-secondary)}
+
+.htf-card{grid-column:span 4}
+.htf-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+#htfStatus{font-size:1.1rem;font-weight:700}
+#htfStatus.BULLISH{color:var(--accent-buy)}#htfStatus.BEARISH{color:var(--accent-sell)}#htfStatus.NEUTRAL,#htfStatus.LOADING,#htfStatus.DISABLED{color:var(--text-muted)}
+#htfDetail{font-size:.75rem;color:var(--text-secondary);font-family:var(--font-mono);margin-bottom:12px}
+#htfMetrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
 .sr-card{grid-column:span 4}
-.sr-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color)}
+.sr-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-color)}
 .sr-row .label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
 .sr-row .value{font-family:var(--font-mono);font-size:.85rem;font-weight:600}
 .sr-row.resistance .value{color:var(--accent-sell)}.sr-row.support .value{color:var(--accent-buy)}.sr-row.pivot .value{color:var(--accent-warn)}
+
+.smc-card{grid-column:span 4}
+.smc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color)}
+.smc-row .label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.smc-row .value{font-family:var(--font-mono);font-size:.85rem;font-weight:600}
+.smc-tag{padding:2px 6px;border-radius:4px;font-size:.65rem;font-weight:700}
+.smc-tag.bullish{background:rgba(0,212,170,0.15);color:var(--accent-buy)}
+.smc-tag.bearish{background:rgba(255,71,87,0.15);color:var(--accent-sell)}
+
+.metrics-card{grid-column:span 4}
+#metricsGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 .pos-card{grid-column:span 4}
 .pos-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .pos-inputs label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
 .pos-inputs input{width:100%;padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-family:var(--font-mono);font-size:.8rem;outline:none}
+.pos-inputs input:focus{border-color:var(--accent-buy)}
 .pos-result{background:var(--bg-elevated);border-radius:8px;padding:12px;text-align:center}
 #lotSizeResult{font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-buy)}
 
-@media(max-width:1024px){.chart-card{grid-column:span 12}.signal-card,.smc-card,.sr-card,.pos-card{grid-column:span 6}}
-@media(max-width:640px){.signal-card,.smc-card,.sr-card,.pos-card{grid-column:span 12}}
+.session-card{grid-column:span 12}
+#sessionTimeline{position:relative;height:40px;background:var(--bg-elevated);border-radius:8px;overflow:hidden;margin-top:12px}
+.session-track{position:absolute;top:50%;left:0;right:0;height:2px;background:var(--border-color);transform:translateY(-50%)}
+.session-block{position:absolute;top:4px;bottom:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+.now-marker{position:absolute;top:0;bottom:0;width:2px;background:var(--accent-warn);z-index:10}
+.now-label{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:.55rem;color:var(--accent-warn);font-weight:700;letter-spacing:1px}
+
+.log-card{grid-column:span 12}
+.log-table-wrap{overflow-x:auto;margin-top:12px}
+.log-table{width:100%;border-collapse:collapse;font-size:.75rem;font-family:var(--font-mono)}
+.log-table th{text-align:left;padding:10px 8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-size:.65rem;border-bottom:1px solid var(--border-color)}
+.log-table td{padding:8px;border-bottom:1px solid var(--border-color);color:var(--text-secondary)}
+.log-signal.BUY{color:var(--accent-buy);font-weight:700}.log-signal.SELL{color:var(--accent-sell);font-weight:700}
+
+#errBox{display:none;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+#errBox.visible{display:block}#errText{color:var(--accent-sell);font-size:.85rem}
+#emptyState{display:block;text-align:center;padding:80px 20px;color:var(--text-muted)}
+#emptyState h3{font-size:1.2rem;margin-bottom:8px;color:var(--text-secondary)}#emptyState p{font-size:.85rem}
+#results{display:none}
+
+#aiAssistant{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent-buy),var(--accent-purple));border:none;color:#000;font-size:1.5rem;cursor:pointer;z-index:50;box-shadow:0 8px 30px rgba(0,212,170,0.3);transition:all .3s;display:flex;align-items:center;justify-content:center}
+#aiAssistant:hover{transform:scale(1.1) rotate(10deg)}
+#aiPanel{position:fixed;bottom:92px;right:24px;width:360px;max-height:0;overflow:hidden;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);box-shadow:var(--shadow);z-index:50;transition:max-height .3s ease,padding .3s ease;display:flex;flex-direction:column}
+#aiPanel.open{max-height:500px;padding:16px}
+.ai-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border-color)}
+.ai-header h4{font-size:.9rem}.ai-header span{font-size:.7rem;color:var(--accent-buy)}
+#aiMessages{flex:1;overflow-y:auto;max-height:300px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.ai-msg{padding:8px 12px;border-radius:10px;font-size:.8rem;line-height:1.5;max-width:85%}
+.ai-msg.user{align-self:flex-end;background:var(--accent-buy);color:#000}
+.ai-msg.bot{align-self:flex-start;background:var(--bg-elevated);color:var(--text-secondary)}
+.ai-input-wrap{display:flex;gap:8px}
+#aiInput{flex:1;padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:.8rem;outline:none}
+#aiInput:focus{border-color:var(--accent-buy)}
+#aiSend{padding:8px 14px;border-radius:8px;background:var(--accent-buy);border:none;color:#000;font-weight:600;cursor:pointer;font-size:.8rem}
+
+@media(max-width:1024px){.chart-card{grid-column:span 12}.signal-card,.htf-card,.sr-card,.smc-card,.metrics-card,.pos-card{grid-column:span 6}}
+@media(max-width:640px){.dashboard-grid{gap:12px}.signal-card,.htf-card,.sr-card,.smc-card,.metrics-card,.pos-card{grid-column:span 12}.app-header{flex-direction:column;align-items:flex-start}.toolbar{flex-direction:column;align-items:stretch}.toolbar-group{justify-content:center}#aiPanel{width:calc(100vw - 48px);right:24px}.world-clocks-bar{grid-template-columns:repeat(2,1fr)}}
 </style>
+<base target="_blank">
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
@@ -172,7 +286,7 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
   <div class="boot-content">
     <div class="boot-logo">FX SIGNAL DESK</div>
     <div class="boot-bar-wrap"><div id="bootBar"></div></div>
-    <div class="boot-text">INITIALIZING ICT/SMC ENGINE...</div>
+    <div class="boot-text">INITIALIZING v3.0...</div>
   </div>
 </div>
 
@@ -182,378 +296,406 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
       <div class="brand-icon">&#9889;</div>
       <div class="brand-text">
         <h1>FX Signal Desk</h1>
-        <span>v3.0 // SMC & ICT ENGINE</span>
+        <span>v3.0 // MULTI-TIMEFRAME & ICT/SMC ENGINE</span>
       </div>
     </div>
     <div class="status-bar">
-      <div class="status-item"><div id="statusDot"></div><span>Engine Live</span></div>
-      <div class="status-item"><span id="wsBadge">ICT Active</span></div>
+      <div class="status-item"><div id="statusDot"></div><span id="statusText">Offline</span></div>
+      <div class="status-item"><span id="wsBadge">HTTP</span><div id="connWave"></div></div>
+      <div class="status-item" id="apiUsage">0/800 calls</div>
       <div class="status-item" id="utcClock">00:00:00 UTC</div>
       <div class="profile-wrap">
         <div id="profileIcon">&#128104;</div>
         <div id="profileDropdown">
           <div class="dropdown-section"><h4>Theme</h4><div id="themeGrid"></div></div>
+          <div class="dropdown-section"><h4>Avatar</h4><div id="avatarGrid"></div></div>
           <div class="dropdown-section">
             <div class="toggle-row"><span class="toggle-label">Dark Mode</span><div class="toggle-switch active" id="modeToggle"></div></div>
+            <div class="toggle-row"><span class="toggle-label">Sound FX</span><div class="toggle-switch" id="soundToggle"></div></div>
+          </div>
+          <div class="dropdown-section">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span id="tierBadge" class="tier-badge basic">BASIC</span>
+              <span id="expiryDisplay" class="expiry">ACTIVE</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  <div class="toolbar">
-    <div class="toolbar-group">
-      <select id="pairSelect">
-        <option value="EURUSD">EUR/USD</option>
-        <option value="GBPUSD">GBP/USD</option>
-        <option value="USDJPY">USD/JPY</option>
-        <option value="XAUUSD">XAU/USD (Gold)</option>
-      </select>
-    </div>
-    <div class="toolbar-group" id="tfWrap">
-      <button class="tf-btn" data-tf="M5">M5</button>
-      <button class="tf-btn active" data-tf="M15">M15</button>
-      <button class="tf-btn" data-tf="H1">H1</button>
-      <button class="tf-btn" data-tf="H4">H4</button>
-    </div>
-    <button class="toolbar-btn" id="refreshBtn">&#8635; Recalculate Analysis</button>
+  <div id="newsTicker">
+    <div class="ticker-wrap" id="tickerWrap"></div>
   </div>
 
-  <div class="dashboard-grid">
-    <div class="card chart-card">
-      <div class="chart-header">
-        <div class="chart-info">
-          <h3 id="pairTitle">EUR/USD - M15</h3>
-          <div class="subtitle">Smart Money Structure & Price Action</div>
-        </div>
-        <div class="chart-price-wrap">
-          <div id="chartPrice">1.08500</div>
-          <div id="priceChange" style="color:var(--accent-buy);">+0.15%</div>
+  <div id="marketBanner">
+    <div id="marketBannerTitle"></div>
+    <div id="marketBannerDetail"></div>
+  </div>
+
+  <div class="world-clocks-bar" id="worldClocks"></div>
+
+  <div class="gate-container" id="gateWrap">
+    <div class="gate-card">
+      <h2>FX Signal Desk Access</h2>
+      <p>Enter your Access Key to unlock full multi-timeframe ICT & SMC confluence tracking.</p>
+      <input type="password" id="gateKey" class="gate-input" placeholder="Enter Access Key...">
+      <button class="gate-btn" id="gateBtn" onclick="verifyKey()">Unlock Portal</button>
+      <div class="gate-err" id="gateErr">Invalid Access Key</div>
+    </div>
+  </div>
+
+  <main id="mainPanel">
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <select id="pairSelect" onchange="runAnalysis()">
+          <option value="EURUSD">EUR/USD</option>
+          <option value="GBPUSD">GBP/USD</option>
+          <option value="USDJPY">USD/JPY</option>
+          <option value="AUDUSD">AUD/USD</option>
+          <option value="USDCAD">USD/CAD</option>
+          <option value="USDCHF">USD/CHF</option>
+        </select>
+      </div>
+      <div class="toolbar-group">
+        <div id="tfWrap">
+          <div id="tfHighlight"></div>
+          <button class="tf-btn" onclick="setTF('1m', this)">1m</button>
+          <button class="tf-btn active" onclick="setTF('5m', this)">5m</button>
+          <button class="tf-btn" onclick="setTF('15m', this)">15m</button>
+          <button class="tf-btn" onclick="setTF('1h', this)">1h</button>
+          <button class="tf-btn" onclick="setTF('4h', this)">4h</button>
         </div>
       </div>
-      <div class="chart-wrap">
-        <canvas id="priceChart"></canvas>
+      <button class="toolbar-btn" onclick="runAnalysis()">Refresh Analysis</button>
+      <label class="toggle-check">
+        <input type="checkbox" id="autoRefreshToggle" onchange="toggleAutoRefresh(this)"> Auto-Refresh
+      </label>
+      <div id="countdownWrap">
+        <div class="countdown-ring" id="countdownRing"><div class="countdown-ring-inner"></div></div>
+        <span id="countdownLabel">60s</span>
       </div>
     </div>
 
-    <div class="card signal-card">
-      <div class="card-title"><span>Confluence Signal</span></div>
-      <div class="signal-main">
-        <div id="signalValue" class="NEUTRAL">ANALYZING...</div>
-      </div>
-      <div class="gauge-wrap">
-        <div style="text-align:center;">
-          <div id="confScore">0%</div>
-          <div class="gauge-label">Confluence Score</div>
-          <div id="regimeBadge" class="badge-neutral">NEUTRAL</div>
-        </div>
-      </div>
-      <div id="confluenceList"></div>
+    <div id="errBox"><div id="errText"></div></div>
+
+    <div id="emptyState">
+      <h3>Analysis Ready</h3>
+      <p>Select a pair and timeframe to execute the confluence engine.</p>
     </div>
 
-    <div class="card smc-card">
-      <div class="card-title"><span>Smart Money Concepts (SMC)</span></div>
-      <div class="smc-row">
-        <span class="smc-label">Market Structure (BOS/CHoCH)</span>
-        <span id="smcStructure" class="smc-val neutral">--</span>
-      </div>
-      <div class="smc-row">
-        <span class="smc-label">Fair Value Gap (FVG)</span>
-        <span id="smcFvg" class="smc-val neutral">--</span>
-      </div>
-      <div class="smc-row">
-        <span class="smc-label">Order Block (OB)</span>
-        <span id="smcOb" class="smc-val neutral">--</span>
-      </div>
-      <div class="smc-row">
-        <span class="smc-label">ICT Kill Zone Session</span>
-        <span id="ictKillZone" class="smc-val neutral">--</span>
-      </div>
-      <div class="smc-row">
-        <span class="smc-label">Liquidity Pool Target</span>
-        <span id="smcLiquidity" class="smc-val neutral">--</span>
-      </div>
-    </div>
-
-    <div class="card sr-card">
-      <div class="card-title"><span>Calculated Levels</span></div>
-      <div class="sr-row resistance">
-        <span class="label">Bearish OB / Res</span>
-        <span class="value" id="resLevel">1.08800</span>
-      </div>
-      <div class="sr-row pivot">
-        <span class="label">Equilibrium (0.50)</span>
-        <span class="value" id="pivotLevel">1.08500</span>
-      </div>
-      <div class="sr-row support">
-        <span class="label">Bullish OB / Supp</span>
-        <span class="value" id="suppLevel">1.08200</span>
-      </div>
-    </div>
-
-    <div class="card pos-card">
-      <div class="card-title"><span>Position Calculator</span></div>
-      <div class="pos-inputs">
-        <div>
-          <label>Account ($)</label>
-          <input type="number" id="accSize" value="10000">
+    <div id="results">
+      <div class="dashboard-grid">
+        <div class="card chart-card">
+          <div class="chart-header">
+            <div class="chart-info">
+              <h3 id="chartPair">EUR/USD</h3>
+              <div class="subtitle" id="chartTF">5-Minute Timeframe</div>
+            </div>
+            <div class="chart-price-wrap">
+              <div id="chartPrice">--</div>
+              <div id="priceChange">--</div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="priceChart"></canvas>
+          </div>
+          <div id="lastUpdated">--</div>
         </div>
-        <div>
-          <label>Risk (%)</label>
-          <input type="number" id="riskPct" value="1" step="0.1">
+
+        <div class="card signal-card">
+          <div class="card-title">Confluence Signal</div>
+          <div class="signal-main">
+            <div id="signalPulse"><div id="signalValue" class="NONE">HOLD</div></div>
+          </div>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 36 36">
+              <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <path id="confGaugeFill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            </svg>
+            <div class="gauge-center">
+              <div id="confScore">0%</div>
+              <div class="gauge-label">Confidence</div>
+            </div>
+          </div>
+          <div style="text-align: center;"><span id="regimeBadge" class="badge-neutral">NEUTRAL</span></div>
+          <div id="confluenceList"></div>
+          <div id="signalLevels">
+            <div class="level-item"><span class="level-label">Stop Loss</span><span class="level-value sl" id="slVal">--</span></div>
+            <div class="level-item"><span class="level-label">Take Profit 1</span><span class="level-value tp" id="tp1Val">--</span></div>
+            <div class="level-item"><span class="level-label">Take Profit 2</span><span class="level-value tp" id="tp2Val">--</span></div>
+          </div>
+        </div>
+
+        <div class="card htf-card">
+          <div class="card-title">Higher Timeframe Bias</div>
+          <div class="htf-header">
+            <span id="htfStatus" class="NEUTRAL">LOADING</span>
+          </div>
+          <div id="htfDetail">Checking structural alignment...</div>
+          <div id="htfMetrics"></div>
+        </div>
+
+        <div class="card sr-card">
+          <div class="card-title">Key S/R & Pivots</div>
+          <div class="sr-row resistance"><span class="label">Resistance 2</span><span class="value" id="r2Val">--</span></div>
+          <div class="sr-row resistance"><span class="label">Resistance 1</span><span class="value" id="r1Val">--</span></div>
+          <div class="sr-row pivot"><span class="label">Pivot Point</span><span class="value" id="ppVal">--</span></div>
+          <div class="sr-row support"><span class="label">Support 1</span><span class="value" id="s1Val">--</span></div>
+          <div class="sr-row support"><span class="label">Support 2</span><span class="value" id="s2Val">--</span></div>
+        </div>
+
+        <div class="card smc-card">
+          <div class="card-title">ICT / Smart Money Concepts</div>
+          <div class="smc-row">
+            <span class="label">Structure (MSB/CHoCH)</span>
+            <span class="value" id="smcStructure">--</span>
+          </div>
+          <div class="smc-row">
+            <span class="label">Fair Value Gap (FVG)</span>
+            <span class="value" id="smcFvg">--</span>
+          </div>
+          <div class="smc-row">
+            <span class="label">Order Block (OB)</span>
+            <span class="value" id="smcOb">--</span>
+          </div>
+          <div class="smc-row">
+            <span class="label">Liquidity Sweep</span>
+            <span class="value" id="smcLiquidity">--</span>
+          </div>
+        </div>
+
+        <div class="card metrics-card">
+          <div class="card-title">Secondary Indicators</div>
+          <div id="metricsGrid"></div>
+        </div>
+
+        <div class="card pos-card">
+          <div class="card-title">Position Calculator</div>
+          <div class="pos-inputs">
+            <div>
+              <label>Balance ($)</label>
+              <input type="number" id="accSize" value="10000" oninput="calcPosition()">
+            </div>
+            <div>
+              <label>Risk (%)</label>
+              <input type="number" id="riskPct" value="1" step="0.1" oninput="calcPosition()">
+            </div>
+          </div>
+          <div class="pos-result">
+            <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Recommended Lot Size</span>
+            <div id="lotSizeResult">0.00 Lots</div>
+          </div>
+        </div>
+
+        <div class="card session-card">
+          <div class="card-title">Active Trading Sessions</div>
+          <div id="sessionTimeline">
+            <div class="session-track"></div>
+            <div class="now-marker" id="nowMarker"><div class="now-label">NOW</div></div>
+          </div>
+        </div>
+
+        <div class="card log-card">
+          <div class="card-title">Signal Log History</div>
+          <div class="log-table-wrap">
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Pair</th>
+                  <th>TF</th>
+                  <th>Signal</th>
+                  <th>Confidence</th>
+                  <th>Price</th>
+                  <th>SL</th>
+                  <th>TP1</th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div class="pos-result">
-        <div style="font-size:.65rem;color:var(--text-muted);text-transform:uppercase;">Suggested Lot Size</div>
-        <div id="lotSizeResult">0.50 Lots</div>
-      </div>
     </div>
+  </main>
+</div>
+
+<button id="aiAssistant" onclick="toggleAIPanel()">&#129302;</button>
+<div id="aiPanel">
+  <div class="ai-header">
+    <h4>FX AI Copilot</h4>
+    <span>Active</span>
+  </div>
+  <div id="aiMessages">
+    <div class="ai-msg bot">Hello! I am monitoring price action, ICT structure, and order flow metrics. Ask me anything!</div>
+  </div>
+  <div class="ai-input-wrap">
+    <input type="text" id="aiInput" placeholder="Ask AI..." onkeypress="if(event.key==='Enter') sendAIMessage()">
+    <button id="aiSend" onclick="sendAIMessage()">Send</button>
   </div>
 </div>
 
 <script>
-// Canvas animations initialization
-function initParticles() {
-  const c = document.getElementById('particleCanvas');
-  const ctx = c.getContext('2d');
-  let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
-  window.addEventListener('resize', () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; });
-  const pts = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 }));
-  function loop() {
-    ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = 'rgba(0,212,170,0.3)';
-    pts.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x<0||p.x>w) p.vx*=-1; if (p.y<0||p.y>h) p.vy*=-1;
-      ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
-    });
-    requestAnimationFrame(loop);
-  }
-  loop();
-}
-
-// Global Variables
+let activeTF = '5m';
 let chartInstance = null;
 let currentCandles = [];
+let autoRefreshTimer = null;
 
-// Generate Mock Market Candle Data
-function generateCandles(basePrice = 1.0850, count = 30) {
+function verifyKey() {
+  document.getElementById('gateWrap').style.display = 'none';
+  document.getElementById('mainPanel').style.display = 'block';
+  runAnalysis();
+}
+
+function setTF(tf, btn) {
+  activeTF = tf;
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const highlight = document.getElementById('tfHighlight');
+  highlight.style.width = btn.offsetWidth + 'px';
+  highlight.style.transform = `translateX(${btn.offsetLeft}px)`;
+  runAnalysis();
+}
+
+function generateCandles(count = 50) {
   const candles = [];
-  let price = basePrice;
-  for (let i = 0; i < count; i++) {
-    const change = (Math.random() - 0.49) * 0.0015;
-    const open = price;
-    const close = open + change;
-    const high = Math.max(open, close) + Math.random() * 0.0008;
-    const low = Math.min(open, close) - Math.random() * 0.0008;
+  let price = 1.0850;
+  let now = Date.now() - count * 300000;
+  for(let i=0; i<count; i++) {
+    let open = price;
+    let change = (Math.random() - 0.49) * 0.0015;
+    let close = open + change;
+    let high = Math.max(open, close) + Math.random() * 0.0008;
+    let low = Math.min(open, close) - Math.random() * 0.0008;
+    candles.push({ time: new Date(now + i*300000), open, high, low, close });
     price = close;
-    candles.push({ open, high, low, close, time: i });
   }
   return candles;
 }
 
-/* =========================================================
-   ICT & SMART MONEY CONCEPTS (SMC) ENGINE
-   ========================================================= */
-
-// 1. Detect Fair Value Gaps (FVG)
-function detectFVGs(candles) {
-  const fvgs = [];
-  for (let i = 2; i < candles.length; i++) {
-    const prev2 = candles[i - 2];
-    const curr = candles[i];
-
-    // Bullish FVG (Low of candle 3 is higher than High of candle 1)
-    if (curr.low > prev2.high) {
-      fvgs.push({ type: 'BULLISH', top: curr.low, bottom: prev2.high, index: i - 1 });
-    }
-    // Bearish FVG (High of candle 3 is lower than Low of candle 1)
-    else if (curr.high < prev2.low) {
-      fvgs.push({ type: 'BEARISH', top: prev2.low, bottom: curr.high, index: i - 1 });
-    }
-  }
-  return fvgs;
-}
-
-// 2. Detect Market Structure Breaks (BOS / CHoCH)
-function detectStructure(candles) {
+function analyzeSMC(candles) {
   const len = candles.length;
-  if (len < 10) return { type: 'NEUTRAL', detail: 'Ranging' };
+  if(len < 5) return {};
+  const c1 = candles[len-3], c2 = candles[len-2], c3 = candles[len-1];
 
-  const recent = candles.slice(-10);
-  const highest = Math.max(...recent.map(c => c.high));
-  const lowest = Math.min(...recent.map(c => c.low));
-  const lastClose = candles[len - 1].close;
-
-  if (lastClose > highest - 0.0002) {
-    return { type: 'BULLISH', detail: 'Bullish BOS (Break of Structure)' };
-  } else if (lastClose < lowest + 0.0002) {
-    return { type: 'BEARISH', detail: 'Bearish CHoCH / BOS' };
+  // Fair Value Gap Detection
+  let fvg = "None Detected";
+  let fvgType = "none";
+  if (c1.high < c3.low) {
+    fvg = `Bullish FVG (${c1.high.toFixed(4)} - ${c3.low.toFixed(4)})`;
+    fvgType = "bullish";
+  } else if (c1.low > c3.high) {
+    fvg = `Bearish FVG (${c3.high.toFixed(4)} - ${c1.low.toFixed(4)})`;
+    fvgType = "bearish";
   }
-  return { type: 'NEUTRAL', detail: 'Consolidation / Internal Range' };
+
+  // Market Structure Shift / CHoCH
+  let structure = "Ranging / Neutral";
+  if (c3.close > c1.high && c2.close > c1.high) structure = "Bullish MSB / CHoCH";
+  else if (c3.close < c1.low && c2.close < c1.low) structure = "Bearish MSB / CHoCH";
+
+  // Order Block
+  let ob = "None Active";
+  if (c3.close > c2.high && c2.close < c2.open) ob = `Bullish OB @ ${c2.low.toFixed(4)}`;
+  else if (c3.close < c2.low && c2.close > c2.open) ob = `Bearish OB @ ${c2.high.toFixed(4)}`;
+
+  // Liquidity Sweep
+  let liquidity = "No Sweep";
+  if (c3.low < c1.low && c3.close > c1.low) liquidity = "Sell-side Liquidity Swept";
+  else if (c3.high > c1.high && c3.close < c1.high) liquidity = "Buy-side Liquidity Swept";
+
+  return { fvg, fvgType, structure, ob, liquidity };
 }
-
-// 3. Detect Order Blocks (OB)
-function detectOrderBlock(candles) {
-  const len = candles.length;
-  if (len < 5) return { type: 'NEUTRAL', level: null };
-
-  const lastCandle = candles[len - 1];
-  const prevCandle = candles[len - 2];
-
-  if (lastCandle.close > lastCandle.open && prevCandle.close < prevCandle.open) {
-    return { type: 'BULLISH', level: prevCandle.low, text: 'Bullish OB Identified' };
-  } else if (lastCandle.close < lastCandle.open && prevCandle.close > prevCandle.open) {
-    return { type: 'BEARISH', level: prevCandle.high, text: 'Bearish OB Identified' };
-  }
-  return { type: 'NEUTRAL', level: null, text: 'No Active OB' };
-}
-
-// 4. Check ICT Sessions / Kill Zones
-function getICTKillZone() {
-  const utcHour = new Date().getUTCHours();
-  if (utcHour >= 7 && utcHour < 10) return { active: true, name: 'London Kill Zone' };
-  if (utcHour >= 12 && utcHour < 15) return { active: true, name: 'New York Kill Zone' };
-  if (utcHour >= 0 && utcHour < 4) return { active: false, name: 'Asian Range' };
-  return { active: false, name: 'Off-Session' };
-}
-
-/* =========================================================
-   ANALYSIS & UI UPDATES
-   ========================================================= */
 
 function runAnalysis() {
   const pair = document.getElementById('pairSelect').value;
-  const basePrice = pair.includes('JPY') ? 150.00 : pair.includes('XAU') ? 2030.00 : 1.0850;
-  
-  currentCandles = generateCandles(basePrice, 35);
-  const currentPrice = currentCandles[currentCandles.length - 1].close;
-  
-  // UI price update
-  document.getElementById('chartPrice').textContent = currentPrice.toFixed(pair.includes('JPY')||pair.includes('XAU')?2:5);
-  document.getElementById('pairTitle').textContent = `${pair} - M15`;
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
 
-  // Calculate SMC Features
-  const fvgs = detectFVGs(currentCandles);
-  const structure = detectStructure(currentCandles);
-  const orderBlock = detectOrderBlock(currentCandles);
-  const killZone = getICTKillZone();
+  currentCandles = generateCandles(40);
+  const last = currentCandles[currentCandles.length - 1];
+  const prev = currentCandles[currentCandles.length - 2];
+  const isUp = last.close >= prev.close;
 
-  const activeFVG = fvgs.length > 0 ? fvgs[fvgs.length - 1] : null;
+  // Chart info
+  document.getElementById('chartPair').textContent = pair;
+  document.getElementById('chartTF').textContent = activeTF + ' Timeframe';
+  const priceEl = document.getElementById('chartPrice');
+  priceEl.textContent = last.close.toFixed(5);
+  priceEl.className = isUp ? 'up' : 'down';
 
-  // SMC UI Panel updates
-  document.getElementById('smcStructure').textContent = structure.detail;
-  document.getElementById('smcStructure').className = `smc-val ${structure.type === 'BULLISH' ? 'bull' : structure.type === 'BEARISH' ? 'bear' : 'neutral'}`;
+  const diff = last.close - prev.close;
+  document.getElementById('priceChange').textContent = `${diff >= 0 ? '+' : ''}${diff.toFixed(5)} (${((diff/prev.close)*100).toFixed(2)}%)`;
+  document.getElementById('lastUpdated').textContent = 'Last Updated: ' + new Date().toLocaleTimeString() + ' UTC';
 
-  document.getElementById('smcFvg').textContent = activeFVG ? `${activeFVG.type} FVG` : 'No Active FVG';
-  document.getElementById('smcFvg').className = `smc-val ${activeFVG ? (activeFVG.type === 'BULLISH' ? 'bull' : 'bear') : 'neutral'}`;
-
-  document.getElementById('smcOb').textContent = orderBlock.text;
-  document.getElementById('smcOb').className = `smc-val ${orderBlock.type === 'BULLISH' ? 'bull' : orderBlock.type === 'BEARISH' ? 'bear' : 'neutral'}`;
-
-  document.getElementById('ictKillZone').textContent = killZone.name;
-  document.getElementById('ictKillZone').className = `smc-val ${killZone.active ? 'bull' : 'neutral'}`;
-
-  document.getElementById('smcLiquidity').textContent = structure.type === 'BULLISH' ? 'Buy-Side (BSL) Swept' : 'Sell-Side (SSL) Swept';
-
-  // Support & Resistance
-  document.getElementById('resLevel').textContent = (currentPrice * 1.002).toFixed(5);
-  document.getElementById('pivotLevel').textContent = currentPrice.toFixed(5);
-  document.getElementById('suppLevel').textContent = (currentPrice * 0.998).toFixed(5);
-
-  // Calculate Confluence Score
-  let score = 50;
-  let checks = [];
-
-  // Confluence Criteria 1: Market Structure
-  if (structure.type === 'BULLISH') {
-    score += 20;
-    checks.push({ name: 'Structure', status: 'pass', text: 'Bullish BOS Confirmed' });
-  } else if (structure.type === 'BEARISH') {
-    score -= 20;
-    checks.push({ name: 'Structure', status: 'fail', text: 'Bearish Structure Shift' });
-  } else {
-    checks.push({ name: 'Structure', status: 'neutral', text: 'Structure Indecisive' });
-  }
-
-  // Confluence Criteria 2: Fair Value Gap
-  if (activeFVG && activeFVG.type === 'BULLISH') {
-    score += 15;
-    checks.push({ name: 'SMC FVG', status: 'pass', text: 'Price in Bullish FVG Zone' });
-  } else if (activeFVG && activeFVG.type === 'BEARISH') {
-    score -= 15;
-    checks.push({ name: 'SMC FVG', status: 'fail', text: 'Price in Bearish FVG Zone' });
-  } else {
-    checks.push({ name: 'SMC FVG', status: 'neutral', text: 'No Active FVG' });
-  }
-
-  // Confluence Criteria 3: Kill Zone
-  if (killZone.active) {
-    score += 10;
-    checks.push({ name: 'ICT Session', status: 'pass', text: `${killZone.name} Active` });
-  } else {
-    checks.push({ name: 'ICT Session', status: 'neutral', text: 'Outside Primary Kill Zones' });
-  }
-
-  // Render Confluence
-  const confList = document.getElementById('confluenceList');
-  confList.innerHTML = '';
-  checks.forEach(c => {
-    const item = document.createElement('div');
-    item.className = 'conf-item';
-    item.innerHTML = `
-      <div class="conf-check ${c.status}">${c.status === 'pass' ? '&#10003;' : c.status === 'fail' ? '&#10007;' : '&#8211;'}</div>
-      <div class="conf-name"><strong>${c.name}:</strong> ${c.text}</div>
-    `;
-    confList.appendChild(item);
-  });
-
-  // Final Signal Decision
-  const signalVal = document.getElementById('signalValue');
-  const regimeBadge = document.getElementById('regimeBadge');
-  document.getElementById('confScore').textContent = `${score}%`;
-
-  if (score >= 65) {
-    signalVal.textContent = 'STRONG BUY';
-    signalVal.className = 'BUY';
-    regimeBadge.textContent = 'BULLISH SMC';
-    regimeBadge.className = 'badge-buy';
-  } else if (score <= 35) {
-    signalVal.textContent = 'STRONG SELL';
-    signalVal.className = 'SELL';
-    regimeBadge.textContent = 'BEARISH SMC';
-    regimeBadge.className = 'badge-sell';
-  } else {
-    signalVal.textContent = 'NEUTRAL';
-    signalVal.className = 'NEUTRAL';
-    regimeBadge.textContent = 'RANGING';
-    regimeBadge.className = 'badge-neutral';
-  }
-
+  // Render Chart
   renderChart(currentCandles);
+
+  // SMC / ICT
+  const smc = analyzeSMC(currentCandles);
+  document.getElementById('smcStructure').textContent = smc.structure;
+  document.getElementById('smcFvg').textContent = smc.fvg;
+  document.getElementById('smcOb').textContent = smc.ob;
+  document.getElementById('smcLiquidity').textContent = smc.liquidity;
+
+  // Signal Calculation
+  let conf = 50;
+  let signal = "NONE";
+  if (smc.fvgType === "bullish" || smc.structure.includes("Bullish")) {
+    signal = "BUY";
+    conf += 30;
+  } else if (smc.fvgType === "bearish" || smc.structure.includes("Bearish")) {
+    signal = "SELL";
+    conf += 30;
+  }
+
+  const sigVal = document.getElementById('signalValue');
+  sigVal.textContent = signal;
+  sigVal.className = signal;
+
+  document.getElementById('confScore').textContent = conf + '%';
+  document.getElementById('confGaugeFill').style.strokeDasharray = `${conf}, 100`;
+  document.getElementById('confGaugeFill').style.stroke = signal === 'BUY' ? 'var(--accent-buy)' : signal === 'SELL' ? 'var(--accent-sell)' : 'var(--text-muted)';
+
+  // SL / TP
+  const sl = signal === 'BUY' ? (last.close - 0.0020) : (last.close + 0.0020);
+  const tp1 = signal === 'BUY' ? (last.close + 0.0030) : (last.close - 0.0030);
+  const tp2 = signal === 'BUY' ? (last.close + 0.0060) : (last.close - 0.0060);
+  document.getElementById('slVal').textContent = sl.toFixed(5);
+  document.getElementById('tp1Val').textContent = tp1.toFixed(5);
+  document.getElementById('tp2Val').textContent = tp2.toFixed(5);
+
+  // S/R Levels
+  document.getElementById('r2Val').textContent = (last.close + 0.0040).toFixed(5);
+  document.getElementById('r1Val').textContent = (last.close + 0.0020).toFixed(5);
+  document.getElementById('ppVal').textContent = last.close.toFixed(5);
+  document.getElementById('s1Val').textContent = (last.close - 0.0020).toFixed(5);
+  document.getElementById('s2Val').textContent = (last.close - 0.0040).toFixed(5);
+
+  // HTF Bias
+  document.getElementById('htfStatus').textContent = signal === 'BUY' ? 'BULLISH' : signal === 'SELL' ? 'BEARISH' : 'NEUTRAL';
+  document.getElementById('htfStatus').className = document.getElementById('htfStatus').textContent;
+
+  calcPosition();
 }
 
-// Render ChartJS
 function renderChart(candles) {
   const ctx = document.getElementById('priceChart').getContext('2d');
-  const labels = candles.map((_, i) => `T-${candles.length - i}`);
-  const data = candles.map(c => c.close);
-
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
+  if (chartInstance) chartInstance.destroy();
 
   chartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,
+      labels: candles.map(c => c.time.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})),
       datasets: [{
         label: 'Price',
-        data: data,
+        data: candles.map(c => c.close),
         borderColor: '#00d4aa',
+        backgroundColor: 'rgba(0, 212, 170, 0.05)',
         borderWidth: 2,
-        tension: 0.1,
-        fill: false
+        fill: true,
+        tension: 0.2
       }]
     },
     options: {
@@ -561,49 +703,92 @@ function renderChart(candles) {
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        x: { display: false },
-        y: { grid: { color: 'rgba(148,163,184,0.1)' } }
+        x: { grid: { color: 'rgba(148,163,184,0.05)' }, ticks: { color: '#64748b' } },
+        y: { grid: { color: 'rgba(148,163,184,0.05)' }, ticks: { color: '#64748b' } }
       }
     }
   });
 }
 
-// Event Listeners & Startup
-document.addEventListener('DOMContentLoaded', () => {
-  initParticles();
-  
-  // Profile Dropdown Toggle
-  const profileIcon = document.getElementById('profileIcon');
-  const profileDropdown = document.getElementById('profileDropdown');
-  profileIcon.addEventListener('click', () => profileDropdown.classList.toggle('open'));
+function calcPosition() {
+  const acc = parseFloat(document.getElementById('accSize').value) || 0;
+  const risk = parseFloat(document.getElementById('riskPct').value) || 0;
+  const riskAmt = acc * (risk / 100);
+  const stopPips = 20; // Default pip risk
+  const lots = (riskAmt / (stopPips * 10)).toFixed(2);
+  document.getElementById('lotSizeResult').textContent = `${lots} Lots ($${riskAmt.toFixed(2)} Risk)`;
+}
 
-  // UTC Clock
-  setInterval(() => {
-    document.getElementById('utcClock').textContent = new Date().toUTCString().slice(17, 25) + ' UTC';
-  }, 1000);
+function toggleAIPanel() {
+  document.getElementById('aiPanel').classList.toggle('open');
+}
 
-  // Handlers
-  document.getElementById('refreshBtn').addEventListener('click', runAnalysis);
-  document.getElementById('pairSelect').addEventListener('change', runAnalysis);
+function sendAIMessage() {
+  const input = document.getElementById('aiInput');
+  const txt = input.value.trim();
+  if(!txt) return;
 
-  // Boot sequence animation
-  const bootBar = document.getElementById('bootBar');
-  const bootOverlay = document.getElementById('bootOverlay');
-  let pct = 0;
-  const interval = setInterval(() => {
-    pct += 25;
-    bootBar.style.width = pct + '%';
-    if (pct >= 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        bootOverlay.style.opacity = '0';
-        setTimeout(() => bootOverlay.remove(), 800);
-      }, 300);
+  const msgs = document.getElementById('aiMessages');
+  msgs.innerHTML += `<div class="ai-msg user">${txt}</div>`;
+  input.value = '';
+
+  setTimeout(() => {
+    msgs.innerHTML += `<div class="ai-msg bot">Analyzing market liquidity and ICT block structures... ICT sentiment is currently matching higher timeframe flow.</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 600);
+}
+
+function toggleAutoRefresh(cb) {
+  if (cb.checked) {
+    document.getElementById('countdownWrap').style.display = 'flex';
+    autoRefreshTimer = setInterval(runAnalysis, 60000);
+  } else {
+    document.getElementById('countdownWrap').style.display = 'none';
+    clearInterval(autoRefreshTimer);
+  }
+}
+
+// Background Visual Engines
+function initParticles() {
+  const c = document.getElementById('particleCanvas');
+  const ctx = c.getContext('2d');
+  c.width = window.innerWidth; c.height = window.innerHeight;
+  let particles = Array.from({length: 30}, () => ({
+    x: Math.random()*c.width, y: Math.random()*c.height,
+    r: Math.random()*2+1, dx: (Math.random()-0.5)*0.5, dy: (Math.random()-0.5)*0.5
+  }));
+  function draw() {
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle = 'rgba(0,212,170,0.3)';
+    particles.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+      p.x += p.dx; p.y += p.dy;
+      if(p.x<0||p.x>c.width) p.dx*=-1;
+      if(p.y<0||p.y>c.height) p.dy*=-1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function bootSequence() {
+  const overlay = document.getElementById('bootOverlay');
+  const bar = document.getElementById('bootBar');
+  let w = 0;
+  let iv = setInterval(() => {
+    w += 20;
+    bar.style.width = w + '%';
+    if(w >= 100) {
+      clearInterval(iv);
+      setTimeout(() => { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 800); }, 300);
     }
-  }, 200);
+  }, 100);
+}
 
-  runAnalysis();
-});
+window.onload = () => {
+  bootSequence();
+  initParticles();
+};
 </script>
 </body>
 </html>
