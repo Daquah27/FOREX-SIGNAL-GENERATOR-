@@ -50,7 +50,7 @@
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.5}
 #particleCanvas,#dataRainCanvas,#gradientOrbCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
-#particleCanvas{z-index:1}#dataRainCanvas{z-index:0;opacity:0.6}#gradientOrbCanvas{z-index:0}
+#particleCanvas{z-index:1}#dataRainCanvas{z-index:0;opacity:0.6}#gradientOrbCanvas{z-index:0}#themeCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 #bootOverlay{position:fixed;inset:0;z-index:9999;background:var(--bg-primary);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease}
 .boot-content{text-align:center}
 .boot-logo{font-family:var(--font-mono);font-size:2rem;font-weight:700;color:var(--accent-buy);letter-spacing:4px;margin-bottom:2rem;text-shadow:0 0 20px var(--accent-buy)}
@@ -252,11 +252,13 @@ body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-
 @media(max-width:640px){.dashboard-grid{gap:12px}.signal-card,.htf-card,.sr-card,.metrics-card,.pos-card{grid-column:span 12}.app-header{flex-direction:column;align-items:flex-start}.toolbar{flex-direction:column;align-items:stretch}.toolbar-group{justify-content:center}#aiPanel{width:calc(100vw - 48px);right:24px}.world-clocks-bar{grid-template-columns:repeat(2,1fr)}}
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
 <canvas id="dataRainCanvas"></canvas>
 <canvas id="gradientOrbCanvas"></canvas>
+<canvas id="themeCanvas"></canvas>
 <div id="scanline"></div>
 <div id="bootOverlay">
   <div class="boot-content">
@@ -561,6 +563,216 @@ const THEMES = [
   {id:'volcanic',name:'Volcanic'}
 ];
 const AVATARS = ['\u{1F468}','\u{1F469}','\u{1F464}','\u{1F473}','\u{1F47B}','\u{1F47E}','\u{1F4A3}','\u{1F525}','\u{1F680}','\u{1F31F}','\u{1F308}','\u{1F333}','\u{1F409}','\u{1F405}','\u{1F430}','\u{1F916}','\u{1F52E}','\u{1F384}'];
+
+/* ===== THEME ANIMATION ENGINE ===== */
+const ThemeAnimations = {
+  ocean: createOceanRenderer(),
+  volcanic: createVolcanicRenderer(),
+  forest: createForestRenderer(),
+  arctic: createArcticRenderer(),
+  anime: createAnimeRenderer(),
+  cyberpunk: createCyberpunkRenderer(),
+  matrix: createMatrixRenderer(),
+  solar: createSolarRenderer(),
+  sunset: createSunsetRenderer(),
+  neon: createNeonRenderer(),
+  royal: createRoyalRenderer(),
+  minimalist: createMinimalistRenderer()
+};
+
+function initThemeAnimations() {
+  const canvas = document.getElementById('themeCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  let currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
+  const observer = new MutationObserver(() => {
+    const newTheme = document.documentElement.getAttribute('data-theme') || 'default';
+    if (newTheme !== currentTheme) {
+      currentTheme = newTheme;
+      Object.keys(ThemeAnimations).forEach(key => { if (ThemeAnimations[key].reset) ThemeAnimations[key].reset(); });
+    }
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  (function loop() {
+    ctx.clearRect(0, 0, w, h);
+    const animator = ThemeAnimations[currentTheme];
+    if (animator) animator(ctx, w, h, Date.now());
+    requestAnimationFrame(loop);
+  })();
+}
+
+function createOceanRenderer() {
+  let fish = [], jelly = [], bubbles = [], rays = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) {
+    fish = []; jelly = []; bubbles = []; rays = [];
+    for (let i = 0; i < 18; i++) fish.push({ x: Math.random()*w, y: Math.random()*h*0.8+h*0.1, vx: (Math.random()*0.8+0.3)*(Math.random()<0.5?1:-1), vy: 0, size: Math.random()*14+6, color: ['#00d2ff','#00b4d8','#90e0ef','#48cae4','#0096c7'][Math.floor(Math.random()*5)], tail: Math.random()*Math.PI*2, tailSpd: Math.random()*0.12+0.06, school: Math.floor(Math.random()*5) });
+    for (let i = 0; i < 5; i++) jelly.push({ x: Math.random()*w, y: Math.random()*h, size: Math.random()*18+12, vy: -Math.random()*0.25-0.08, pulse: Math.random()*Math.PI*2, tent: Array.from({length:6},()=>({off:Math.random()*Math.PI*2,len:Math.random()*25+18})) });
+    for (let i = 0; i < 45; i++) bubbles.push({ x: Math.random()*w, y: Math.random()*h, size: Math.random()*3.5+0.8, speed: Math.random()*0.9+0.4, wob: Math.random()*Math.PI*2, wobSpd: Math.random()*0.025+0.008 });
+    for (let i = 0; i < 6; i++) rays.push({ x: Math.random()*w, width: Math.random()*90+35, angle: Math.random()*0.15-0.075, alpha: Math.random()*0.06+0.02, phase: Math.random()*Math.PI*2 });
+    initd = true;
+  }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, 'rgba(0,30,60,0.22)'); g.addColorStop(1, 'rgba(0,70,90,0.06)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    rays.forEach(r => { const a = Math.max(0, r.alpha + Math.sin(time*0.0012+r.phase)*0.015); ctx.save(); ctx.translate(r.x, 0); ctx.rotate(r.angle); const rg = ctx.createLinearGradient(0, 0, 0, h); rg.addColorStop(0, `rgba(255,255,255,${a})`); rg.addColorStop(0.5, `rgba(0,210,255,${a*0.45})`); rg.addColorStop(1, 'rgba(0,210,255,0)'); ctx.fillStyle = rg; ctx.fillRect(-r.width/2, 0, r.width, h*1.2); ctx.restore(); });
+    bubbles.forEach(b => { b.y -= b.speed; b.wob += b.wobSpd; b.x += Math.sin(b.wob)*0.25; if (b.y < -20) { b.y = h+20; b.x = Math.random()*w; } ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.arc(b.x, b.y, b.size, 0, Math.PI*2); ctx.fill(); ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.arc(b.x-b.size*0.3, b.y-b.size*0.3, b.size*0.25, 0, Math.PI*2); ctx.fill(); });
+    jelly.forEach(j => { j.y += j.vy; j.pulse += 0.035; if (j.y < -80) j.y = h+80; ctx.save(); ctx.translate(j.x, j.y); const p = 1 + Math.sin(j.pulse)*0.14; ctx.fillStyle = 'rgba(255,182,193,0.22)'; ctx.strokeStyle = 'rgba(255,182,193,0.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, j.size*p, Math.PI, 0); ctx.bezierCurveTo(j.size*p, j.size*0.25, -j.size*p, j.size*0.25, -j.size*p, 0); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.strokeStyle = 'rgba(255,182,193,0.18)'; j.tent.forEach((t, i) => { const tx = (i-2.5)*j.size*0.22; ctx.beginPath(); ctx.moveTo(tx, 0); for (let k = 0; k < 10; k++) { const ty = k*t.len/10; const wave = Math.sin(j.pulse+t.off+k*0.5)*3; ctx.lineTo(tx+wave, ty); } ctx.stroke(); }); ctx.restore(); });
+    fish.forEach(f => { f.x += f.vx; f.y += Math.sin(f.tail*0.5)*0.25; f.tail += f.tailSpd; if (f.vx > 0 && f.x > w+40) f.x = -40; if (f.vx < 0 && f.x < -40) f.x = w+40; ctx.save(); ctx.translate(f.x, f.y); ctx.scale(f.vx > 0 ? 1 : -1, 1); ctx.fillStyle = f.color; ctx.beginPath(); ctx.ellipse(0, 0, f.size, f.size*0.38, 0, 0, Math.PI*2); ctx.fill(); const tw = Math.sin(f.tail)*0.35; ctx.beginPath(); ctx.moveTo(-f.size*0.7, 0); ctx.lineTo(-f.size*1.35, -f.size*0.45+tw*f.size); ctx.lineTo(-f.size*1.35, f.size*0.45+tw*f.size); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(f.size*0.4, -f.size*0.1, f.size*0.11, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(f.size*0.44, -f.size*0.1, f.size*0.055, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = f.color + 'aa'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-f.size*0.25, -f.size*0.55); ctx.lineTo(f.size*0.18, -f.size*0.28); ctx.closePath(); ctx.fill(); ctx.restore(); });
+  }, { reset });
+}
+
+function createVolcanicRenderer() {
+  let lava = [], flow = [], erupt = [], smoke = [], embers = [], lastErupt = 0, initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { lava = []; flow = []; erupt = []; smoke = []; embers = []; lastErupt = 0; initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    const peakX = w*0.5, peakY = h*0.58, baseW = w*0.38, baseY = h;
+    const glow = ctx.createRadialGradient(peakX, peakY, 0, peakX, baseY, baseW);
+    glow.addColorStop(0, 'rgba(255,50,0,0.18)'); glow.addColorStop(0.6, 'rgba(255,20,0,0.05)'); glow.addColorStop(1, 'rgba(255,0,0,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#0f0404'; ctx.beginPath(); ctx.moveTo(peakX-22, peakY); ctx.lineTo(peakX-baseW/2, baseY); ctx.lineTo(peakX+baseW/2, baseY); ctx.lineTo(peakX+22, peakY); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ff1a00'; ctx.beginPath(); ctx.ellipse(peakX, peakY+3, 28, 6, 0, 0, Math.PI*2); ctx.fill();
+    if (Math.random() < 0.35) lava.push({ x: peakX+(Math.random()-0.5)*45, y: peakY+4, size: Math.random()*7+2, life: 1, decay: Math.random()*0.018+0.008 });
+    if (Math.random() < 0.4) { const side = Math.random()<0.5?-1:1; flow.push({ x: peakX+side*(18+Math.random()*28), y: peakY+8, vx: side*(Math.random()*0.6+0.15), vy: Math.random()*0.4+0.2, size: Math.random()*5+2, life: 1, decay: Math.random()*0.004+0.002 }); }
+    if (time - lastErupt > 3200 + Math.random()*2800) {
+      for (let i = 0; i < 38; i++) { const ang = -Math.PI/2 + (Math.random()-0.5)*1.0; const spd = Math.random()*5.5+2.5; erupt.push({ x: peakX+(Math.random()-0.5)*12, y: peakY, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd, size: Math.random()*5+2, life: 1, decay: Math.random()*0.012+0.008, color: Math.random()<0.4?'#ff4500':Math.random()<0.7?'#ff6347':'#ffcc00' }); }
+      for (let i = 0; i < 14; i++) smoke.push({ x: peakX+(Math.random()-0.5)*18, y: peakY-12, vx: (Math.random()-0.5)*0.7, vy: -Math.random()*1.1-0.3, size: Math.random()*16+7, life: 1, decay: Math.random()*0.0025+0.0018 });
+      lastErupt = time;
+    }
+    if (Math.random() < 0.25) embers.push({ x: peakX+(Math.random()-0.5)*110, y: peakY+Math.random()*35, vx: (Math.random()-0.5)*1.1, vy: -Math.random()*1.6-0.4, size: Math.random()*2.2+0.6, life: 1, decay: Math.random()*0.004+0.004 });
+    lava = lava.filter(p => { p.life -= p.decay; p.size += 0.08; ctx.fillStyle = `rgba(255,${Math.floor(60+p.life*120)},0,${p.life})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); return p.life > 0; });
+    flow = flow.filter(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.012; p.life -= p.decay; const dist = Math.abs(p.x-peakX); const slopeY = peakY + dist*0.72; if (p.y > slopeY) { p.y = slopeY; p.vy *= -0.25; } ctx.fillStyle = `rgba(255,${Math.floor(80+p.life*100)},0,${p.life})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); return p.life > 0 && p.y < baseY; });
+    erupt = erupt.filter(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= p.decay; ctx.fillStyle = p.color; ctx.globalAlpha = p.life; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); return p.life > 0 && p.y < baseY+20; });
+    ctx.globalAlpha = 1;
+    smoke = smoke.filter(p => { p.x += p.vx; p.y += p.vy; p.size += 0.22; p.life -= p.decay; ctx.fillStyle = `rgba(70,55,55,${p.life*0.22})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); return p.life > 0; });
+    embers = embers.filter(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.018; p.life -= p.decay; ctx.fillStyle = '#ff5500'; ctx.globalAlpha = p.life; ctx.shadowBlur = 7; ctx.shadowColor = '#ff2200'; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; return p.life > 0; });
+    ctx.globalAlpha = 1;
+  }, { reset });
+}
+
+function createForestRenderer() {
+  let flies = [], leaves = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { flies = []; leaves = []; for (let i = 0; i < 28; i++) flies.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.35, vy: (Math.random()-0.5)*0.35, size: Math.random()*2.2+0.8, phase: Math.random()*Math.PI*2, color: `rgba(${140+Math.random()*90},${195+Math.random()*60},40,${0.35+Math.random()*0.35})` }); for (let i = 0; i < 16; i++) leaves.push({ x: Math.random()*w, y: Math.random()*h, vx: Math.random()*0.45+0.15, vy: Math.random()*0.45+0.25, size: Math.random()*6+4, rot: Math.random()*Math.PI*2, rotSpd: (Math.random()-0.5)*0.035, color: `rgba(${90+Math.random()*70},${130+Math.random()*55},50,0.55)` }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    ctx.fillStyle = 'rgba(10,35,10,0.12)'; ctx.fillRect(0, 0, w, h);
+    flies.forEach(f => { f.x += f.vx + Math.sin(time*0.001+f.phase)*0.25; f.y += f.vy + Math.cos(time*0.001+f.phase)*0.18; if (f.x < -10) f.x = w+10; if (f.x > w+10) f.x = -10; if (f.y < -10) f.y = h+10; if (f.y > h+10) f.y = -10; const pulse = 0.4 + Math.sin(time*0.003+f.phase)*0.4; ctx.fillStyle = f.color.replace(/[\d.]+\)$/, `${pulse})`); ctx.shadowBlur = 9; ctx.shadowColor = f.color; ctx.beginPath(); ctx.arc(f.x, f.y, f.size, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; });
+    leaves.forEach(l => { l.x += l.vx; l.y += l.vy; l.rot += l.rotSpd; if (l.x > w+20) l.x = -20; if (l.y > h+20) { l.y = -20; l.x = Math.random()*w; } ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.rot); ctx.fillStyle = l.color; ctx.beginPath(); ctx.ellipse(0, 0, l.size, l.size*0.55, 0, 0, Math.PI*2); ctx.fill(); ctx.restore(); });
+  }, { reset });
+}
+
+function createArcticRenderer() {
+  let snow = [], aurora = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { snow = []; aurora = []; for (let i = 0; i < 110; i++) snow.push({ x: Math.random()*w, y: Math.random()*h, size: Math.random()*2.8+0.6, speed: Math.random()*0.9+0.4, drift: Math.random()*0.45+0.15, phase: Math.random()*Math.PI*2 }); for (let i = 0; i < 3; i++) aurora.push({ y: Math.random()*h*0.35, amp: Math.random()*35+25, freq: Math.random()*0.002+0.001, phase: Math.random()*Math.PI*2, speed: Math.random()*0.0004+0.00015, color: i===0?'rgba(0,255,140,0.07)':i===1?'rgba(0,200,255,0.055)':'rgba(120,255,180,0.045)' }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    aurora.forEach(a => { a.phase += a.speed*16; ctx.fillStyle = a.color; ctx.beginPath(); ctx.moveTo(0, a.y); for (let x = 0; x <= w; x += 12) { const y = a.y + Math.sin(x*a.freq+a.phase)*a.amp + Math.sin(x*a.freq*2.2+a.phase*1.4)*a.amp*0.45; ctx.lineTo(x, y); } ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath(); ctx.fill(); });
+    snow.forEach(s => { s.y += s.speed; s.x += Math.sin(time*0.001+s.phase)*s.drift; if (s.y > h) { s.y = -5; s.x = Math.random()*w; } if (s.x > w) s.x = 0; if (s.x < 0) s.x = w; ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); });
+  }, { reset });
+}
+
+function createAnimeRenderer() {
+  let petals = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { petals = []; for (let i = 0; i < 32; i++) petals.push({ x: Math.random()*w, y: Math.random()*h, vx: Math.random()*0.7+0.15, vy: Math.random()*0.55+0.3, size: Math.random()*5+3, rot: Math.random()*Math.PI*2, rotSpd: (Math.random()-0.5)*0.028, sway: Math.random()*0.018+0.008, phase: Math.random()*Math.PI*2, color: `rgba(255,${175+Math.random()*45},${195+Math.random()*60},0.65)` }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    ctx.fillStyle = 'rgba(255,200,220,0.04)'; ctx.fillRect(0, 0, w, h);
+    petals.forEach(p => { p.x += p.vx + Math.sin(time*p.sway+p.phase)*0.45; p.y += p.vy; p.rot += p.rotSpd; if (p.x > w+20) p.x = -20; if (p.y > h+20) { p.y = -20; p.x = Math.random()*w; } ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.color; ctx.beginPath(); ctx.moveTo(0, -p.size); ctx.bezierCurveTo(p.size, -p.size*0.45, p.size, p.size*0.45, 0, p.size); ctx.bezierCurveTo(-p.size, p.size*0.45, -p.size, -p.size*0.45, 0, -p.size); ctx.fill(); ctx.restore(); });
+  }, { reset });
+}
+
+function createCyberpunkRenderer() {
+  let pulses = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { pulses = []; for (let i = 0; i < 8; i++) pulses.push({ x: Math.random()*w, y: Math.random()*h, size: Math.random()*110+60, phase: Math.random()*Math.PI*2, speed: Math.random()*0.0025+0.001, color: Math.random()<0.5?'rgba(0,240,255,0.035)':'rgba(189,0,255,0.035)' }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    ctx.strokeStyle = 'rgba(0,240,255,0.055)'; ctx.lineWidth = 1;
+    const horizon = h*0.62;
+    for (let i = 0; i < 18; i++) { const y = horizon + Math.pow(i/18, 2.2)*(h-horizon); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+    const cx = w/2;
+    for (let i = -8; i <= 8; i++) { ctx.beginPath(); ctx.moveTo(cx + i*35, horizon); ctx.lineTo(cx + i*w*1.2, h); ctx.stroke(); }
+    pulses.forEach(p => { p.phase += p.speed*16; const a = Math.max(0, 0.035 + Math.sin(p.phase)*0.02); ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${a})`); ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); });
+  }, { reset });
+}
+
+function createMatrixRenderer() {
+  let glitches = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { glitches = []; initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    if (Math.random() < 0.035) glitches.push({ y: Math.random()*h, height: Math.random()*3+1, life: 1, decay: Math.random()*0.06+0.04, color: Math.random()<0.7?'rgba(0,255,65,0.12)':'rgba(0,255,65,0.06)' });
+    glitches = glitches.filter(g => { g.life -= g.decay; ctx.fillStyle = g.color.replace(/[\d.]+\)$/, `${g.life*0.12})`); ctx.fillRect(0, g.y, w, g.height); return g.life > 0; });
+    const rg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w*0.65); rg.addColorStop(0, 'rgba(0,40,0,0)'); rg.addColorStop(1, 'rgba(0,55,0,0.07)'); ctx.fillStyle = rg; ctx.fillRect(0, 0, w, h);
+  }, { reset });
+}
+
+function createSolarRenderer() {
+  let rays = [], flares = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { rays = []; flares = []; for (let i = 0; i < 14; i++) rays.push({ angle: (Math.PI*2/14)*i, width: Math.random()*0.09+0.04, phase: Math.random()*Math.PI*2 }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    const sunX = w*0.85, sunY = h*0.13, sunR = 55;
+    rays.forEach(r => { r.phase += 0.0045; const len = 130 + Math.sin(r.phase)*28; const a = 0.035 + Math.sin(r.phase)*0.018; ctx.save(); ctx.translate(sunX, sunY); ctx.rotate(r.angle + Math.sin(time*0.0004)*0.015); ctx.fillStyle = `rgba(255,180,40,${a})`; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-r.width*sunR, sunR+len); ctx.lineTo(r.width*sunR, sunR+len); ctx.closePath(); ctx.fill(); ctx.restore(); });
+    const sg = ctx.createRadialGradient(sunX, sunY, sunR*0.4, sunX, sunY, sunR*2.2); sg.addColorStop(0, 'rgba(255,200,40,0.28)'); sg.addColorStop(0.5, 'rgba(255,140,30,0.09)'); sg.addColorStop(1, 'rgba(255,90,0,0)'); ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sunX, sunY, sunR*2.2, 0, Math.PI*2); ctx.fill();
+    if (Math.random() < 0.025) flares.push({ x: sunX+(Math.random()-0.5)*sunR, y: sunY+(Math.random()-0.5)*sunR, vx: (Math.random()-0.5)*1.8, vy: (Math.random()-0.5)*1.8, size: Math.random()*2.8+0.8, life: 1, decay: Math.random()*0.018+0.015 });
+    flares = flares.filter(f => { f.x += f.vx; f.y += f.vy; f.life -= f.decay; ctx.fillStyle = `rgba(255,230,100,${f.life*0.55})`; ctx.beginPath(); ctx.arc(f.x, f.y, f.size, 0, Math.PI*2); ctx.fill(); return f.life > 0; });
+  }, { reset });
+}
+
+function createSunsetRenderer() {
+  let birds = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { birds = []; for (let i = 0; i < 5; i++) { const fy = Math.random()*h*0.35 + h*0.08; for (let j = 0; j < 6; j++) birds.push({ x: Math.random()*w, y: fy + (Math.random()-0.5)*28, vx: Math.random()*0.7+0.45, vy: (Math.random()-0.5)*0.18, wing: Math.random()*Math.PI*2, size: Math.random()*2.8+1.6 }); } initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    ctx.fillStyle = 'rgba(255,120,60,0.035)'; ctx.fillRect(0, 0, w, h);
+    birds.forEach(b => { b.x += b.vx; b.y += b.vy + Math.sin(time*0.001+b.wing)*0.08; b.wing += 0.14; if (b.x > w+45) b.x = -45; ctx.save(); ctx.translate(b.x, b.y); ctx.strokeStyle = 'rgba(50,30,20,0.45)'; ctx.lineWidth = 1.4; const wy = Math.sin(b.wing)*b.size; ctx.beginPath(); ctx.moveTo(-b.size, wy); ctx.quadraticCurveTo(0, -b.size*0.45, b.size, wy); ctx.stroke(); ctx.restore(); });
+  }, { reset });
+}
+
+function createNeonRenderer() {
+  let pulses = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { pulses = []; for (let i = 0; i < 7; i++) pulses.push({ x: Math.random()*w, y: Math.random()*h, size: Math.random()*130+70, phase: Math.random()*Math.PI*2, speed: Math.random()*0.003+0.001, color: Math.random()<0.33?'rgba(57,255,20,0.04)':Math.random()<0.5?'rgba(255,7,58,0.04)':'rgba(188,19,254,0.04)' }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    pulses.forEach(p => { p.phase += p.speed*16; const a = Math.max(0, 0.04 + Math.sin(p.phase)*0.025); ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${a})`); ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); });
+  }, { reset });
+}
+
+function createRoyalRenderer() {
+  let sparkles = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { sparkles = []; for (let i = 0; i < 45; i++) sparkles.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.25, vy: -Math.random()*0.25-0.08, size: Math.random()*2+0.7, phase: Math.random()*Math.PI*2, life: Math.random() }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    ctx.fillStyle = 'rgba(255,215,0,0.025)'; ctx.fillRect(0, 0, w, h);
+    sparkles.forEach(s => { s.x += s.vx; s.y += s.vy; s.phase += 0.028; s.life -= 0.0028; if (s.life <= 0) { s.x = Math.random()*w; s.y = h+10; s.life = 1; } const a = (0.3 + Math.sin(s.phase)*0.3)*s.life; ctx.fillStyle = `rgba(255,215,0,${a})`; ctx.shadowBlur = 5; ctx.shadowColor = 'rgba(255,215,0,0.45)'; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; });
+  }, { reset });
+}
+
+function createMinimalistRenderer() {
+  let shapes = [], initd = false;
+  function reset() { initd = false; }
+  function init(w, h) { shapes = []; for (let i = 0; i < 10; i++) shapes.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18, size: Math.random()*18+8, rot: Math.random()*Math.PI*2, rotSpd: (Math.random()-0.5)*0.004 }); initd = true; }
+  return Object.assign(function(ctx, w, h, time) {
+    if (!initd) init(w, h);
+    shapes.forEach(s => { s.x += s.vx; s.y += s.vy; s.rot += s.rotSpd; if (s.x < -50) s.x = w+50; if (s.x > w+50) s.x = -50; if (s.y < -50) s.y = h+50; if (s.y > h+50) s.y = -50; ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot); ctx.strokeStyle = 'rgba(120,120,120,0.07)'; ctx.lineWidth = 1; ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size); ctx.restore(); });
+  }, { reset });
+}
 
 function initThemeSystem() {
   const savedTheme = localStorage.getItem('fx_theme') || 'default';
@@ -1940,6 +2152,7 @@ initSoundToggle();
 initParticles();
 initDataRain();
 initGradientOrbs();
+initThemeAnimations();
 initCardTilt();
 initAI();
 updateApiUsage();
