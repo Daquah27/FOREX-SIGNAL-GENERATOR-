@@ -1672,18 +1672,18 @@ function bootSequence() {
   next();
 }
 
+bootSequence(); // <-- Start boot sequence first
 initSelectors();
 initThemeSystem();
 initAvatarSystem();
 initModeToggle();
+initSoundToggle();
 initParticles();
 initDataRain();
 initGradientOrbs();
 initThemeAnimations();
 initCardTilt();
 initAI();
+updateApiUsage();
+updateMarketBanner();
 renderWorldClocks();
-bootSequence();
-</script>
-</body>
-</html>
