@@ -736,7 +736,6 @@
             if (statusIndicator) statusIndicator.textContent = "Checking key...";
 
             try {
-                // Fully functional mock validation or gateway call fallback
                 let isValid = true;
                 let message = "License validated successfully.";
 
@@ -997,6 +996,7 @@
         }
         setInterval(updateClocks, 1000);
 
+        // CORRECTED MARKET STATUS BANNER WITH WEEKEND CHECK LOGIC
         async function updateMarketStatusBanner() {
             const banner = document.getElementById('marketStatusBanner');
             const icon = document.getElementById('marketStatusIcon');
@@ -1008,7 +1008,23 @@
 
             if (!banner || !activeApiKey) return;
 
-            try {
+            const now = new Date();
+            const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+            const utcHours = now.getUTCHours();
+
+            // Forex/Commodities typically close Friday at 21:00 UTC and reopen Sunday at 21:00 UTC
+            const isWeekend = (dayOfWeek === 6) || (dayOfWeek === 0 && utcHours < 21) || (dayOfWeek === 5 && utcHours >= 21);
+
+            if (isWeekend) {
+                if (eurStatus) { eurStatus.innerText = "CLOSED"; eurStatus.className = "text-red-400"; }
+                if (gbpStatus) { gbpStatus.innerText = "CLOSED"; gbpStatus.className = "text-red-400"; }
+                if (jpyStatus) { jpyStatus.innerText = "CLOSED"; jpyStatus.className = "text-red-400"; }
+                if (xauStatus) { xauStatus.innerText = "CLOSED"; xauStatus.className = "text-red-400"; }
+
+                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-red-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
+                icon.className = "w-3 h-3 rounded-full bg-red-400 animate-pulse";
+                title.innerText = "🔴 MARKETS CLOSED: WEEKEND SESSION PAUSED";
+            } else {
                 if (eurStatus) { eurStatus.innerText = "OPEN"; eurStatus.className = "text-emerald-400"; }
                 if (gbpStatus) { gbpStatus.innerText = "OPEN"; gbpStatus.className = "text-emerald-400"; }
                 if (jpyStatus) { jpyStatus.innerText = "OPEN"; jpyStatus.className = "text-emerald-400"; }
@@ -1017,8 +1033,6 @@
                 banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
                 icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
                 title.innerText = "🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS";
-            } catch (err) {
-                console.error("Failed to query backend market status endpoint", err);
             }
         }
 
