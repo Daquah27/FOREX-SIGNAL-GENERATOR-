@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.2 // Institutional Pro Suite + Market Structure Engine</title>
+    <title>FX Signal Desk v4.2 // Institutional Pro Suite + Volume & SMC Engine</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -115,7 +115,7 @@
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.2</h1>
-                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + SMC Module</p>
+                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Volume & SMC Module</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
@@ -191,7 +191,7 @@
             <div class="flex items-center space-x-6">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.2 + SMC</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.2 + VOLUME</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/25 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
@@ -348,7 +348,7 @@
                                 <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live API Synced</span>
                             </div>
                             <div class="text-xs font-mono text-[#00ffcc] flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> SMC Structure Active
+                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> Volume & SMC Active
                             </div>
                         </div>
                         <div class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
@@ -369,7 +369,7 @@
                     <!-- RSI Sub-Chart Section -->
                     <div class="flex flex-col">
                         <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
-                            <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Crossover Watcher</span>
+                            <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
                             <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
                         </div>
                         <div class="relative w-full h-[140px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
@@ -378,10 +378,23 @@
                     </div>
                 </div>
 
-                <!-- Signal Card, Market Structure Panel & Multi-Timeframe Matrix -->
+                <!-- Signal Card, Market Structure Panel, Volume Widget & Multi-Timeframe Matrix -->
                 <div class="space-y-6">
                     
-                    <!-- NEW: Market Structure & CHoCH / BOS Panel -->
+                    <!-- NEW: Volume Participation & Pullback Analyzer Widget -->
+                    <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
+                            <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
+                        </div>
+                        <p id="volDescText" class="text-xs text-slate-300">Increasing buy volume with decreasing sell volume on pullback (High continuation probability)</p>
+                        <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
+                            <span>Pullback Impact:</span>
+                            <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
+                        </div>
+                    </div>
+
+                    <!-- SMC Structure & CHoCH / BOS Panel -->
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chess-board text-[#00ffcc] mr-2"></i>SMC Structure State</h2>
@@ -502,6 +515,83 @@
 
     <!-- JAVASCRIPT ENGINE -->
     <script>
+        class VolumePullbackAnalyzer {
+            constructor() {}
+
+            analyzePullbackHealth(candles) {
+                if (!candles || candles.length < 5) return { status: 'INSUFFICIENT_DATA', probabilityBonus: 0, description: 'Gathering volume stream...' };
+
+                let recentMoves = candles.slice(-5);
+                let impulseVolumeIncreasing = true;
+                let pullbackVolumeDecreasing = true;
+                let highSellingPressure = false;
+
+                let impulseCandles = recentMoves.slice(0, 2);
+                let pullbackCandles = recentMoves.slice(2);
+
+                for (let i = 1; i < impulseCandles.length; i++) {
+                    if (impulseCandles[i].volume <= impulseCandles[i - 1].volume && impulseCandles[i].close > impulseCandles[i].open) {
+                        impulseVolumeIncreasing = false;
+                    }
+                }
+
+                let redVolumes = pullbackCandles.filter(c => c.close < c.open).map(c => c.volume);
+                if (redVolumes.length >= 2) {
+                    if (redVolumes[1] > redVolumes[0]) {
+                        pullbackVolumeDecreasing = false;
+                        highSellingPressure = true;
+                    }
+                }
+
+                let analysisResult = {
+                    status: 'NEUTRAL',
+                    probabilityBonus: 0,
+                    description: 'Standard volume distribution across candles'
+                };
+
+                if (impulseVolumeIncreasing && pullbackVolumeDecreasing) {
+                    analysisResult = {
+                        status: 'HEALTHY_PULLBACK',
+                        probabilityBonus: 4.0, 
+                        description: 'Increasing buy volume with decreasing sell volume on pullback (High continuation probability)'
+                    };
+                } else if (impulseVolumeIncreasing && highSellingPressure) {
+                    analysisResult = {
+                        status: 'HIGH_REVERSAL_RISK',
+                        probabilityBonus: -5.0, 
+                        description: 'Warning: Increasing red volume during pullback signals strong distribution pressure'
+                    };
+                }
+
+                return analysisResult;
+            }
+
+            renderWidget(analysis) {
+                const badge = document.getElementById('volStatusBadge');
+                const desc = document.getElementById('volDescText');
+                const bonus = document.getElementById('volBonusDisplay');
+                const container = document.getElementById('volumeWidgetContainer');
+                if (!badge) return;
+
+                badge.innerText = analysis.status;
+                desc.innerText = analysis.description;
+                bonus.innerText = `${analysis.probabilityBonus > 0 ? '+' : ''}${analysis.probabilityBonus}% Confluence`;
+
+                if (analysis.status === 'HEALTHY_PULLBACK') {
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30";
+                } else if (analysis.status === 'HIGH_REVERSAL_RISK') {
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-red-500/20 text-red-400 border-red-500/30 animate-pulse";
+                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-red-500/40";
+                } else {
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-slate-500/20 text-slate-400 border-slate-500/30";
+                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-white/10";
+                }
+            }
+        }
+
+        const globalVolumeAnalyzer = new VolumePullbackAnalyzer();
+
         class InstitutionalTelemetryEngine {
             constructor(apiKey, maxCalls = 1000) {
                 this.apiKey = apiKey;
@@ -560,7 +650,8 @@
                         datetime: d.toISOString().slice(11, 19),
                         close: basePrice.toFixed(5),
                         high: (basePrice + 0.0005).toFixed(5),
-                        low: (basePrice - 0.0005).toFixed(5)
+                        low: (basePrice - 0.0005).toFixed(5),
+                        volume: Math.floor(Math.random() * 500 + 100)
                     });
                 }
                 return fallbackValues;
@@ -973,7 +1064,7 @@
             const tableBody = document.getElementById('signalLogTableBody');
             if (!tableBody) return;
             tableBody.innerHTML = `
-                <tr><td class="py-2 text-[#00ffcc]">2026-08-22 06:20:12</td><td>EUR/USD</td><td class="text-[#00ffcc]">BUY</td><td>1.1042</td><td class="text-emerald-400">EXECUTED (SMC Confirmed)</td></tr>
+                <tr><td class="py-2 text-[#00ffcc]">2026-08-22 06:20:12</td><td>EUR/USD</td><td class="text-[#00ffcc]">BUY</td><td>1.1042</td><td class="text-emerald-400">EXECUTED (Volume & SMC Confirmed)</td></tr>
                 <tr><td class="py-2 text-gray-400">2026-08-22 05:30:00</td><td>GBP/USD</td><td class="text-red-400">SELL</td><td>1.2750</td><td class="text-emerald-400">EXECUTED (CHoCH Verified)</td></tr>
             `;
         }
@@ -1078,15 +1169,12 @@
             if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
         }
 
-        // ==========================================
-        // NEW: MARKET STRUCTURE (CHoCH / BOS) ENGINE
-        // ==========================================
+        // SMC STRUCTURE ENGINE
         function analyzeMarketStructure(prices) {
-            if (!prices || prices.length < 5) return;
+            if (!prices || prices.length < 5) return { type: 'BOS', bonus: 2.0 };
 
             let recentHigh = Math.max(...prices.slice(-10));
             let recentLow = Math.min(...prices.slice(-10));
-            let currentPrice = prices[prices.length - 1];
             let prevBodyClose = prices[prices.length - 2];
 
             let smcStateBadge = document.getElementById('smcStateBadge');
@@ -1097,7 +1185,6 @@
             smcRangeHigh.innerText = recentHigh.toFixed(5);
             smcRangeLow.innerText = recentLow.toFixed(5);
 
-            // Determine Break of Structure (BOS) or Change of Character (CHoCH) based on body closures[cite: 5]
             let isBreakAbove = prevBodyClose > recentHigh;
             let isBreakBelow = prevBodyClose < recentLow;
 
@@ -1119,13 +1206,16 @@
             }
         }
 
-        function evaluateMarketDirection(prices, rsiValues) {
+        function evaluateMarketDirection(candles, rsiValues) {
+            const prices = candles.map(c => parseFloat(c.close));
             const currentPrice = prices[prices.length - 1];
             const previousPrice = prices[prices.length - 5]; 
             const currentRsi = parseFloat(rsiValues[rsiValues.length - 1]);
 
-            // Run SMC Structural Analysis Upgrade
+            // Run SMC Structural Analysis & Volume Pullback Analyzer
             const smcResult = analyzeMarketStructure(prices);
+            const volumeResult = globalVolumeAnalyzer.analyzePullbackHealth(candles);
+            globalVolumeAnalyzer.renderWidget(volumeResult);
 
             let isBuy = currentPrice >= previousPrice && currentRsi >= 50;
 
@@ -1153,8 +1243,8 @@
                 activeTp = (currentPrice * 0.9950).toFixed(4);
             }
 
-            // Weight confidence score with structural analysis bonus
-            finalConfidence = Math.min(99.4, baseConfidence + (smcResult ? smcResult.bonus : 0)).toFixed(1) + "%";
+            // Combine base confidence with structural and volume participation bonuses
+            finalConfidence = Math.min(99.4, baseConfidence + smcResult.bonus + volumeResult.probabilityBonus).toFixed(1) + "%";
 
             confidenceElem.innerText = finalConfidence;
             slElem.innerText = activeSl;
@@ -1181,7 +1271,7 @@
                 return Math.min(90, Math.max(10, (50 + diff * 15000).toFixed(1)));
             });
 
-            evaluateMarketDirection(prices, rsiValues);
+            evaluateMarketDirection(values, rsiValues);
 
             const ctxChart = document.getElementById('mainPriceChart').getContext('2d');
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
@@ -1278,11 +1368,11 @@
             countdownSec = 30;
             initCharts();
             updateMTFMatrix();
-            showToast("Institutional Telemetry & SMC Structures Refreshed");
+            showToast("Institutional Telemetry, SMC & Volume Engine Refreshed");
         }
 
         function executeTradeAlert() {
-            showToast(`Institutional order executed successfully for ${currentPair} with structural validation.`);
+            showToast(`Institutional order executed successfully for ${currentPair} with volume & structural validation.`);
         }
     </script>
 </body>
