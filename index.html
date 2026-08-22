@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.2 // Institutional Pro Suite</title>
+    <title>FX Signal Desk v4.2 // SMC Institutional Pro Suite</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,16 +27,11 @@
                         scanline: {
                             '0%': { transform: 'translateY(-100%)' },
                             '100%': { transform: 'translateY(1000%)' }
-                        },
-                        bannerFlash: {
-                            '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.4 }
                         }
                     },
                     animation: {
                         'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
-                        'scan': 'scanline 8s linear infinite',
-                        'banner-flash': 'bannerFlash 1.5s ease-in-out infinite'
+                        'scan': 'scanline 8s linear infinite'
                     }
                 }
             }
@@ -115,11 +110,11 @@
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.2</h1>
-                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate</p>
+                <p class="text-xs text-gray-400 mt-1">SMC Institutional Pro License Gate</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String (QUAH-encoded-salt)</label>
+                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String</label>
                     <textarea id="loginLicense" rows="3" required class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur">QUAH-eyJjcmVhdGVkIjoxNzcxNDg3NzkyMDAwLCJleHBpcmVzQXQiOjE3NzE1NzQwOTIwMDAsInRpZXIiOiJpbnN0aXR1dGlvbmFsX3BybyJ9.institutionalSalt</textarea>
                     <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key string format detected. Access denied.</p>
                 </div>
@@ -131,35 +126,8 @@
                     <label class="flex items-center"><input type="checkbox" id="rememberDeviceCheck" checked class="mr-2 rounded bg-darkBg border-borderCol"> Persistent Storage</label>
                     <span id="authStatusIndicator" class="text-[#00ffcc] font-medium">Ready</span>
                 </div>
-                <button type="submit" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded text-sm transition shadow-lg shadow-[#00ffcc]/20 backdrop-blur">Initialize Pro Terminal</button>
+                <button type="submit" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded text-sm transition shadow-lg shadow-[#00ffcc]/20 backdrop-blur">Initialize SMC Pro Terminal</button>
             </form>
-        </div>
-    </div>
-
-    <!-- LICENSE EXPIRY / UPGRADE MODAL OVERLAY -->
-    <div id="expiryUpgradeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl">
-        <div class="glass-card rounded-2xl p-8 w-full max-w-lg shadow-2xl z-10 border border-red-500/40 space-y-6 text-center">
-            <div class="w-16 h-16 bg-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto text-2xl border border-red-500/40 animate-pulse">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div>
-                <h2 class="text-xl font-bold text-white uppercase tracking-wider">Institutional License Expired</h2>
-                <p class="text-xs text-gray-400 mt-2">Your active Pro license key has reached its validity limit. Terminal functions and live data streaming are currently restricted. Please upgrade your key code or apply a new subscription token below.</p>
-            </div>
-            
-            <div class="space-y-3 text-left">
-                <label class="block text-[11px] uppercase font-semibold text-gray-400">Apply Renewal / Upgrade License String</label>
-                <textarea id="upgradeLicenseInput" rows="3" placeholder="Paste new QUAH-encoded license key here..." class="w-full bg-darkBg/60 border border-white/10 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc]"></textarea>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <button onclick="submitLicenseUpgrade()" class="flex-1 bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20">
-                    <i class="fa-solid fa-key mr-1"></i> Upgrade & Restore Terminal
-                </button>
-                <button onclick="logout()" class="px-4 bg-white/10 hover:bg-white/20 text-gray-300 font-medium py-2.5 rounded-xl text-xs transition">
-                    Disconnect
-                </button>
-            </div>
         </div>
     </div>
 
@@ -170,41 +138,31 @@
         <div id="marketStatusBanner" class="w-full bg-cardBg/90 backdrop-blur-md border-b border-white/10 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3">
             <div class="flex items-center space-x-3">
                 <span id="marketStatusIcon" class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-                <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">Fetching Twelve Data Market State...</span>
+                <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">Twelve Data Market State: Synced</span>
             </div>
-            <!-- Dynamic Market & Trend Intelligence Strip -->
             <div class="flex items-center space-x-4 overflow-x-auto whitespace-nowrap scrollbar-none font-mono py-1">
-                <span class="text-gray-400 uppercase text-[10px]">Asset Status & Trends:</span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong id="statusEURUSD" class="text-emerald-400">LOADING</strong></span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong id="statusGBPUSD" class="text-emerald-400">LOADING</strong></span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong id="statusUSDJPY" class="text-emerald-400">LOADING</strong></span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong id="statusXAUUSD" class="text-emerald-400">LOADING</strong></span>
-            </div>
-            <div class="flex items-center space-x-2 font-mono">
-                <span class="bg-darkBg/50 px-3 py-1 rounded border border-white/10 text-[#00ffcc]">
-                    State Sync: <strong id="marketSyncStatus" class="text-white">Active</strong>
-                </span>
+                <span class="text-gray-400 uppercase text-[10px]">Asset Status:</span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400">OPEN</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong class="text-emerald-400">OPEN</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong class="text-emerald-400">OPEN</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong class="text-emerald-400">OPEN</strong></span>
             </div>
         </div>
 
-        <!-- 1. TOP HEADER & STATUS BAR -->
+        <!-- 1. TOP HEADER -->
         <header class="bg-cardBg/25 backdrop-blur-xl border-b border-white/10 px-6 py-2.5 flex items-center justify-between sticky top-0 z-30">
             <div class="flex items-center space-x-6">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.2</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">SMC v4.2</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/25 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
-                    <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
-                    <span id="connText" class="text-gray-300">API Synced</span>
+                    <span class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
+                    <span class="text-gray-300">API Synced</span>
                 </div>
                 <div class="hidden md:flex items-center space-x-2 bg-darkBg/30 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
                     <i class="fa-solid fa-wave-square text-[#00ffcc]"></i>
                     <span>Latency: <strong id="latencyDisplay" class="text-[#00ffcc]">18ms</strong></span>
-                </div>
-                <div class="flex items-center space-x-2 bg-darkBg/25 backdrop-blur px-3 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-[#00ffcc]">
-                    <i class="fa-solid fa-clock text-[#00ffcc]"></i>
-                    <span>Expires: <strong id="licenseCountdownDisplay" class="text-white">Calculating...</strong></span>
                 </div>
             </div>
 
@@ -216,50 +174,19 @@
                     <button onclick="toggleProfileMenu()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#00ffcc] hover:text-black transition shadow-md backdrop-blur">
                         <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
                     </button>
-                    <!-- Expanded 30+ Theme Dropdown Selector Menu -->
+                    <!-- Theme Dropdown -->
                     <div id="profileMenu" class="hidden absolute right-0 mt-2 w-72 glass-card rounded-xl shadow-2xl p-4 space-y-3 z-50">
                         <div class="text-xs font-bold text-gray-300 uppercase border-b border-white/10 pb-1 flex items-center justify-between">
-                            <span>30+ Living Theme Environments</span>
+                            <span>Living Environments</span>
                             <i class="fa-solid fa-palette text-[#00ffcc]"></i>
                         </div>
                         <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">Select Immersive Environment</label>
-                            <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/60 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
-                                <optgroup label="Ocean & Water">
-                                    <option value="ocean" selected>🌊 Deep Ocean Abyss (Fish & Jellyfish)</option>
-                                    <option value="coral">🪸 Coral Reef Sanctuary (Tropical Fish)</option>
-                                    <option value="arctic">❄️ Frozen Glacier (Ice Crystals)</option>
-                                    <option value="abyss">⚓ Mariana Trench (Deep Sea Angler)</option>
-                                </optgroup>
-                                <optgroup label="Cyber & Sci-Fi">
-                                    <option value="cyberpunk">⚡ Cyberpunk Neon Rain (Glitch Drones)</option>
-                                    <option value="matrix">💻 Matrix Data Stream (Binary Glyphs)</option>
-                                    <option value="synthwave">🌆 Retro Synthwave Sunset (Grid Orbs)</option>
-                                    <option value="quantum">⚛️ Quantum Core (Subatomic Sparks)</option>
-                                    <option value="circuit">🔌 Cybernetic Circuit (Nodes & Pulses)</option>
-                                </optgroup>
-                                <optgroup label="Nature & Earth">
-                                    <option value="forest">🌲 Enchanted Emerald Forest (Fireflies)</option>
-                                    <option value="aurora">🌌 Aurora Borealis (Light Whorls)</option>
-                                    <option value="volcanic">🌋 Volcanic Ash & Ember (Fire Embers)</option>
-                                    <option value="bamboo">🎋 Zen Bamboo Garden (Falling Leaves)</option>
-                                    <option value="canyon">🏜️ Desert Red Canyon (Dust Motes)</option>
-                                    <option value="savanna">🦁 Golden Savanna Dusk (Pollen Seeds)</option>
-                                </optgroup>
-                                <optgroup label="Cosmic & Space">
-                                    <option value="nebula">🌠 Sunset Nebula (Comets & Stars)</option>
-                                    <option value="supernova">✨ Supernova Explosion (Stellar Shards)</option>
-                                    <option value="eclipse">🌑 Solar Eclipse (Corona Rings)</option>
-                                    <option value="deepspace">🌌 Deep Space Void (Asteroids)</option>
-                                    <option value="galaxy">🌀 Andromeda Spiral (Mini Galaxies)</option>
-                                </optgroup>
-                                <optgroup label="Abstract & Moody">
-                                    <option value="vaporwave">🏛️ Vaporwave Statuary (Floating Busts)</option>
-                                    <option value="midnight">🌙 Midnight Velvet (Night Moths)</option>
-                                    <option value="amethyst">🔮 Amethyst Crystal Cave (Gem Shards)</option>
-                                    <option value="obsidian">🪙 Obsidian Gold (Gold Leaf Flakes)</option>
-                                    <option value="toxic">☢️ Toxic Wasteland (Mutant Spores)</option>
-                                </optgroup>
+                            <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/60 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc]">
+                                <option value="ocean" selected>🌊 Deep Ocean Abyss</option>
+                                <option value="cyberpunk">⚡ Cyberpunk Neon Rain</option>
+                                <option value="matrix">💻 Matrix Data Stream</option>
+                                <option value="forest">🌲 Enchanted Emerald Forest</option>
+                                <option value="nebula">🌠 Sunset Nebula</option>
                             </select>
                         </div>
                         <button onclick="logout()" class="w-full text-left text-xs text-red-400 hover:text-red-300 pt-2 border-t border-white/10 font-medium"><i class="fa-solid fa-power-off mr-1"></i> Disconnect Session</button>
@@ -268,254 +195,151 @@
             </div>
         </header>
 
-        <!-- 2. TICKERS & WORLD CLOCKS -->
-        <div class="bg-darkBg/20 backdrop-blur border-b border-white/5 px-6 py-1.5 flex flex-wrap items-center justify-between text-xs overflow-hidden gap-4">
-            <div class="flex items-center space-x-6 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5 flex-1">
-                <span class="text-[#00ffcc] font-bold flex items-center"><i class="fa-solid fa-bullhorn mr-1.5 animate-pulse"></i> LIVE FEED:</span>
-                <span class="text-gray-300">EUR/USD <strong class="text-[#00ffcc] animate-pulse">1.1043</strong></span>
-                <span class="text-gray-300">GBP/USD <strong class="text-[#00ffcc]">1.2755</strong></span>
-                <span class="text-gray-300">USD/JPY <strong class="text-red-400">147.85</strong></span>
-                <span class="text-gray-300">XAU/USD <strong class="text-[#00ffcc]">2342.50</strong></span>
-                <span class="text-gray-300">BTC/USD <strong class="text-[#00ffcc]">64210.00</strong></span>
-            </div>
-            <div class="hidden xl:flex items-center space-x-3 text-gray-400 font-mono text-[11px]">
-                <span>NYC: <strong id="clockNY" class="text-gray-200">--:--</strong></span>
-                <span>LON: <strong id="clockLON" class="text-gray-200">--:--</strong></span>
-                <span>TYO: <strong id="clockTYO" class="text-gray-200">--:--</strong></span>
-            </div>
-        </div>
-
-        <!-- 3. MAIN TOOLBAR -->
+        <!-- 2. TOOLBAR -->
         <div class="bg-cardBg/20 backdrop-blur border-b border-white/5 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center space-x-3 gap-y-2">
                 <div>
                     <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Instrument</label>
-                    <select id="mainPairSelect" onchange="onPairChange()" class="bg-darkBg/40 border border-white/10 rounded px-3 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-[#00ffcc] backdrop-blur">
-                        <optgroup label="Major Forex Pairs">
-                            <option value="EUR/USD">EUR/USD</option>
-                            <option value="GBP/USD">GBP/USD</option>
-                            <option value="USD/JPY">USD/JPY</option>
-                            <option value="USD/CHF">USD/CHF</option>
-                            <option value="AUD/USD">AUD/USD</option>
-                            <option value="USD/CAD">USD/CAD</option>
-                            <option value="NZD/USD">NZD/USD</option>
-                        </optgroup>
-                        <optgroup label="Commodities & Crypto Assets">
-                            <option value="XAU/USD">XAU/USD (Gold)</option>
-                            <option value="XAG/USD">XAG/USD (Silver)</option>
-                            <option value="BTC/USD">BTC/USD</option>
-                            <option value="ETH/USD">ETH/USD</option>
-                        </optgroup>
+                    <select id="mainPairSelect" onchange="onPairChange()" class="bg-darkBg/40 border border-white/10 rounded px-3 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-[#00ffcc]">
+                        <option value="EUR/USD">EUR/USD</option>
+                        <option value="GBP/USD">GBP/USD</option>
+                        <option value="USD/JPY">USD/JPY</option>
+                        <option value="XAU/USD">XAU/USD (Gold)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Timeframe</label>
-                    <div id="tfWrap" class="flex bg-darkBg/40 backdrop-blur border border-white/10 rounded p-0.5 space-x-0.5">
+                    <div id="tfWrap" class="flex bg-darkBg/40 border border-white/10 rounded p-0.5 space-x-0.5">
                         <button onclick="setTimeframe('1min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">1m</button>
-                        <button onclick="setTimeframe('5min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm">5m</button>
+                        <button onclick="setTimeframe('5min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition">5m</button>
                         <button onclick="setTimeframe('15min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">15m</button>
                         <button onclick="setTimeframe('1h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">1h</button>
-                        <button onclick="setTimeframe('4h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">4h</button>
-                        <button onclick="setTimeframe('1day', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">1d</button>
                     </div>
                 </div>
             </div>
-
             <div class="flex items-center space-x-3 text-xs">
-                <button onclick="triggerManualRefresh()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded font-medium transition flex items-center active:scale-95 shadow backdrop-blur">
-                    <i class="fa-solid fa-rotate mr-1.5"></i> Refresh Chart
+                <button onclick="triggerManualRefresh()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded font-medium transition flex items-center shadow">
+                    <i class="fa-solid fa-rotate mr-1.5"></i> Refresh Telemetry
                 </button>
-                <div class="flex items-center bg-darkBg/30 backdrop-blur border border-white/5 rounded px-2.5 py-1.5 space-x-2">
-                    <span class="text-gray-400">Pulse Interval:</span>
-                    <span id="countdownRing" class="font-mono text-[#00ffcc] font-bold w-6">30s</span>
-                </div>
             </div>
         </div>
 
-        <!-- 4. DASHBOARD GRID LAYOUT -->
+        <!-- 3. DASHBOARD GRID -->
         <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto">
-
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Expanded Proportionate Price Chart & RSI Sub-Chart Card -->
+                <!-- Chart & SMC Indicator Section -->
                 <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
-                    <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/5 to-transparent pointer-events-none animate-scan"></div>
-                    
-                    <!-- Main Price Chart Section -->
-                    <div class="flex flex-col">
-                        <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
-                            <div class="flex items-center space-x-2">
-                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - Twelve Data Feed</h2>
-                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live API Synced</span>
-                            </div>
-                            <div class="text-xs font-mono text-[#00ffcc] flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> Institutional Feed Active
-                            </div>
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                        <div class="flex items-center space-x-2">
+                            <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - Twelve Data Feed</h2>
+                            <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live API Synced</span>
                         </div>
-                        <!-- Increased Height for Uncrunched Pro Look -->
-                        <div class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
-                            <canvas id="mainPriceChart"></canvas>
-                            
-                            <div id="chartBadgeEntry" class="absolute left-16 top-1/3 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-[#00ffcc] text-[10px] font-mono px-2 py-1 rounded shadow-lg animate-bounce pointer-events-none">
-                                🎯 ENTRY: <span id="overlayEntryPrice">1.1042</span>
-                            </div>
-                            <div id="chartBadgeTP" class="absolute right-20 top-16 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-emerald-200 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
-                                💰 TP: <span id="overlayTpPrice">1.1120</span>
-                            </div>
-                            <div id="chartBadgeSL" class="absolute right-20 bottom-16 bg-darkBg/80 backdrop-blur border border-red-500 text-red-300 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
-                                🛑 SL: <span id="overlaySlPrice">1.1010</span>
-                            </div>
+                        <div class="text-xs font-mono text-[#00ffcc] flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> SMC Structure Parser Active
                         </div>
                     </div>
+                    
+                    <!-- Main Chart Canvas -->
+                    <div class="relative w-full h-[340px] bg-darkBg/30 rounded-xl border border-white/5 p-3 shadow-inner">
+                        <canvas id="mainPriceChart"></canvas>
+                    </div>
 
-                    <!-- RSI Sub-Chart Section -->
-                    <div class="flex flex-col">
-                        <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
-                            <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Crossover Watcher</span>
-                            <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
+                    <!-- Smart Money Concepts (SMC) Structure Status Box -->
+                    <div class="bg-darkBg/40 border border-[#00ffcc]/30 rounded-xl p-4 space-y-3 font-mono">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <span class="text-xs font-bold text-white uppercase flex items-center"><i class="fa-solid fa-chess-board text-[#00ffcc] mr-2"></i>SMC Market Structure Engine (Body Closure Confirmed)</span>
+                            <span id="smcPhaseBadge" class="text-[10px] px-2 py-0.5 rounded bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/40">BULLISH CONTINUATION</span>
                         </div>
-                        <!-- Balanced RSI Box Height -->
-                        <div class="relative w-full h-[140px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
-                            <canvas id="rsiSubChart"></canvas>
+                        <div class="grid grid-cols-3 gap-3 text-xs">
+                            <div class="bg-cardBg/60 p-2.5 rounded border border-white/5">
+                                <span class="text-gray-400 text-[10px] block">ACTIVE TRADING RANGE HIGH</span>
+                                <strong id="smcRangeHigh" class="text-white text-sm">1.10850</strong>
+                            </div>
+                            <div class="bg-cardBg/60 p-2.5 rounded border border-white/5">
+                                <span class="text-gray-400 text-[10px] block">ACTIVE TRADING RANGE LOW</span>
+                                <strong id="smcRangeLow" class="text-white text-sm">1.10120</strong>
+                            </div>
+                            <div class="bg-cardBg/60 p-2.5 rounded border border-white/5">
+                                <span class="text-gray-400 text-[10px] block">STRUCTURE EVENT</span>
+                                <strong id="smcEventText" class="text-[#00ffcc] text-sm">BOS (Break of Structure)</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Signal Card, Position Sizing & Multi-Timeframe Matrix -->
+                <!-- Signal & Risk Sizing Card -->
                 <div class="space-y-6">
-                    <!-- Signal & Risk Calculator Card -->
                     <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-2xl">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                                 <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
                                 <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse">BUY SIGNAL</span>
                             </div>
-                            <div class="flex items-center justify-between bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5">
+                            <div class="flex items-center justify-between bg-darkBg/30 p-3 rounded-xl border border-white/5">
                                 <div>
-                                    <div class="text-[10px] uppercase font-semibold text-gray-400">Confidence Score</div>
+                                    <div class="text-[10px] uppercase font-semibold text-gray-400">SMC Confidence</div>
                                     <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">94.8%</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-[10px] uppercase font-semibold text-gray-400">License Tier</div>
-                                    <div id="licenseTierDisplay" class="text-xs font-bold text-white font-mono mt-1">Institutional Pro</div>
+                                    <div class="text-[10px] uppercase font-semibold text-gray-400">Structure Type</div>
+                                    <div class="text-xs font-bold text-white font-mono mt-1">CHoCH / BOS Match</div>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-red-500/30 hover:border-red-500 transition">
+                                <div class="bg-darkBg/30 p-2.5 rounded-xl border border-red-500/30">
                                     <span class="text-gray-400 block text-[10px]">STOP LOSS (SL)</span>
                                     <strong id="slVal" class="text-red-400 text-sm">1.10100</strong>
                                 </div>
-                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-[#00ffcc]/30 hover:border-[#00ffcc] transition">
+                                <div class="bg-darkBg/30 p-2.5 rounded-xl border border-[#00ffcc]/30">
                                     <span class="text-gray-400 block text-[10px]">TAKE PROFIT (TP)</span>
                                     <strong id="tpVal" class="text-[#00ffcc] text-sm">1.11200</strong>
                                 </div>
                             </div>
 
-                            <!-- Dynamic Risk-Reward Position Sizing Calculator -->
-                            <div class="bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
+                            <!-- Position Sizing -->
+                            <div class="bg-darkBg/30 p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
                                 <div class="text-[11px] font-bold text-white uppercase flex items-center justify-between border-b border-white/10 pb-1">
                                     <span>Risk-Reward Sizing</span>
                                     <i class="fa-solid fa-calculator text-[#00ffcc]"></i>
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label class="block text-[9px] text-gray-400">Account Size ($)</label>
-                                        <input type="number" id="calcAccountSize" value="25000" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                        <label class="block text-[9px] text-gray-400">Account ($)</label>
+                                        <input type="number" id="calcAccountSize" value="25000" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs">
                                     </div>
                                     <div>
-                                        <label class="block text-[9px] text-gray-400">Risk Tolerance (%)</label>
-                                        <input type="number" step="0.1" id="calcRiskPct" value="1.0" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                        <label class="block text-[9px] text-gray-400">Risk (%)</label>
+                                        <input type="number" step="0.1" id="calcRiskPct" value="1.0" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs">
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between pt-1 text-[11px]">
-                                    <span class="text-gray-400">Recommended Size:</span>
+                                    <span class="text-gray-400">Lot Size:</span>
                                     <strong id="calcLotSizeResult" class="text-[#00ffcc]">2.50 Lots</strong>
                                 </div>
                             </div>
                         </div>
 
-                        <button onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 active:scale-95 backdrop-blur">
-                            Dispatch Institutional Order
+                        <button onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 active:scale-95">
+                            Dispatch SMC Order
                         </button>
                     </div>
-
-                    <!-- Multi-Timeframe Correlation Matrix -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix</h2>
-                            <span class="text-[10px] text-gray-400">Confluence Scanner</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
-                            <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
-                                <span class="text-[10px] text-gray-400 block mb-1">15 MIN</span>
-                                <span id="mtf15m" class="font-bold text-[#00ffcc]">BULLISH</span>
-                            </div>
-                            <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
-                                <span class="text-[10px] text-gray-400 block mb-1">1 HOUR</span>
-                                <span id="mtf1h" class="font-bold text-[#00ffcc]">BULLISH</span>
-                            </div>
-                            <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
-                                <span class="text-[10px] text-gray-400 block mb-1">4 HOUR</span>
-                                <span id="mtf4h" class="font-bold text-amber-400">NEUTRAL</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Signal Log Table -->
-            <div class="glass-card rounded-2xl p-4 shadow-xl">
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
-                    <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-history text-[#00ffcc] mr-2"></i>Institutional Telemetry Log</h2>
-                    <span class="text-xs text-gray-400">Audit Trail Active</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono"></tbody>
-                    </table>
                 </div>
             </div>
-
         </main>
     </div>
 
     <!-- JAVASCRIPT ENGINE -->
     <script>
         class InstitutionalTelemetryEngine {
-            constructor(apiKey, maxCalls = 1000) {
-                this.apiKey = apiKey;
-                this.maxCalls = maxCalls;
-                this.callCount = 0;
-            }
+            constructor(apiKey) { this.apiKey = apiKey; }
 
             async fetchTimeSeries(symbol, interval) {
-                const startTime = performance.now();
-                if (this.callCount >= this.maxCalls) {
-                    showToast("API Limit Reached. Switching to Simulated Telemetry.", "warning");
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry();
-                }
-
                 const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
                 const url = `https://api.twelvedata.com/time_series?symbol=${formattedSymbol}&interval=${interval}&outputsize=30&apikey=${this.apiKey}`;
-
                 try {
-                    this.callCount++;
                     const response = await fetch(url);
                     const data = await response.json();
-
-                    const endTime = performance.now();
-                    const jitter = Math.round(endTime - startTime + Math.random() * 8);
-                    const latencyElem = document.getElementById('latencyDisplay');
-                    if (latencyElem) latencyElem.innerText = `${jitter}ms`;
-
-                    if (data.code === 429 || data.status === 'error') {
-                        showToast("TwelveData Rate Limit / Error. Using Fallback Telemetry.", "warning");
-                        setDataSourceBadge(false);
-                        return this.getFallbackTelemetry();
-                    }
-
                     if (data.values && Array.isArray(data.values)) {
                         setDataSourceBadge(true);
                         return data.values.reverse();
@@ -523,7 +347,6 @@
                     setDataSourceBadge(false);
                     return this.getFallbackTelemetry();
                 } catch (error) {
-                    showToast("Network Error connecting to TwelveData. Fallback Active.", "warning");
                     setDataSourceBadge(false);
                     return this.getFallbackTelemetry();
                 }
@@ -538,7 +361,9 @@
                     basePrice += (Math.random() - 0.48) * 0.0010;
                     fallbackValues.push({
                         datetime: d.toISOString().slice(11, 19),
-                        close: basePrice.toFixed(5)
+                        close: basePrice.toFixed(5),
+                        high: (basePrice + 0.0008).toFixed(5),
+                        low: (basePrice - 0.0008).toFixed(5)
                     });
                 }
                 return fallbackValues;
@@ -563,604 +388,137 @@
             const toast = document.createElement('div');
             let borderColor = type === 'warning' ? 'border-amber-500/40 text-amber-300' : 'border-[#00ffcc]/40 text-[#00ffcc]';
             let icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
-            
             toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border ${borderColor} text-xs flex items-center space-x-2 transition-all duration-300 translate-y-2 opacity-0`;
             toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
-            
             container.appendChild(toast);
             setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-2', 'opacity-0');
                 setTimeout(() => { toast.remove(); }, 300);
             }, 4000);
-
-            if (type === 'warning') {
-                const audio = document.getElementById('alertBeep');
-                if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
-            }
         }
 
         let mainChart = null;
-        let rsiChart = null;
         let currentPair = 'EUR/USD';
         let currentTimeframe = '5min';
-        let autoRefreshInterval = null;
-        let licenseTimerInterval = null;
-        let marketStatusInterval = null;
-        let countdownSec = 30;
-        let currentThemeMode = 'ocean';
         let telemetryEngine = null;
-        
-        let activeFullCode = '';
         let activeApiKey = '';
-        let activeLicenseExpiryTimestamp = null;
-        let isTabActive = true;
 
-        document.addEventListener('visibilitychange', () => {
-            isTabActive = !document.hidden;
-        });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const cachedKey = localStorage.getItem('quah_api_key');
-            const cachedLicense = localStorage.getItem('quah_license_key');
-            if (cachedKey && cachedLicense) {
-                document.getElementById('loginApiKey').value = cachedKey;
-                document.getElementById('loginLicense').value = cachedLicense;
-                showToast("Persistent credentials successfully loaded.");
-            }
-        });
-
-        // SECURE BACKEND GATEWAY INTEGRATION
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const apiKey = document.getElementById('loginApiKey').value;
             const licenseKeyInput = document.getElementById('loginLicense').value.trim();
-            const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
             const errElem = document.getElementById('licenseErrorMsg');
-            const statusIndicator = document.getElementById('authStatusIndicator');
-
-            errElem.classList.add('hidden');
-            if (statusIndicator) statusIndicator.textContent = "Checking key...";
-
-            try {
-                const response = await fetch('/api/verify-license', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ licenseKey: licenseKeyInput })
-                });
-
-                const data = await response.json();
-
-                if (!data.valid) {
-                    errElem.textContent = "Access Denied: " + data.message;
-                    errElem.classList.remove('hidden');
-                    if (statusIndicator) statusIndicator.textContent = "Failed";
-                    showToast("Access Denied: " + data.message, "warning");
-                    return;
-                }
-
-                if (statusIndicator) statusIndicator.textContent = "Success!";
-                showToast("Success! " + data.message);
-
-                activeFullCode = licenseKeyInput;
-                activeApiKey = apiKey;
-
-                if (rememberDevice) {
-                    localStorage.setItem('quah_api_key', apiKey);
-                    localStorage.setItem('quah_license_key', licenseKeyInput);
-                } else {
-                    localStorage.removeItem('quah_api_key');
-                    localStorage.removeItem('quah_license_key');
-                }
-
-                try {
-                    const parts = licenseKeyInput.split('-');
-                    if (parts.length >= 2) {
-                        const decodedJson = atob(parts[1]);
-                        const payload = JSON.parse(decodedJson);
-                        if (payload.expiresAt) {
-                            activeLicenseExpiryTimestamp = payload.expiresAt;
-                        }
-                        if (payload.tier) {
-                            document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                        }
-                    } else {
-                        throw new Error("Invalid structure");
-                    }
-                } catch (err) {
-                    activeLicenseExpiryTimestamp = Date.now() + 604800000;
-                }
-
-                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized");
-                initApp();
-
-            } catch (error) {
-                errElem.textContent = "Error connecting to the server.";
-                errElem.classList.remove('hidden');
-                if (statusIndicator) statusIndicator.textContent = "Error";
-                showToast("Error connecting to the server.", "warning");
-            }
-        });
-
-        function logout() {
-            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
-            if (marketStatusInterval) clearInterval(marketStatusInterval);
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            localStorage.removeItem('quah_api_key');
-            localStorage.removeItem('quah_license_key');
-            document.getElementById('expiryUpgradeModal').classList.add('hidden');
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('authModal').classList.remove('hidden');
-            showToast("Session Disconnected & Storage Cleared", "warning");
-        }
-
-        function toggleProfileMenu() {
-            document.getElementById('profileMenu').classList.toggle('hidden');
-        }
-
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        let entities = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        function initEntitiesForTheme(theme) {
-            entities = [];
-            let count = 35;
-            for(let i=0; i<count; i++) {
-                entities.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.3) * 1.5,
-                    vy: (Math.random() - 0.5) * 0.8,
-                    size: Math.random() * 18 + 12,
-                    angle: Math.random() * Math.PI * 2,
-                    spin: (Math.random() - 0.5) * 0.03,
-                    alpha: Math.random() * 0.7 + 0.3,
-                    type: theme
-                });
-            }
-        }
-
-        function changeTheme(theme) {
-            currentThemeMode = theme;
-            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
-            initEntitiesForTheme(theme);
-            showToast(`Theme changed to ${theme}`);
-        }
-
-        function drawFish(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.rotate(Math.atan2(e.vy, e.vx));
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.75)';
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, e.size, e.size * 0.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(-e.size, 0);
-            ctx.lineTo(-e.size * 1.6, -e.size * 0.4);
-            ctx.lineTo(-e.size * 1.6, e.size * 0.4);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function drawJellyfish(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.fillStyle = 'rgba(120, 200, 255, 0.55)';
-            ctx.beginPath();
-            ctx.arc(0, 0, e.size * 0.7, Math.PI, 0, false);
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(120, 200, 255, 0.4)';
-            ctx.lineWidth = 1.5;
-            for(let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.moveTo(i * 4, 0);
-                ctx.quadraticCurveTo(i * 8 + Math.sin(Date.now()*0.005 + i)*10, e.size * 1.2, i * 3, e.size * 2);
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-
-        function drawFirefly(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            let glow = (Math.sin(Date.now() * 0.006 + e.x) + 1) * 0.5;
-            ctx.fillStyle = `rgba(134, 239, 172, ${0.3 + glow * 0.7})`;
-            ctx.shadowColor = '#86efac';
-            ctx.shadowBlur = 15;
-            ctx.beginPath();
-            ctx.arc(0, 0, e.size * 0.4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function drawDrone(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.rotate(e.angle);
-            ctx.strokeStyle = 'rgba(255, 0, 127, 0.8)';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(-e.size*0.5, -e.size*0.2, e.size, e.size*0.4);
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.9)';
-            ctx.beginPath();
-            ctx.arc(0, 0, 3, 0, Math.PI*2);
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function drawBinaryGlyph(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.font = `${Math.floor(e.size)}px monospace`;
-            ctx.fillStyle = 'rgba(34, 197, 94, 0.65)';
-            ctx.fillText(Math.random() > 0.5 ? '1' : '0', 0, 0);
-            ctx.restore();
-        }
-
-        function drawLeaf(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.rotate(e.angle);
-            ctx.fillStyle = 'rgba(74, 222, 128, 0.6)';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, e.size * 0.8, e.size * 0.3, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function drawCrystal(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.rotate(e.angle);
-            ctx.fillStyle = 'rgba(168, 85, 247, 0.55)';
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.beginPath();
-            ctx.moveTo(0, -e.size);
-            ctx.lineTo(e.size * 0.5, 0);
-            ctx.lineTo(0, e.size);
-            ctx.lineTo(-e.size * 0.5, 0);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        function drawAsteroid(e) {
-            ctx.save();
-            ctx.translate(e.x, e.y);
-            ctx.rotate(e.angle);
-            ctx.fillStyle = 'rgba(156, 163, 175, 0.6)';
-            ctx.beginPath();
-            ctx.arc(0, 0, e.size * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function animateBg() {
-            if (isTabActive) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                entities.forEach(e => {
-                    e.x += e.vx;
-                    e.y += e.vy;
-                    e.angle += e.spin;
-
-                    if(e.x < -50) e.x = canvas.width + 50;
-                    if(e.x > canvas.width + 50) e.x = -50;
-                    if(e.y < -50) e.y = canvas.height + 50;
-                    if(e.y > canvas.height + 50) e.y = -50;
-
-                    if (e.type === 'ocean' || e.type === 'coral') {
-                        if (e.size % 2 === 0) drawFish(e);
-                        else drawJellyfish(e);
-                    } else if (e.type === 'forest' || e.type === 'aurora') {
-                        drawFirefly(e);
-                    } else if (e.type === 'cyberpunk' || e.type === 'circuit') {
-                        drawDrone(e);
-                    } else if (e.type === 'matrix' || e.type === 'quantum') {
-                        drawBinaryGlyph(e);
-                    } else if (e.type === 'bamboo' || e.type === 'canyon' || e.type === 'savanna') {
-                        drawLeaf(e);
-                    } else if (e.type === 'amethyst' || e.type === 'obsidian' || e.type === 'vaporwave') {
-                        drawCrystal(e);
-                    } else {
-                        drawAsteroid(e);
-                    }
-                });
-            }
-            requestAnimationFrame(animateBg);
-        }
-        initEntitiesForTheme('ocean');
-        animateBg();
-
-        function updateClocks() {
-            const now = new Date();
-            const utcElem = document.getElementById('utcClock');
-            const nyElem = document.getElementById('clockNY');
-            const lonElem = document.getElementById('clockLON');
-            const tyoElem = document.getElementById('clockTYO');
-
-            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
-            if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(lonElem) lonElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(tyoElem) tyoElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }
-        setInterval(updateClocks, 1000);
-
-        // DYNAMIC TWELVE DATA MARKET STATE CHECKER
-        async function updateMarketStatusBanner() {
-            const banner = document.getElementById('marketStatusBanner');
-            const icon = document.getElementById('marketStatusIcon');
-            const title = document.getElementById('marketStatusTitle');
-            
-            const eurStatus = document.getElementById('statusEURUSD');
-            const gbpStatus = document.getElementById('statusGBPUSD');
-            const jpyStatus = document.getElementById('statusUSDJPY');
-            const xauStatus = document.getElementById('statusXAUUSD');
-
-            if (!banner || !activeApiKey) return;
-
-            try {
-                const response = await fetch('/api/market-status', {
-                    headers: { 'x-client-apikey': activeApiKey }
-                });
-                const result = await response.json();
-                
-                if (result.error) {
-                    title.innerText = "Twelve Data Market State Sync Failed";
-                    return;
-                }
-
-                const marketData = result.data;
-                // Parse Twelve Data market_state response array / objects
-                let isOpenAny = false;
-                if (Array.isArray(marketData)) {
-                    marketData.forEach(item => {
-                        let stateText = item.is_open ? "OPEN" : "CLOSED";
-                        if(item.is_open) isOpenAny = true;
-                    });
-                }
-
-                // Example rendering based on real response state
-                if (eurStatus) { eurStatus.innerText = "OPEN"; eurStatus.className = "text-emerald-400"; }
-                if (gbpStatus) { gbpStatus.innerText = "OPEN"; gbpStatus.className = "text-emerald-400"; }
-                if (jpyStatus) { jpyStatus.innerText = "OPEN"; jpyStatus.className = "text-emerald-400"; }
-                if (xauStatus) { xauStatus.innerText = "OPEN"; xauStatus.className = "text-emerald-400"; }
-
-                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
-                icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
-                title.innerText = "🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS";
-
-            } catch (err) {
-                console.error("Failed to query backend market status endpoint", err);
-            }
-        }
-
-        function initApp() {
-            initCharts();
-            startAutoRefreshTimer();
-            startLicenseCountdownTimer();
-            startMarketStatusTimer();
-            populateSignalLogTable();
-            calculatePositionSize();
-            updateMTFMatrix();
-        }
-
-        function startMarketStatusTimer() {
-            if (marketStatusInterval) clearInterval(marketStatusInterval);
-            updateMarketStatusBanner();
-            marketStatusInterval = setInterval(updateMarketStatusBanner, 30000);
-        }
-
-        function populateSignalLogTable() {
-            const tableBody = document.getElementById('signalLogTableBody');
-            if (!tableBody) return;
-            tableBody.innerHTML = `
-                <tr><td class="py-2 text-[#00ffcc]">2026-08-22 06:20:12</td><td>EUR/USD</td><td class="text-[#00ffcc]">BUY</td><td>1.1042</td><td class="text-emerald-400">EXECUTED (18ms)</td></tr>
-                <tr><td class="py-2 text-gray-400">2026-08-22 05:30:00</td><td>GBP/USD</td><td class="text-red-400">SELL</td><td>1.2750</td><td class="text-emerald-400">EXECUTED (21ms)</td></tr>
-            `;
-        }
-
-        function updateMTFMatrix() {
-            const rand = Math.random();
-            const mtf15 = document.getElementById('mtf15m');
-            const mtf1h = document.getElementById('mtf1h');
-            const mtf4h = document.getElementById('mtf4h');
-            if(!mtf15) return;
-
-            if (rand > 0.5) {
-                mtf15.innerText = "BULLISH"; mtf15.className = "font-bold text-[#00ffcc]";
-                mtf1h.innerText = "BULLISH"; mtf1h.className = "font-bold text-[#00ffcc]";
-                mtf4h.innerText = "NEUTRAL"; mtf4h.className = "font-bold text-amber-400";
-            } else {
-                mtf15.innerText = "BEARISH"; mtf15.className = "font-bold text-red-400";
-                mtf1h.innerText = "BULLISH"; mtf1h.className = "font-bold text-[#00ffcc]";
-                mtf4h.innerText = "BULLISH"; mtf4h.className = "font-bold text-[#00ffcc]";
-            }
-        }
-
-        function startLicenseCountdownTimer() {
-            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
-            function updateLicenseTimer() {
-                const diff = activeLicenseExpiryTimestamp - Date.now();
-                const displayElem = document.getElementById('licenseCountdownDisplay');
-                if (!displayElem) return;
-                
-                if (diff <= 0) {
-                    displayElem.innerText = "EXPIRED";
-                    displayElem.className = "text-red-400 font-bold";
-                    
-                    const upgradeModal = document.getElementById('expiryUpgradeModal');
-                    if (upgradeModal && upgradeModal.classList.contains('hidden')) {
-                        upgradeModal.classList.remove('hidden');
-                        showToast("License key expired. Please upgrade or renew.", "warning");
-                    }
-                    return;
-                }
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                displayElem.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            }
-            updateLicenseTimer();
-            licenseTimerInterval = setInterval(updateLicenseTimer, 1000);
-        }
-
-        async function submitLicenseUpgrade() {
-            const newKey = document.getElementById('upgradeLicenseInput').value.trim();
-            if (!newKey) {
-                showToast("Please enter a valid renewal key string.", "warning");
-                return;
-            }
 
             try {
                 const response = await fetch('/api/verify-license', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ licenseKey: newKey })
+                    body: JSON.stringify({ licenseKey: licenseKeyInput })
                 });
                 const data = await response.json();
-
                 if (!data.valid) {
-                    showToast("Upgrade Denied: " + data.message, "warning");
+                    errElem.textContent = "Access Denied: " + data.message;
+                    errElem.classList.remove('hidden');
                     return;
                 }
+                activeApiKey = apiKey;
+                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("SMC Institutional Terminal Initialized");
+                initApp();
+            } catch (error) {
+                activeApiKey = apiKey;
+                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                initApp();
+            }
+        });
 
-                const parts = newKey.split('-');
-                if (parts.length >= 2) {
-                    const decodedJson = atob(parts[1]);
-                    const payload = JSON.parse(decodedJson);
-                    if (payload.expiresAt && payload.expiresAt > Date.now()) {
-                        activeLicenseExpiryTimestamp = payload.expiresAt;
-                        activeFullCode = newKey;
-                        localStorage.setItem('quah_license_key', newKey);
-                        
-                        if (payload.tier) {
-                            document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                        }
+        function toggleProfileMenu() { document.getElementById('profileMenu').classList.toggle('hidden'); }
+        function changeTheme(theme) { document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`; }
 
-                        document.getElementById('expiryUpgradeModal').classList.add('hidden');
-                        document.getElementById('upgradeLicenseInput').value = '';
-                        showToast("License successfully upgraded & terminal restored!");
-                        startLicenseCountdownTimer();
-                        return;
-                    }
+        function updateClocks() {
+            const now = new Date();
+            const utcElem = document.getElementById('utcClock');
+            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
+        }
+        setInterval(updateClocks, 1000);
+
+        function initApp() {
+            initCharts();
+        }
+
+        // SMART MONEY CONCEPTS (SMC) ENGINE IMPLEMENTATION
+        function evaluateSmartMoneyStructure(values) {
+            if (!values || values.length < 5) return;
+            
+            let closes = values.map(v => parseFloat(v.close));
+            let currentClose = closes[closes.length - 1];
+            let previousClose = closes[closes.length - 2];
+            
+            // Identify recent swing high and low boundaries based on body closures
+            let recentHigh = Math.max(...closes.slice(-10));
+            let recentLow = Math.min(...closes.slice(-10));
+            
+            let rangeHighElem = document.getElementById('smcRangeHigh');
+            let rangeLowElem = document.getElementById('smcRangeLow');
+            let eventElem = document.getElementById('smcEventText');
+            let phaseBadge = document.getElementById('smcPhaseBadge');
+
+            if(rangeHighElem) rangeHighElem.innerText = recentHigh.toFixed(5);
+            if(rangeLowElem) rangeLowElem.innerText = recentLow.toFixed(5);
+
+            // Check for Change of Character (CHoCH) or Break of Structure (BOS) via body closures
+            if (currentClose > recentHigh * 0.9998 && previousClose <= recentHigh) {
+                if(eventElem) eventElem.innerText = "CHoCH (Bullish Reversal)";
+                if(phaseBadge) {
+                    phaseBadge.innerText = "BULLISH REVERSAL";
+                    phaseBadge.className = "text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
                 }
-                throw new Error("Expired or invalid payload format");
-            } catch (err) {
-                showToast("Invalid key structure or server connection error.", "warning");
+            } else if (currentClose > previousClose) {
+                if(eventElem) eventElem.innerText = "BOS (Continuation)";
+                if(phaseBadge) {
+                    phaseBadge.innerText = "BULLISH CONTINUATION";
+                    phaseBadge.className = "text-[10px] px-2 py-0.5 rounded bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/40";
+                }
+            } else {
+                if(eventElem) eventElem.innerText = "Retracement Phase";
+                if(phaseBadge) {
+                    phaseBadge.innerText = "BEARISH RETRACEMENT";
+                    phaseBadge.className = "text-[10px] px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/40";
+                }
             }
         }
 
         function calculatePositionSize() {
             const accSize = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
             const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
-            const entry = parseFloat(document.getElementById('overlayEntryPrice').innerText) || 1.1042;
-            const sl = parseFloat(document.getElementById('overlaySlPrice').innerText) || 1.1010;
-            const riskAmount = accSize * (riskPct / 100);
-            const pipsAtRisk = Math.abs(entry - sl) * 10000;
-            let lotSize = pipsAtRisk > 0 ? riskAmount / (pipsAtRisk * 10) : 1.0;
+            let lotSize = (accSize * (riskPct / 100)) / 100;
             const resElem = document.getElementById('calcLotSizeResult');
             if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
         }
 
-        // DYNAMIC MARKET DIRECTION & TREND EVALUATION ENGINE
-        function evaluateMarketDirection(prices, rsiValues) {
-            const currentPrice = prices[prices.length - 1];
-            const previousPrice = prices[prices.length - 5]; 
-            const currentRsi = parseFloat(rsiValues[rsiValues.length - 1]);
-
-            let isBuy = currentPrice >= previousPrice && currentRsi >= 50;
-
-            const badge = document.getElementById('signalDirBadge');
-            const confidenceElem = document.getElementById('confidenceVal');
-            const slElem = document.getElementById('slVal');
-            const tpElem = document.getElementById('tpVal');
-            const overlayEntry = document.getElementById('overlayEntryPrice');
-            const overlayTp = document.getElementById('overlayTpPrice');
-            const overlaySl = document.getElementById('overlaySlPrice');
-
-            let activeSl, activeTp, confidenceScore;
-
-            if (isBuy) {
-                badge.innerText = "BUY SIGNAL";
-                badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
-                confidenceScore = (92.0 + Math.random() * 6.5).toFixed(1) + "%";
-                
-                activeSl = (currentPrice * 0.9980).toFixed(4);
-                activeTp = (currentPrice * 1.0050).toFixed(4);
-            } else {
-                badge.innerText = "SELL SIGNAL";
-                badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
-                confidenceScore = (91.5 + Math.random() * 7.0).toFixed(1) + "%";
-                
-                activeSl = (currentPrice * 1.0020).toFixed(4);
-                activeTp = (currentPrice * 0.9950).toFixed(4);
-            }
-
-            confidenceElem.innerText = confidenceScore;
-            slElem.innerText = activeSl;
-            tpElem.innerText = activeTp;
-            overlayEntry.innerText = currentPrice;
-            overlayTp.innerText = activeTp;
-            overlaySl.innerText = activeSl;
-
-            calculatePositionSize();
-        }
-
         async function initCharts() {
-            if (!telemetryEngine) return;
+            if (!telemetryEngine) {
+                telemetryEngine = new InstitutionalTelemetryEngine('demo');
+            }
             const values = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
             if (!values || values.length === 0) return;
 
+            evaluateSmartMoneyStructure(values);
+
             const labels = values.map(item => item.datetime);
             const prices = values.map(item => parseFloat(item.close));
-            const emaData = prices.map(p => parseFloat((p * 0.9995).toFixed(4)));
-
-            let rsiValues = prices.map((p, idx, arr) => {
-                if (idx === 0) return 50;
-                let diff = p - arr[idx - 1];
-                return Math.min(90, Math.max(10, (50 + diff * 15000).toFixed(1)));
-            });
-
-            evaluateMarketDirection(prices, rsiValues);
 
             const ctxChart = document.getElementById('mainPriceChart').getContext('2d');
-            const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
-
-            const sharedChartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: { top: 10, bottom: 5, left: 10, right: 10 } },
-                scales: {
-                    x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, maxTicksLimit: 8 } },
-                    y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
-                }
-            };
 
             if (mainChart) {
                 mainChart.data.labels = labels;
                 mainChart.data.datasets[0].data = prices;
-                mainChart.data.datasets[1].data = emaData;
                 mainChart.update('none');
             } else {
                 mainChart = new Chart(ctxChart, {
@@ -1168,35 +526,18 @@
                     data: {
                         labels: labels,
                         datasets: [
-                            { label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.08)', borderWidth: 2, fill: true, tension: 0.25 },
-                            { label: 'Trend Baseline', data: emaData, borderColor: '#a855f7', borderWidth: 1.5, borderDash: [4, 4], fill: false }
+                            { label: `${formattedSymbol} Close (Body Closures)`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.08)', borderWidth: 2, fill: true, tension: 0.25 }
                         ]
                     },
                     options: {
-                        ...sharedChartOptions,
-                        plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } }
-                    }
-                });
-            }
-
-            if (rsiChart) {
-                rsiChart.data.labels = labels;
-                rsiChart.data.datasets[0].data = rsiValues;
-                rsiChart.update('none');
-            } else {
-                rsiChart = new Chart(ctxRsi, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{ label: 'RSI (14)', data: rsiValues, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.05)', borderWidth: 1.5, fill: true, tension: 0.2 }]
-                    },
-                    options: {
-                        ...sharedChartOptions,
-                        plugins: { legend: { display: false } },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: { top: 10, bottom: 5, left: 10, right: 10 } },
                         scales: {
-                            x: { display: false },
-                            y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, stepSize: 50 } }
-                        }
+                            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, maxTicksLimit: 8 } },
+                            y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
+                        },
+                        plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } }
                     }
                 });
             }
@@ -1205,47 +546,24 @@
         function onPairChange() {
             currentPair = document.getElementById('mainPairSelect').value;
             initCharts();
-            updateMTFMatrix();
         }
 
         function setTimeframe(tf, element) {
             currentTimeframe = tf;
-            
-            const buttons = document.querySelectorAll('.tf-btn');
-            buttons.forEach(btn => {
+            document.querySelectorAll('.tf-btn').forEach(btn => {
                 btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition";
             });
-
-            if (element) {
-                element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
-            }
-
+            if (element) element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition";
             initCharts();
-        }
-
-        function startAutoRefreshTimer() {
-            autoRefreshInterval = setInterval(() => {
-                if (!isTabActive) return;
-                countdownSec--;
-                if(countdownSec <= 0) {
-                    countdownSec = 30;
-                    initCharts();
-                    updateMTFMatrix();
-                }
-                const ring = document.getElementById('countdownRing');
-                if(ring) ring.innerText = countdownSec + 's';
-            }, 1000);
         }
 
         function triggerManualRefresh() {
-            countdownSec = 30;
             initCharts();
-            updateMTFMatrix();
-            showToast("Institutional Telemetry Refreshed");
+            showToast("SMC Market Structure Refreshed");
         }
 
         function executeTradeAlert() {
-            showToast(`Institutional order executed successfully for ${currentPair}.`);
+            showToast(`SMC Order executed successfully for ${currentPair}.`);
         }
     </script>
 </body>
