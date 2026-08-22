@@ -166,16 +166,23 @@
     <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="hidden flex-1 flex flex-col z-10">
         
-        <!-- MARKET STATUS FLASHING BANNER -->
-        <div id="marketStatusBanner" class="w-full bg-cardBg/90 backdrop-blur-md border-b border-white/10 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40">
+        <!-- PROFESSIONAL MARKET STATUS & LIVE TREND BANNER -->
+        <div id="marketStatusBanner" class="w-full bg-cardBg/90 backdrop-blur-md border-b border-white/10 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3">
             <div class="flex items-center space-x-3">
                 <span id="marketStatusIcon" class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
                 <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">Forex Market Open: Live Active Sessions</span>
             </div>
-            <div class="flex items-center space-x-4 font-mono">
-                <span id="activeSessionsList" class="text-gray-300">Active: London, New York</span>
+            <!-- Dynamic Market & Trend Intelligence Strip -->
+            <div class="flex items-center space-x-4 overflow-x-auto whitespace-nowrap scrollbar-none font-mono py-1">
+                <span class="text-gray-400 uppercase text-[10px]">Asset Status & Trends:</span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-[#00ffcc]">BUY</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-red-400">SELL</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-[#00ffcc]">BUY</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-[#00ffcc]">BUY</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 font-mono">
                 <span class="bg-darkBg/50 px-3 py-1 rounded border border-white/10 text-[#00ffcc]">
-                    Countdown to Close/Open: <strong id="marketCountdownTimer" class="text-white">--:--:--</strong>
+                    Countdown: <strong id="marketCountdownTimer" class="text-white">--:--:--</strong>
                 </span>
             </div>
         </div>
@@ -902,7 +909,6 @@
             const banner = document.getElementById('marketStatusBanner');
             const icon = document.getElementById('marketStatusIcon');
             const title = document.getElementById('marketStatusTitle');
-            const sessionsList = document.getElementById('activeSessionsList');
             const countdownTimer = document.getElementById('marketCountdownTimer');
 
             if (!banner) return;
@@ -930,22 +936,14 @@
             const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
             countdownTimer.innerText = `${String(diffHours).padStart(2, '0')}:${String(diffMins).padStart(2, '0')}:${String(diffSecs).padStart(2, '0')}`;
 
-            let activeSessions = [];
-            if (utcHour >= 22 || utcHour < 7) activeSessions.push("Sydney");
-            if (utcHour >= 0 && utcHour < 9) activeSessions.push("Tokyo");
-            if (utcHour >= 8 && utcHour < 16) activeSessions.push("London");
-            if (utcHour >= 13 && utcHour < 21) activeSessions.push("New York");
-
             if (isMarketOpen) {
-                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40";
+                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
                 icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
-                title.innerText = "🟢 FOREX MARKET ACTIVE // SESSIONS OPEN";
-                sessionsList.innerText = `Active Sessions: ${activeSessions.join(', ')}`;
+                title.innerText = "🟢 FOREX MARKET ACTIVE // LIVE SESSIONS OPEN";
             } else {
-                banner.className = "w-full bg-red-950/40 backdrop-blur-md border-b border-red-500/50 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 animate-banner-flash";
+                banner.className = "w-full bg-red-950/40 backdrop-blur-md border-b border-red-500/50 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 animate-banner-flash gap-3";
                 icon.className = "w-3 h-3 rounded-full bg-red-500 animate-pulse";
                 title.innerText = "🔴 WEEKEND MARKET CLOSED // ALL PAIRS SUSPENDED";
-                sessionsList.innerText = "Active Sessions: None (Weekend Lock)";
             }
         }
 
@@ -1082,10 +1080,9 @@
         // DYNAMIC MARKET DIRECTION & TREND EVALUATION ENGINE
         function evaluateMarketDirection(prices, rsiValues) {
             const currentPrice = prices[prices.length - 1];
-            const previousPrice = prices[prices.length - 5]; // Check trend over last 5 periods
+            const previousPrice = prices[prices.length - 5]; 
             const currentRsi = parseFloat(rsiValues[rsiValues.length - 1]);
 
-            // Determine trend direction based on price momentum and RSI validation
             let isBuy = currentPrice >= previousPrice && currentRsi >= 50;
 
             const badge = document.getElementById('signalDirBadge');
@@ -1103,7 +1100,6 @@
                 badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
                 confidenceScore = (92.0 + Math.random() * 6.5).toFixed(1) + "%";
                 
-                // For Buys: SL is below entry price, TP is above entry price
                 activeSl = (currentPrice * 0.9980).toFixed(4);
                 activeTp = (currentPrice * 1.0050).toFixed(4);
             } else {
@@ -1111,7 +1107,6 @@
                 badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
                 confidenceScore = (91.5 + Math.random() * 7.0).toFixed(1) + "%";
                 
-                // For Sells: SL is above entry price, TP is below entry price
                 activeSl = (currentPrice * 1.0020).toFixed(4);
                 activeTp = (currentPrice * 0.9950).toFixed(4);
             }
@@ -1141,7 +1136,6 @@
                 return Math.min(90, Math.max(10, (50 + diff * 15000).toFixed(1)));
             });
 
-            // Dynamically evaluate market direction and feed indicators into the UI
             evaluateMarketDirection(prices, rsiValues);
 
             const ctxChart = document.getElementById('mainPriceChart').getContext('2d');
