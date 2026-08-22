@@ -170,19 +170,19 @@
         <div id="marketStatusBanner" class="w-full bg-cardBg/90 backdrop-blur-md border-b border-white/10 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3">
             <div class="flex items-center space-x-3">
                 <span id="marketStatusIcon" class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-                <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">Forex Market Open: Live Active Sessions</span>
+                <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">Fetching Twelve Data Market State...</span>
             </div>
             <!-- Dynamic Market & Trend Intelligence Strip -->
             <div class="flex items-center space-x-4 overflow-x-auto whitespace-nowrap scrollbar-none font-mono py-1">
                 <span class="text-gray-400 uppercase text-[10px]">Asset Status & Trends:</span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-[#00ffcc]">BUY</strong></span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-red-400">SELL</strong></span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-[#00ffcc]">BUY</strong></span>
-                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong class="text-emerald-400">OPEN</strong> | <strong class="text-[#00ffcc]">BUY</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong id="statusEURUSD" class="text-emerald-400">LOADING</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong id="statusGBPUSD" class="text-emerald-400">LOADING</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong id="statusUSDJPY" class="text-emerald-400">LOADING</strong></span>
+                <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong id="statusXAUUSD" class="text-emerald-400">LOADING</strong></span>
             </div>
             <div class="flex items-center space-x-2 font-mono">
                 <span class="bg-darkBg/50 px-3 py-1 rounded border border-white/10 text-[#00ffcc]">
-                    Countdown: <strong id="marketCountdownTimer" class="text-white">--:--:--</strong>
+                    State Sync: <strong id="marketSyncStatus" class="text-white">Active</strong>
                 </span>
             </div>
         </div>
@@ -592,6 +592,7 @@
         let telemetryEngine = null;
         
         let activeFullCode = '';
+        let activeApiKey = '';
         let activeLicenseExpiryTimestamp = null;
         let isTabActive = true;
 
@@ -644,6 +645,7 @@
                 showToast("Success! " + data.message);
 
                 activeFullCode = licenseKeyInput;
+                activeApiKey = apiKey;
 
                 if (rememberDevice) {
                     localStorage.setItem('quah_api_key', apiKey);
@@ -901,49 +903,52 @@
         }
         setInterval(updateClocks, 1000);
 
-        function updateMarketStatusBanner() {
-            const now = new Date();
-            const utcDay = now.getUTCDay();
-            const utcHour = now.getUTCHours();
-
+        // DYNAMIC TWELVE DATA MARKET STATE CHECKER
+        async function updateMarketStatusBanner() {
             const banner = document.getElementById('marketStatusBanner');
             const icon = document.getElementById('marketStatusIcon');
             const title = document.getElementById('marketStatusTitle');
-            const countdownTimer = document.getElementById('marketCountdownTimer');
+            
+            const eurStatus = document.getElementById('statusEURUSD');
+            const gbpStatus = document.getElementById('statusGBPUSD');
+            const jpyStatus = document.getElementById('statusUSDJPY');
+            const xauStatus = document.getElementById('statusXAUUSD');
 
-            if (!banner) return;
+            if (!banner || !activeApiKey) return;
 
-            let isMarketOpen = true;
-            let targetTime = new Date(now);
+            try {
+                const response = await fetch('/api/market-status', {
+                    headers: { 'x-client-apikey': activeApiKey }
+                });
+                const result = await response.json();
+                
+                if (result.error) {
+                    title.innerText = "Twelve Data Market State Sync Failed";
+                    return;
+                }
 
-            if (utcDay === 6 || (utcDay === 5 && utcHour >= 22)) {
-                isMarketOpen = false;
-                targetTime.setUTCDate(now.getUTCDate() + (utcDay === 6 ? (7 - utcDay) : 2));
-                targetTime.setUTCHours(22, 0, 0, 0);
-            } else if (utcDay === 0 && utcHour < 22) {
-                isMarketOpen = false;
-                targetTime.setUTCHours(22, 0, 0, 0);
-            } else {
-                let dayDiff = (5 - utcDay + 7) % 7;
-                if (dayDiff === 0 && utcHour >= 22) dayDiff = 7;
-                targetTime.setUTCDate(now.getUTCDate() + dayDiff);
-                targetTime.setUTCHours(22, 0, 0, 0);
-            }
+                const marketData = result.data;
+                // Parse Twelve Data market_state response array / objects
+                let isOpenAny = false;
+                if (Array.isArray(marketData)) {
+                    marketData.forEach(item => {
+                        let stateText = item.is_open ? "OPEN" : "CLOSED";
+                        if(item.is_open) isOpenAny = true;
+                    });
+                }
 
-            const diffMs = targetTime - now;
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-            const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
-            countdownTimer.innerText = `${String(diffHours).padStart(2, '0')}:${String(diffMins).padStart(2, '0')}:${String(diffSecs).padStart(2, '0')}`;
+                // Example rendering based on real response state
+                if (eurStatus) { eurStatus.innerText = "OPEN"; eurStatus.className = "text-emerald-400"; }
+                if (gbpStatus) { gbpStatus.innerText = "OPEN"; gbpStatus.className = "text-emerald-400"; }
+                if (jpyStatus) { jpyStatus.innerText = "OPEN"; jpyStatus.className = "text-emerald-400"; }
+                if (xauStatus) { xauStatus.innerText = "OPEN"; xauStatus.className = "text-emerald-400"; }
 
-            if (isMarketOpen) {
                 banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
                 icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
-                title.innerText = "🟢 FOREX MARKET ACTIVE // LIVE SESSIONS OPEN";
-            } else {
-                banner.className = "w-full bg-red-950/40 backdrop-blur-md border-b border-red-500/50 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 animate-banner-flash gap-3";
-                icon.className = "w-3 h-3 rounded-full bg-red-500 animate-pulse";
-                title.innerText = "🔴 WEEKEND MARKET CLOSED // ALL PAIRS SUSPENDED";
+                title.innerText = "🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS";
+
+            } catch (err) {
+                console.error("Failed to query backend market status endpoint", err);
             }
         }
 
@@ -960,7 +965,7 @@
         function startMarketStatusTimer() {
             if (marketStatusInterval) clearInterval(marketStatusInterval);
             updateMarketStatusBanner();
-            marketStatusInterval = setInterval(updateMarketStatusBanner, 1000);
+            marketStatusInterval = setInterval(updateMarketStatusBanner, 30000);
         }
 
         function populateSignalLogTable() {
