@@ -1277,6 +1277,9 @@
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
 
+            // Fix: Dynamically update card title and dataset labels when switching pairs[cite: 1]
+            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - Twelve Data Feed`;[cite: 1]
+
             const sharedChartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -1289,6 +1292,7 @@
 
             if (mainChart) {
                 mainChart.data.labels = labels;
+                mainChart.data.datasets[0].label = `${formattedSymbol} Close`;[cite: 1]
                 mainChart.data.datasets[0].data = prices;
                 mainChart.data.datasets[1].data = emaData;
                 mainChart.update('none');
@@ -1298,7 +1302,7 @@
                     data: {
                         labels: labels,
                         datasets: [
-                            { label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.08)', borderWidth: 2, fill: true, tension: 0.25 },
+                            { label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.08)', borderWidth: 2, fill: true, tension: 0.25 },[cite: 1]
                             { label: 'Trend Baseline', data: emaData, borderColor: '#a855f7', borderWidth: 1.5, borderDash: [4, 4], fill: false }
                         ]
                     },
