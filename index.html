@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -475,12 +476,6 @@
 
     <!-- JAVASCRIPT ENGINE -->
     <script>
-        // ==========================================
-        // YOUR MASTER ADMIN KEY CONFIGURATION VARIABLE
-        // Change this string whenever you issue a new master key code.
-        // ==========================================
-        const MY_MASTER_KEY = "QUAH-eyJjcmVhdGVkIjoxNzcxNDg3NzkyMDAwLCJleHBpcmVzQXQiOjE3NzE1NzQwOTIwMDAsInRpZXIiOiJpbnN0aXR1dGlvbmFsX3BybyJ9.institutionalSalt";
-
         class InstitutionalTelemetryEngine {
             constructor(apiKey, maxCalls = 1000) {
                 this.apiKey = apiKey;
@@ -608,55 +603,82 @@
             }
         });
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // SECURE BACKEND GATEWAY INTEGRATION
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const apiKey = document.getElementById('loginApiKey').value;
             const licenseKeyInput = document.getElementById('loginLicense').value.trim();
             const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
             const errElem = document.getElementById('licenseErrorMsg');
+            const statusIndicator = document.getElementById('authStatusIndicator');
 
             errElem.classList.add('hidden');
-
-            // Compare against your admin master key variable
-            if (licenseKeyInput !== MY_MASTER_KEY) {
-                errElem.classList.remove('hidden');
-                showToast("Invalid Key Code provided.", "warning");
-                return;
-            }
-
-            activeFullCode = licenseKeyInput;
-
-            if (rememberDevice) {
-                localStorage.setItem('quah_api_key', apiKey);
-                localStorage.setItem('quah_license_key', licenseKeyInput);
-            } else {
-                localStorage.removeItem('quah_api_key');
-                localStorage.removeItem('quah_license_key');
-            }
+            if (statusIndicator) statusIndicator.textContent = "Checking key...";
 
             try {
-                const parts = licenseKeyInput.split('-');
-                if (parts.length >= 2) {
-                    const decodedJson = atob(parts[1]);
-                    const payload = JSON.parse(decodedJson);
-                    if (payload.expiresAt) {
-                        activeLicenseExpiryTimestamp = payload.expiresAt;
-                    }
-                    if (payload.tier) {
-                        document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                    }
-                } else {
-                    throw new Error("Invalid structure");
-                }
-            } catch (err) {
-                activeLicenseExpiryTimestamp = Date.now() + 604800000;
-            }
+                // Sends the key to your Vercel backend security guard endpoint[cite: 1]
+                const response = await fetch('/api/verify-license', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ licenseKey: licenseKeyInput })
+                });
 
-            telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            showToast("Institutional Pro Terminal Initialized");
-            initApp();
+                const data = await response.json();
+
+                if (!data.valid) {
+                    errElem.textContent = "Access Denied: " + data.message;
+                    errElem.classList.remove('hidden');
+                    if (statusIndicator) statusIndicator.textContent = "Failed";
+                    showToast("Access Denied: " + data.message, "warning");
+                    return;
+                }
+
+                if (statusIndicator) statusIndicator.textContent = "Success!";
+                showToast("Success! " + data.message);
+
+                activeFullCode = licenseKeyInput;
+
+                if (rememberDevice) {
+                    localStorage.setItem('quah_api_key', apiKey);
+                    localStorage.setItem('quah_license_key', licenseKeyInput);
+                } else {
+                    localStorage.removeItem('quah_api_key');
+                    localStorage.removeItem('quah_license_key');
+                }
+
+                // Decode expiry metadata payload if available, else set fallback
+                try {
+                    const parts = licenseKeyInput.split('-');
+                    if (parts.length >= 2) {
+                        const decodedJson = atob(parts[1]);
+                        const payload = JSON.parse(decodedJson);
+                        if (payload.expiresAt) {
+                            activeLicenseExpiryTimestamp = payload.expiresAt;
+                        }
+                        if (payload.tier) {
+                            document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                        }
+                    } else {
+                        throw new Error("Invalid structure");
+                    }
+                } catch (err) {
+                    activeLicenseExpiryTimestamp = Date.now() + 604800000;
+                }
+
+                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("Institutional Pro Terminal Initialized");
+                initApp();
+
+            } catch (error) {
+                errElem.textContent = "Error connecting to the server.";
+                errElem.classList.remove('hidden');
+                if (statusIndicator) statusIndicator.textContent = "Error";
+                showToast("Error connecting to the server.", "warning");
+            }
         });
 
         function logout() {
@@ -984,7 +1006,6 @@
                     displayElem.innerText = "EXPIRED";
                     displayElem.className = "text-red-400 font-bold";
                     
-                    // Trigger upgrade modal overlay instead of instantly logging out
                     const upgradeModal = document.getElementById('expiryUpgradeModal');
                     if (upgradeModal && upgradeModal.classList.contains('hidden')) {
                         upgradeModal.classList.remove('hidden');
@@ -1003,20 +1024,26 @@
             licenseTimerInterval = setInterval(updateLicenseTimer, 1000);
         }
 
-        function submitLicenseUpgrade() {
+        async function submitLicenseUpgrade() {
             const newKey = document.getElementById('upgradeLicenseInput').value.trim();
             if (!newKey) {
                 showToast("Please enter a valid renewal key string.", "warning");
                 return;
             }
 
-            // Check against master admin key variable
-            if (newKey !== MY_MASTER_KEY) {
-                showToast("Invalid key string or unrecognized token.", "warning");
-                return;
-            }
-
             try {
+                const response = await fetch('/api/verify-license', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ licenseKey: newKey })
+                });
+                const data = await response.json();
+
+                if (!data.valid) {
+                    showToast("Upgrade Denied: " + data.message, "warning");
+                    return;
+                }
+
                 const parts = newKey.split('-');
                 if (parts.length >= 2) {
                     const decodedJson = atob(parts[1]);
@@ -1039,7 +1066,7 @@
                 }
                 throw new Error("Expired or invalid payload format");
             } catch (err) {
-                showToast("Invalid key structure or expired payload token.", "warning");
+                showToast("Invalid key structure or server connection error.", "warning");
             }
         }
 
