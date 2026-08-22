@@ -121,7 +121,7 @@
                 <div>
                     <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String (QUAH-encoded-salt)</label>
                     <textarea id="loginLicense" rows="3" required class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur">QUAH-eyJjcmVhdGVkIjoxNzcxNDg3NzkyMDAwLCJleHBpcmVzQXQiOjE3NzE1NzQwOTIwMDAsInRpZXIiOiJpbnN0aXR1dGlvbmFsX3BybyJ9.institutionalSalt</textarea>
-                    <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key structure format detected. Proceeding with fallback mode.</p>
+                    <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key string format detected. Access denied.</p>
                 </div>
                 <div>
                     <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">TwelveData API Key</label>
@@ -475,6 +475,12 @@
 
     <!-- JAVASCRIPT ENGINE -->
     <script>
+        // ==========================================
+        // YOUR MASTER ADMIN KEY CONFIGURATION VARIABLE
+        // Change this string whenever you issue a new master key code.
+        // ==========================================
+        const MY_MASTER_KEY = "QUAH-eyJjcmVhdGVkIjoxNzcxNDg3NzkyMDAwLCJleHBpcmVzQXQiOjE3NzE1NzQwOTIwMDAsInRpZXIiOiJpbnN0aXR1dGlvbmFsX3BybyJ9.institutionalSalt";
+
         class InstitutionalTelemetryEngine {
             constructor(apiKey, maxCalls = 1000) {
                 this.apiKey = apiKey;
@@ -609,8 +615,16 @@
             const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
             const errElem = document.getElementById('licenseErrorMsg');
 
-            activeFullCode = licenseKeyInput;
             errElem.classList.add('hidden');
+
+            // Compare against your admin master key variable
+            if (licenseKeyInput !== MY_MASTER_KEY) {
+                errElem.classList.remove('hidden');
+                showToast("Invalid Key Code provided.", "warning");
+                return;
+            }
+
+            activeFullCode = licenseKeyInput;
 
             if (rememberDevice) {
                 localStorage.setItem('quah_api_key', apiKey);
@@ -635,7 +649,6 @@
                     throw new Error("Invalid structure");
                 }
             } catch (err) {
-                errElem.classList.remove('hidden');
                 activeLicenseExpiryTimestamp = Date.now() + 604800000;
             }
 
@@ -997,6 +1010,12 @@
                 return;
             }
 
+            // Check against master admin key variable
+            if (newKey !== MY_MASTER_KEY) {
+                showToast("Invalid key string or unrecognized token.", "warning");
+                return;
+            }
+
             try {
                 const parts = newKey.split('-');
                 if (parts.length >= 2) {
@@ -1020,7 +1039,7 @@
                 }
                 throw new Error("Expired or invalid payload format");
             } catch (err) {
-                showToast("Invalid key structure or already expired token.", "warning");
+                showToast("Invalid key structure or expired payload token.", "warning");
             }
         }
 
@@ -1129,13 +1148,11 @@
         function setTimeframe(tf, element) {
             currentTimeframe = tf;
             
-            // Remove active styles from all timeframe buttons and apply unselected style
             const buttons = document.querySelectorAll('.tf-btn');
             buttons.forEach(btn => {
                 btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition";
             });
 
-            // Apply active highlight styling to the clicked button element
             if (element) {
                 element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
             }
