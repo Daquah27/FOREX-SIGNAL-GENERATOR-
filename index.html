@@ -996,7 +996,6 @@
         }
         setInterval(updateClocks, 1000);
 
-        // CORRECTED MARKET STATUS BANNER WITH WEEKEND CHECK LOGIC
         async function updateMarketStatusBanner() {
             const banner = document.getElementById('marketStatusBanner');
             const icon = document.getElementById('marketStatusIcon');
@@ -1009,10 +1008,9 @@
             if (!banner || !activeApiKey) return;
 
             const now = new Date();
-            const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+            const dayOfWeek = now.getUTCDay();
             const utcHours = now.getUTCHours();
 
-            // Forex/Commodities typically close Friday at 21:00 UTC and reopen Sunday at 21:00 UTC
             const isWeekend = (dayOfWeek === 6) || (dayOfWeek === 0 && utcHours < 21) || (dayOfWeek === 5 && utcHours >= 21);
 
             if (isWeekend) {
@@ -1149,7 +1147,6 @@
             if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
         }
 
-        // SMC STRUCTURE ENGINE
         function analyzeMarketStructure(prices) {
             if (!prices || prices.length < 5) return { type: 'BOS', bonus: 2.0 };
 
@@ -1202,24 +1199,53 @@
             const confidenceElem = document.getElementById('confidenceVal');
             const slElem = document.getElementById('slVal');
             const tpElem = document.getElementById('tpVal');
-            const overlayEntry = document.getElementById('overlayEntryPrice');
-            const overlayTp = document.getElementById('overlayTpPrice');
-            const overlaySl = document.getElementById('overlaySlPrice');
+            
+            const badgeEntry = document.getElementById('chartBadgeEntry');
+            const badgeTP = document.getElementById('chartBadgeTP');
+            const badgeSL = document.getElementById('chartBadgeSL');
 
             let activeSl, activeTp, baseConfidence, finalConfidence;
 
             if (isBuy) {
                 badge.innerText = "BUY SIGNAL";
                 badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
+                
                 baseConfidence = 91.0 + Math.random() * 4.0;
                 activeSl = (currentPrice * 0.9980).toFixed(4);
                 activeTp = (currentPrice * 1.0050).toFixed(4);
+
+                if (badgeEntry) {
+                    badgeEntry.className = "absolute left-16 top-1/3 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-[#00ffcc] text-[10px] font-mono px-2 py-1 rounded shadow-lg animate-bounce pointer-events-none";
+                    badgeEntry.innerHTML = `🎯 ENTRY: <span id="overlayEntryPrice">${currentPrice}</span>`;
+                }
+                if (badgeTP) {
+                    badgeTP.className = "absolute right-20 top-16 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-emerald-200 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none";
+                    badgeTP.innerHTML = `💰 TP: <span id="overlayTpPrice">${activeTp}</span>`;
+                }
+                if (badgeSL) {
+                    badgeSL.className = "absolute right-20 bottom-16 bg-darkBg/80 backdrop-blur border border-red-500 text-red-300 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none";
+                    badgeSL.innerHTML = `🛑 SL: <span id="overlaySlPrice">${activeSl}</span>`;
+                }
             } else {
                 badge.innerText = "SELL SIGNAL";
                 badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
+                
                 baseConfidence = 90.5 + Math.random() * 5.0;
                 activeSl = (currentPrice * 1.0020).toFixed(4);
                 activeTp = (currentPrice * 0.9950).toFixed(4);
+
+                if (badgeEntry) {
+                    badgeEntry.className = "absolute left-16 top-1/3 bg-darkBg/80 backdrop-blur border border-red-500 text-red-400 text-[10px] font-mono px-2 py-1 rounded shadow-lg animate-bounce pointer-events-none";
+                    badgeEntry.innerHTML = `🎯 ENTRY: <span id="overlayEntryPrice">${currentPrice}</span>`;
+                }
+                if (badgeTP) {
+                    badgeTP.className = "absolute right-20 bottom-16 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-emerald-200 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none";
+                    badgeTP.innerHTML = `💰 TP (Sell): <span id="overlayTpPrice">${activeTp}</span>`;
+                }
+                if (badgeSL) {
+                    badgeSL.className = "absolute right-20 top-16 bg-darkBg/80 backdrop-blur border border-red-500 text-red-300 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none";
+                    badgeSL.innerHTML = `🛑 SL (Sell): <span id="overlaySlPrice">${activeSl}</span>`;
+                }
             }
 
             finalConfidence = Math.min(99.4, baseConfidence + smcResult.bonus + volumeResult.probabilityBonus).toFixed(1) + "%";
@@ -1227,9 +1253,6 @@
             confidenceElem.innerText = finalConfidence;
             slElem.innerText = activeSl;
             tpElem.innerText = activeTp;
-            overlayEntry.innerText = currentPrice;
-            overlayTp.innerText = activeTp;
-            overlaySl.innerText = activeSl;
 
             calculatePositionSize();
         }
