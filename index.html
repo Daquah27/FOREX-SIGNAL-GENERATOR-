@@ -122,7 +122,7 @@
                 </div>
                 <div>
                     <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">TwelveData API Key</label>
-                    <input type="password" id="loginApiKey" required value="demo_twelve_key" class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
+                    <input type="password" id="loginApiKey" required placeholder="Enter your TwelveData API Key" class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
                 </div>
                 <div class="flex items-center justify-between text-xs text-gray-400 pt-2">
                     <label class="flex items-center"><input type="checkbox" id="rememberDeviceCheck" checked class="mr-2 rounded bg-darkBg border-borderCol"> Persistent Storage</label>
@@ -510,12 +510,12 @@
                 let pullbackCandles = recentMoves.slice(2);
 
                 for (let i = 1; i < impulseCandles.length; i++) {
-                    if (impulseCandles[i].volume <= impulseCandles[i - 1].volume && impulseCandles[i].close > impulseCandles[i].open) {
+                    if (Number(impulseCandles[i].volume) <= Number(impulseCandles[i - 1].volume) && Number(impulseCandles[i].close) > Number(impulseCandles[i].open)) {
                         impulseVolumeIncreasing = false;
                     }
                 }
 
-                let redVolumes = pullbackCandles.filter(c => c.close < c.open).map(c => c.volume);
+                let redVolumes = pullbackCandles.filter(c => Number(c.close) < Number(c.open)).map(c => Number(c.volume));
                 if (redVolumes.length >= 2) {
                     if (redVolumes[1] > redVolumes[0]) {
                         pullbackVolumeDecreasing = false;
@@ -584,7 +584,7 @@
                 if (this.callCount >= this.maxCalls) {
                     showToast("API Limit Reached. Switching to Simulated Telemetry.", "warning");
                     setDataSourceBadge(false);
-                    return this.getFallbackTelemetry();
+                    return this.getFallbackTelemetry(symbol);
                 }
 
                 const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
@@ -601,9 +601,9 @@
                     if (latencyElem) latencyElem.innerText = `${jitter}ms`;
 
                     if (data.code === 429 || data.status === 'error') {
-                        showToast("TwelveData Rate Limit / Error. Using Fallback Telemetry.", "warning");
+                        showToast(`TwelveData Error (${data.message || 'Rate Limit'}). Using Fallback Telemetry.`, "warning");
                         setDataSourceBadge(false);
-                        return this.getFallbackTelemetry();
+                        return this.getFallbackTelemetry(symbol);
                     }
 
                     if (data.values && Array.isArray(data.values)) {
@@ -611,26 +611,27 @@
                         return data.values.reverse();
                     }
                     setDataSourceBadge(false);
-                    return this.getFallbackTelemetry();
+                    return this.getFallbackTelemetry(symbol);
                 } catch (error) {
                     showToast("Network Error connecting to TwelveData. Fallback Active.", "warning");
                     setDataSourceBadge(false);
-                    return this.getFallbackTelemetry();
+                    return this.getFallbackTelemetry(symbol);
                 }
             }
 
-            getFallbackTelemetry() {
-                let basePrice = 1.1040;
+            getFallbackTelemetry(symbol) {
+                let basePrice = symbol.includes('JPY') ? 147.50 : (symbol.includes('XAU') ? 2340.00 : 1.1040);
+                let stepSize = symbol.includes('JPY') ? 0.05 : (symbol.includes('XAU') ? 1.50 : 0.0010);
                 let fallbackValues = [];
                 let now = new Date();
                 for(let i=30; i>=0; i--) {
                     let d = new Date(now.getTime() - i * 60000);
-                    basePrice += (Math.random() - 0.48) * 0.0010;
+                    basePrice += (Math.random() - 0.48) * stepSize;
                     fallbackValues.push({
                         datetime: d.toISOString().slice(11, 19),
-                        close: basePrice.toFixed(5),
-                        high: (basePrice + 0.0005).toFixed(5),
-                        low: (basePrice - 0.0005).toFixed(5),
+                        close: basePrice.toFixed(symbol.includes('JPY') ? 2 : 5),
+                        high: (basePrice + stepSize * 0.5).toFixed(symbol.includes('JPY') ? 2 : 5),
+                        low: (basePrice - stepSize * 0.5).toFixed(symbol.includes('JPY') ? 2 : 5),
                         volume: Math.floor(Math.random() * 500 + 100)
                     });
                 }
@@ -704,7 +705,7 @@
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const apiKey = document.getElementById('loginApiKey').value;
+            const apiKey = document.getElementById('loginApiKey').value.trim();
             const licenseKeyInput = document.getElementById('loginLicense').value.trim();
             const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
             const errElem = document.getElementById('licenseErrorMsg');
@@ -714,6 +715,9 @@
             if (statusIndicator) statusIndicator.textContent = "Checking key...";
 
             try {
+                if (!apiKey) {
+                    throw new Error("API Key required");
+                }
                 let message = "License validated successfully.";
                 if (statusIndicator) statusIndicator.textContent = "Success!";
                 showToast("Success! " + message);
@@ -750,10 +754,10 @@
                 initApp();
 
             } catch (error) {
-                errElem.textContent = "Error connecting to the server.";
+                errElem.textContent = "Please enter a valid TwelveData API Key and license string.";
                 errElem.classList.remove('hidden');
                 if (statusIndicator) statusIndicator.textContent = "Error";
-                showToast("Error connecting to the server.", "warning");
+                showToast("Authentication failed. Check API key.", "warning");
             }
         });
 
@@ -841,7 +845,7 @@
         }
         setInterval(updateClocks, 1000);
 
-        // FIXED: Bulletproof market state banner query handler supporting object, array, and fallback dictionary layouts
+        // BULLETPROOF MARKET STATE BANNER QUERY HANDLER WITH VALID API KEY INJECTION
         async function updateMarketStatusBanner() {
             const banner = document.getElementById('marketStatusBanner');
             const icon = document.getElementById('marketStatusIcon');
@@ -998,7 +1002,7 @@
             const entry = parseFloat(document.getElementById('overlayEntryPrice').innerText) || 1.1042;
             const sl = parseFloat(document.getElementById('overlaySlPrice').innerText) || 1.1010;
             const riskAmount = accSize * (riskPct / 100);
-            const pipsAtRisk = Math.abs(entry - sl) * 10000;
+            const pipsAtRisk = Math.abs(entry - sl) * (currentPair.includes('JPY') ? 100 : 10000);
             let lotSize = pipsAtRisk > 0 ? riskAmount / (pipsAtRisk * 10) : 1.0;
             const resElem = document.getElementById('calcLotSizeResult');
             if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
@@ -1007,16 +1011,18 @@
         function analyzeMarketStructure(prices) {
             let recentHigh = Math.max(...prices.slice(-10));
             let recentLow = Math.min(...prices.slice(-10));
-            document.getElementById('smcRangeHigh').innerText = recentHigh.toFixed(5);
-            document.getElementById('smcRangeLow').innerText = recentLow.toFixed(5);
+            document.getElementById('smcRangeHigh').innerText = recentHigh.toFixed(currentPair.includes('JPY') ? 2 : 5);
+            document.getElementById('smcRangeLow').innerText = recentLow.toFixed(currentPair.includes('JPY') ? 2 : 5);
             return { type: 'BOS', bonus: 2.0 };
         }
 
         function evaluateMarketDirection(candles, rsiValues, prices, emaData) {
             const currentPrice = prices[prices.length - 1];
             const currentEma = emaData[emaData.length - 1];
+            const rsiCurrent = rsiValues[rsiValues.length - 1];
             
-            let isBuy = currentPrice >= currentEma;
+            // Harmonized trend + indicator confluence logic matching TwelveData stream
+            let isBuy = (currentPrice >= currentEma) && (rsiCurrent >= 45);
 
             const badge = document.getElementById('signalDirBadge');
             const confidenceElem = document.getElementById('confidenceVal');
@@ -1027,18 +1033,19 @@
             const overlaySl = document.getElementById('overlaySlPrice');
 
             let activeSl, activeTp, finalConfidence;
+            let decimals = currentPair.includes('JPY') ? 2 : (currentPair.includes('XAU') ? 2 : 5);
 
             if (isBuy) {
                 badge.innerText = "BUY SIGNAL";
                 badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
-                activeSl = (currentPrice * 0.9980).toFixed(4);
-                activeTp = (currentPrice * 1.0050).toFixed(4);
+                activeSl = (currentPrice * 0.9980).toFixed(decimals);
+                activeTp = (currentPrice * 1.0050).toFixed(decimals);
                 finalConfidence = "94.8%";
             } else {
                 badge.innerText = "SELL SIGNAL";
                 badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
-                activeSl = (currentPrice * 1.0020).toFixed(4);
-                activeTp = (currentPrice * 0.9950).toFixed(4);
+                activeSl = (currentPrice * 1.0020).toFixed(decimals);
+                activeTp = (currentPrice * 0.9950).toFixed(decimals);
                 finalConfidence = "92.1%";
             }
 
@@ -1061,13 +1068,16 @@
 
             const labels = values.map(item => item.datetime);
             const prices = values.map(item => parseFloat(item.close));
-            const emaData = prices.map(p => parseFloat((p * 0.9995).toFixed(4)));
+            const decimals = currentPair.includes('JPY') ? 2 : (currentPair.includes('XAU') ? 2 : 5);
+            const emaData = prices.map(p => parseFloat((p * 0.9995).toFixed(decimals)));
 
             let rsiValues = prices.map((p, idx, arr) => {
                 if (idx === 0) return 50;
                 let diff = p - arr[idx - 1];
-                return Math.min(90, Math.max(10, (50 + diff * 15000).toFixed(1)));
+                return Number(Math.min(90, Math.max(10, 50 + diff * 15000)).toFixed(1));
             });
+
+            document.getElementById('rsiValDisplay').innerText = `${rsiValues[rsiValues.length - 1]} (${rsiValues[rsiValues.length - 1] > 50 ? 'Bullish' : 'Bearish'})`;
 
             analyzeMarketStructure(prices);
             evaluateMarketDirection(values, rsiValues, prices, emaData);
