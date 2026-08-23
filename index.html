@@ -397,16 +397,17 @@
                         </div>
                     </div>
 
-                    <!-- Relocated & Review-Fixed TradingView Widget Section -->
-                    <div class="flex flex-col pt-2 border-t border-white/10">
+                    <!-- FIXED: Fully Styled TradingView Live Widget Section -->
+                    <div class="flex flex-col pt-3 border-t border-white/10">
                         <div class="flex items-center justify-between mb-2 z-10">
                             <div class="flex items-center space-x-2">
-                                <h3 class="font-bold text-gray-300 text-xs uppercase tracking-wider"><i class="fa-solid fa-chart-candlestick text-[#00ffcc] mr-1.5"></i>TradingView Live Chart Widget</h3>
-                                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30">Synced Feed</span>
+                                <h3 class="font-bold text-gray-200 text-xs uppercase tracking-wider"><i class="fa-solid fa-chart-candlestick text-[#00ffcc] mr-1.5"></i>TradingView Live Chart Stream</h3>
+                                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30 font-mono">Embedded Pro Widget</span>
                             </div>
-                            <span class="text-[11px] font-mono text-gray-400">Supports Open Assets (Crypto 24/7, Forex/Indices)</span>
+                            <span class="text-[11px] font-mono text-gray-400">Multi-Asset Real-Time Feed</span>
                         </div>
-                        <div id="tradingviewWidgetWrapper" class="relative w-full h-[320px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-2 z-10 shadow-inner overflow-hidden">
+                        <!-- Refined styling wrapper ensuring proper padding, clean borders, and no awkward clipping -->
+                        <div class="relative w-full h-[400px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-2 z-10 shadow-2xl overflow-hidden">
                             <div id="tradingview_container_inner" style="height:100%;width:100%"></div>
                         </div>
                     </div>
@@ -529,12 +530,12 @@
                         </button>
                     </div>
 
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3">
+                    <div class="glass-card rounded-2xl p-4 shadow-xl">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix</h2>
                             <span class="text-[10px] text-gray-400">Confluence Scanner</span>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
+                        <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs mt-3">
                             <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
                                 <span class="text-[10px] text-gray-400 block mb-1">15 MIN</span>
                                 <span id="mtf15m" class="font-bold text-[#00ffcc]">BUY</span>
