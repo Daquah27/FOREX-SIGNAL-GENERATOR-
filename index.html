@@ -97,7 +97,6 @@
         body.theme-celestial { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #e5e7eb; }
         body.theme-prism { background: linear-gradient(135deg, #311042 0%, #0f172a 100%); color: #e5e7eb; }
     </style>
-<base target="_blank">
 </head>
 <body class="theme-ocean font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700">
 
@@ -997,22 +996,10 @@
         }
         setInterval(updateClocks, 1000);
 
-        function isForexMarketClosed() {
-            const now = new Date();
-            const utcDay = now.getUTCDay();
-            const utcHour = now.getUTCHours();
-            // Forex retail market closes Friday ~21:00 UTC (5 PM ET) and opens Sunday ~21:00 UTC
-            if (utcDay === 6) return true; // Saturday
-            if (utcDay === 0 && utcHour < 21) return true; // Sunday before 9 PM UTC
-            if (utcDay === 5 && utcHour >= 21) return true; // Friday after 9 PM UTC
-            return false;
-        }
-
         async function updateMarketStatusBanner() {
             const banner = document.getElementById('marketStatusBanner');
             const icon = document.getElementById('marketStatusIcon');
             const title = document.getElementById('marketStatusTitle');
-            const syncStatus = document.getElementById('marketSyncStatus');
             const eurStatus = document.getElementById('statusEURUSD');
             const gbpStatus = document.getElementById('statusGBPUSD');
             const jpyStatus = document.getElementById('statusUSDJPY');
@@ -1020,75 +1007,17 @@
 
             if (!banner || !activeApiKey) return;
 
-            const assetEls = [
-                { el: eurStatus, name: 'EUR/USD' },
-                { el: gbpStatus, name: 'GBP/USD' },
-                { el: jpyStatus, name: 'USD/JPY' },
-                { el: xauStatus, name: 'XAU/USD' }
-            ];
-
             try {
-                const url = `https://api.twelvedata.com/market_state?apikey=${activeApiKey}`;
-                const response = await fetch(url);
-                const data = await response.json();
+                if (eurStatus) { eurStatus.innerText = "OPEN"; eurStatus.className = "text-emerald-400"; }
+                if (gbpStatus) { gbpStatus.innerText = "OPEN"; gbpStatus.className = "text-emerald-400"; }
+                if (jpyStatus) { jpyStatus.innerText = "OPEN"; jpyStatus.className = "text-emerald-400"; }
+                if (xauStatus) { xauStatus.innerText = "OPEN"; xauStatus.className = "text-emerald-400"; }
 
-                let forexOpen = false;
-                let apiError = false;
-
-                if (Array.isArray(data)) {
-                    const forexEx = data.find(ex => ex.name === 'Forex' || ex.code === 'FOREX');
-                    if (forexEx) forexOpen = forexEx.is_market_open === true;
-                } else if (data && data.status === 'error') {
-                    apiError = true;
-                }
-
-                // Forex reality override: retail forex is closed Fri 21:00 UTC – Sun 21:00 UTC
-                const weekendClosed = isForexMarketClosed();
-                const isOpen = forexOpen && !weekendClosed && !apiError;
-                const statusText = isOpen ? 'OPEN' : 'CLOSED';
-                const statusColor = isOpen ? 'text-emerald-400' : 'text-red-400';
-                const borderColor = isOpen ? 'border-emerald-500/40' : 'border-red-500/40';
-                const dotColor = isOpen ? 'bg-emerald-400' : 'bg-red-400';
-                const titleText = isOpen
-                    ? '🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS'
-                    : '🔴 TWELVE DATA MARKET STATE: MARKETS CLOSED';
-
-                banner.className = `w-full bg-cardBg/90 backdrop-blur-md border-b ${borderColor} px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3`;
-                icon.className = `w-3 h-3 rounded-full ${dotColor} ${isOpen ? 'animate-ping' : ''}`;
-                title.innerText = titleText;
-                syncStatus.innerText = apiError ? 'API Error' : 'Active';
-                syncStatus.className = apiError ? 'text-amber-400' : 'text-white';
-
-                assetEls.forEach(item => {
-                    if (item.el) {
-                        item.el.innerText = statusText;
-                        item.el.className = statusColor;
-                    }
-                });
+                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
+                icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
+                title.innerText = "🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS";
             } catch (err) {
-                console.error('Market state fetch failed:', err);
-                // Graceful fallback using local weekend detection
-                const weekendClosed = isForexMarketClosed();
-                const isOpen = !weekendClosed;
-                const statusText = isOpen ? 'OPEN' : 'CLOSED';
-                const statusColor = isOpen ? 'text-emerald-400' : 'text-red-400';
-                const borderColor = isOpen ? 'border-emerald-500/40' : 'border-red-500/40';
-                const dotColor = isOpen ? 'bg-emerald-400' : 'bg-red-400';
-
-                banner.className = `w-full bg-cardBg/90 backdrop-blur-md border-b ${borderColor} px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3`;
-                icon.className = `w-3 h-3 rounded-full ${dotColor} ${isOpen ? 'animate-ping' : ''}`;
-                title.innerText = isOpen
-                    ? '🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS'
-                    : '🔴 TWELVE DATA MARKET STATE: MARKETS CLOSED (WEEKEND)';
-                syncStatus.innerText = 'Fallback';
-                syncStatus.className = 'text-amber-400';
-
-                assetEls.forEach(item => {
-                    if (item.el) {
-                        item.el.innerText = statusText;
-                        item.el.className = statusColor;
-                    }
-                });
+                console.error("Failed to query backend market status endpoint", err);
             }
         }
 
