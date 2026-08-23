@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.3 // Institutional Pro Suite + Volume & SMC Engine</title>
+    <title>FX Signal Desk v4.4 // Institutional Pro Suite + Volume & SMC Engine</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -125,7 +125,7 @@
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-2xl">
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
-                <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.3</h1>
+                <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.4</h1>
                 <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Volume & SMC Module</p>
             </div>
             <form id="loginForm" class="space-y-4">
@@ -216,7 +216,7 @@
             <div class="flex items-center space-x-6">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.3 + VOLUME</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.4 + VOLUME</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/25 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
@@ -366,13 +366,14 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
+                <!-- MAIN TECHNICAL WORKSPACE / TWELVE DATA & SUBCHARTS -->
                 <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
                     <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/5 to-transparent pointer-events-none animate-scan"></div>
                     
                     <div class="flex flex-col">
                         <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
                             <div class="flex items-center space-x-2">
-                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - TradingView Advanced Widget</h2>
+                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - Twelve Data Programmatic Stream</h2>
                                 <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live Tick Streams</span>
                             </div>
                             <div class="text-xs font-mono text-[#00ffcc] flex items-center">
@@ -380,9 +381,9 @@
                             </div>
                         </div>
                         
-                        <!-- Dynamic TradingView Widget Container with Compatible Data Mapping -->
-                        <div id="tradingviewWidgetWrapper" class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner overflow-hidden">
-                            <div id="tradingview_container_inner" style="height:100%;width:100%"></div>
+                        <!-- Programmatic Chart.js Technical Data Feed View -->
+                        <div class="relative w-full h-[280px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
+                            <canvas id="mainTimeSeriesChart"></canvas>
                         </div>
                     </div>
 
@@ -393,6 +394,20 @@
                         </div>
                         <div class="relative w-full h-[140px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
                             <canvas id="rsiSubChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Relocated & Review-Fixed TradingView Widget Section -->
+                    <div class="flex flex-col pt-2 border-t border-white/10">
+                        <div class="flex items-center justify-between mb-2 z-10">
+                            <div class="flex items-center space-x-2">
+                                <h3 class="font-bold text-gray-300 text-xs uppercase tracking-wider"><i class="fa-solid fa-chart-candlestick text-[#00ffcc] mr-1.5"></i>TradingView Live Chart Widget</h3>
+                                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30">Synced Feed</span>
+                            </div>
+                            <span class="text-[11px] font-mono text-gray-400">Supports Open Assets (Crypto 24/7, Forex/Indices)</span>
+                        </div>
+                        <div id="tradingviewWidgetWrapper" class="relative w-full h-[320px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-2 z-10 shadow-inner overflow-hidden">
+                            <div id="tradingview_container_inner" style="height:100%;width:100%"></div>
                         </div>
                     </div>
                 </div>
@@ -670,7 +685,7 @@
                     if (latencyElem) latencyElem.innerText = `${jitter}ms`;
 
                     if (data.code === 429 || data.status === 'error') {
-                        showToast(`TwelveData Error (${data.message || 'Rate Limit'}). Using Fallback Telemetry.`, "warning");
+                        showToast(`TwelveData Error/Limit (${data.message || 'Rate Limit'}). Using Robust Fallback Telemetry.`, "warning");
                         setDataSourceBadge(false);
                         return this.getFallbackTelemetry(symbol);
                     }
@@ -744,12 +759,13 @@
             }
         }
 
+        let mainTimeSeriesChart = null;
         let rsiChart = null;
         let currentPair = 'EUR/USD';
         let currentTimeframe = '5min';
         let autoRefreshInterval = null;
         let licenseTimerInterval = null;
-        let countdownSec = 60; // Updated to 60 seconds interval requirement
+        let countdownSec = 60; 
         let autoRefreshEnabled = true;
         let currentThemeMode = 'ocean';
         let telemetryEngine = null;
@@ -951,7 +967,7 @@
                 updateTickerItem("GBPUSD", gbpRate, !isWeekend);
                 updateTickerItem("USDJPY", jpyRate, !isWeekend);
                 updateTickerItem("XAUUSD", xauRate, !isWeekend);
-                updateTickerItem("BTCUSD", btcRate, true); // Crypto is 24/7
+                updateTickerItem("BTCUSD", btcRate, true);
 
                 const nyseEl = document.getElementById('status_NYSE');
                 const lseEl = document.getElementById('status_LSE');
@@ -1096,7 +1112,6 @@
             calculatePositionSize();
         }
 
-        // Helper to map dropdown pairs to TradingView exchange prefixes & symbols
         function getTradingViewSymbolMapping(pair) {
             switch(pair) {
                 case 'EUR/USD': return 'FX:EURUSD';
@@ -1117,11 +1132,10 @@
         function renderTradingViewWidget() {
             const container = document.getElementById('tradingview_container_inner');
             if (!container) return;
-            container.innerHTML = ''; // Clear previous widget instance
+            container.innerHTML = '';
 
             const tvSymbol = getTradingViewSymbolMapping(currentPair);
 
-            // Create new TradingView widget div element dynamically
             const widgetDiv = document.createElement('div');
             widgetDiv.className = "tradingview-widget-container__widget";
             widgetDiv.style.height = "100%";
@@ -1150,7 +1164,6 @@
         async function initCharts() {
             if (!telemetryEngine) return;
             
-            // Render TradingView chart widget with compatible symbol mapping
             renderTradingViewWidget();
 
             const values = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
@@ -1178,10 +1191,11 @@
             const activeTpStr = (currentPriceStr * 1.0050).toFixed(decimals);
             globalVolumeAnalyzer.renderWidget(globalVolumeAnalyzer.analyzePullbackHealth(values), currentPriceStr, activeTpStr, activeSlStr);
 
+            const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
 
-            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - TradingView Advanced Widget`;
+            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - Twelve Data Programmatic Stream`;
 
             const sharedChartOptions = {
                 responsive: true,
@@ -1192,6 +1206,24 @@
                     y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
                 }
             };
+
+            if (mainTimeSeriesChart) {
+                mainTimeSeriesChart.data.labels = labels;
+                mainTimeSeriesChart.data.datasets[0].data = prices;
+                mainTimeSeriesChart.update('none');
+            } else {
+                mainTimeSeriesChart = new Chart(ctxMain, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{ label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.05)', borderWidth: 2, fill: true, tension: 0.1 }]
+                    },
+                    options: {
+                        ...sharedChartOptions,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
 
             if (rsiChart) {
                 rsiChart.data.labels = labels;
@@ -1248,7 +1280,7 @@
 
         function startAutoRefreshTimer() {
             if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            countdownSec = 60; // Set to 60 seconds interval
+            countdownSec = 60;
             autoRefreshInterval = setInterval(() => {
                 if (!isTabActive || !autoRefreshEnabled) return;
                 countdownSec--;
