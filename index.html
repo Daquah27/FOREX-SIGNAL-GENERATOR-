@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FX Signal Desk v4.2 // Institutional Pro Suite + Volume & SMC Engine</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,31 +26,22 @@
                         scanline: {
                             '0%': { transform: 'translateY(-100%)' },
                             '100%': { transform: 'translateY(1000%)' }
-                        },
-                        bannerFlash: {
-                            '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.4 }
                         }
                     },
                     animation: {
                         'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
-                        'scan': 'scanline 8s linear infinite',
-                        'banner-flash': 'bannerFlash 1.5s ease-in-out infinite'
+                        'scan': 'scanline 8s linear infinite'
                     }
                 }
             }
         }
     </script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: rgba(11, 14, 20, 0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(42, 46, 57, 0.3); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(54, 60, 78, 0.5); }
-
         .glass-card {
             background-color: rgba(13, 17, 26, 0.45);
             backdrop-filter: blur(16px);
@@ -64,8 +54,26 @@
             border-color: rgba(0, 255, 204, 0.4);
             box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
         }
-
-        /* 30+ Immersive Theme Background Gradients */
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .asset-item:hover {
+            background: rgba(0, 255, 204, 0.08);
+            border-color: rgba(0, 255, 204, 0.3);
+        }
+        .asset-item.active {
+            background: rgba(0, 255, 204, 0.12);
+            border-color: rgba(0, 255, 204, 0.5);
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.15);
+        }
         body.theme-ocean { background: linear-gradient(135deg, #050B14 0%, #004e92 100%); color: #e5e7eb; }
         body.theme-coral { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #e5e7eb; }
         body.theme-arctic { background: linear-gradient(135deg, #141E30, #243B55); color: #e5e7eb; }
@@ -97,18 +105,12 @@
         body.theme-celestial { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #e5e7eb; }
         body.theme-prism { background: linear-gradient(135deg, #311042 0%, #0f172a 100%); color: #e5e7eb; }
     </style>
+<base target="_blank">
 </head>
 <body class="theme-ocean font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700">
-
     <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-100"></canvas>
-
-    <!-- NOTIFICATION TOAST CONTAINER -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
-
-    <!-- AUDIO ALERTS SYNTHESIZER -->
-    <audio id="alertBeep" preload="auto">
-        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="alertBeep" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg"></audio>
 
     <!-- AUTHENTICATION / LICENSE GATE OVERLAY -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-2xl">
@@ -144,33 +146,29 @@
             </div>
             <div>
                 <h2 class="text-xl font-bold text-white uppercase tracking-wider">Institutional License Expired</h2>
-                <p class="text-xs text-gray-400 mt-2">Your active Pro license key has reached its validity limit. Terminal functions and live data streaming are currently restricted. Please upgrade your key code or apply a new subscription token below[cite: 4].</p>
+                <p class="text-xs text-gray-400 mt-2">Your active Pro license key has reached its validity limit. Terminal functions and live data streaming are currently restricted. Please upgrade your key code or apply a new subscription token below.</p>
             </div>
-            
             <div class="space-y-3 text-left">
                 <label class="block text-[11px] uppercase font-semibold text-gray-400">Apply Renewal / Upgrade License String</label>
                 <textarea id="upgradeLicenseInput" rows="3" placeholder="Paste new QUAH-encoded license key here..." class="w-full bg-darkBg/60 border border-white/10 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc]"></textarea>
             </div>
-
             <div class="flex items-center space-x-3">
                 <button onclick="submitLicenseUpgrade()" class="flex-1 bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20">
                     <i class="fa-solid fa-key mr-1"></i> Upgrade & Restore Terminal
                 </button>
-                <button onclick="logout()" class="px-4 bg-white/10 hover:bg-white/20 text-gray-300 font-medium py-2.5 rounded-xl text-xs transition">
-                    Disconnect
-                </button>
+                <button onclick="logout()" class="px-4 bg-white/10 hover:bg-white/20 text-gray-300 font-medium py-2.5 rounded-xl text-xs transition">Disconnect</button>
             </div>
         </div>
     </div>
 
     <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="hidden flex-1 flex flex-col z-10">
-        
-        <!-- PROFESSIONAL MARKET STATUS & LIVE TREND BANNER -->
+
+        <!-- MARKET STATUS BANNER -->
         <div id="marketStatusBanner" class="w-full bg-cardBg/90 backdrop-blur-md border-b border-white/10 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3">
             <div class="flex items-center space-x-3">
                 <span id="marketStatusIcon" class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-                <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">Fetching Twelve Data Market State...</span>
+                <span id="marketStatusTitle" class="font-bold uppercase tracking-wider text-white">INITIALIZING FEED...</span>
             </div>
             <div class="flex items-center space-x-4 overflow-x-auto whitespace-nowrap scrollbar-none font-mono py-1">
                 <span class="text-gray-400 uppercase text-[10px]">Asset Status & Trends:</span>
@@ -180,13 +178,11 @@
                 <span class="bg-darkBg/60 px-2.5 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong id="statusXAUUSD" class="text-emerald-400">LOADING</strong></span>
             </div>
             <div class="flex items-center space-x-2 font-mono">
-                <span class="bg-darkBg/50 px-3 py-1 rounded border border-white/10 text-[#00ffcc]">
-                    State Sync: <strong id="marketSyncStatus" class="text-white">Active</strong>
-                </span>
+                <span class="bg-darkBg/50 px-3 py-1 rounded border border-white/10 text-[#00ffcc]">State Sync: <strong id="marketSyncStatus" class="text-white">Active</strong></span>
             </div>
         </div>
 
-        <!-- 1. TOP HEADER & STATUS BAR -->
+        <!-- HEADER -->
         <header class="bg-cardBg/25 backdrop-blur-xl border-b border-white/10 px-6 py-2.5 flex items-center justify-between sticky top-0 z-30">
             <div class="flex items-center space-x-6">
                 <div class="flex items-center space-x-2">
@@ -206,58 +202,53 @@
                     <span>Expires: <strong id="licenseCountdownDisplay" class="text-white">Calculating...</strong></span>
                 </div>
             </div>
-
             <div class="flex items-center space-x-4 text-xs">
-                <div id="utcClock" class="bg-darkBg/25 backdrop-blur px-3 py-1.5 rounded border border-white/5 font-mono text-gray-300">
-                    00:00:00 UTC
-                </div>
+                <div id="utcClock" class="bg-darkBg/25 backdrop-blur px-3 py-1.5 rounded border border-white/5 font-mono text-gray-300">00:00:00 UTC</div>
                 <div class="relative">
                     <button onclick="toggleProfileMenu()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#00ffcc] hover:text-black transition shadow-md backdrop-blur">
                         <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
                     </button>
-                    <!-- Expanded 30+ Theme Dropdown Selector Menu -->
                     <div id="profileMenu" class="hidden absolute right-0 mt-2 w-72 glass-card rounded-xl shadow-2xl p-4 space-y-3 z-50">
                         <div class="text-xs font-bold text-gray-300 uppercase border-b border-white/10 pb-1 flex items-center justify-between">
-                            <span>30+ Living Theme Environments</span>
-                            <i class="fa-solid fa-palette text-[#00ffcc]"></i>
+                            <span>30+ Living Theme Environments</span><i class="fa-solid fa-palette text-[#00ffcc]"></i>
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-400 mb-1">Select Immersive Environment</label>
                             <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/60 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
                                 <optgroup label="Ocean & Water">
-                                    <option value="ocean" selected>🌊 Deep Ocean Abyss (Fish & Jellyfish)</option>
-                                    <option value="coral">🪸 Coral Reef Sanctuary (Tropical Fish)</option>
-                                    <option value="arctic">❄️ Frozen Glacier (Ice Crystals)</option>
-                                    <option value="abyss">⚓ Mariana Trench (Deep Sea Angler)</option>
+                                    <option value="ocean" selected>Deep Ocean Abyss</option>
+                                    <option value="coral">Coral Reef Sanctuary</option>
+                                    <option value="arctic">Frozen Glacier</option>
+                                    <option value="abyss">Mariana Trench</option>
                                 </optgroup>
                                 <optgroup label="Cyber & Sci-Fi">
-                                    <option value="cyberpunk">⚡ Cyberpunk Neon Rain (Glitch Drones)</option>
-                                    <option value="matrix">💻 Matrix Data Stream (Binary Glyphs)</option>
-                                    <option value="synthwave">🌆 Retro Synthwave Sunset (Grid Orbs)</option>
-                                    <option value="quantum">⚛️ Quantum Core (Subatomic Sparks)</option>
-                                    <option value="circuit">🔌 Cybernetic Circuit (Nodes & Pulses)</option>
+                                    <option value="cyberpunk">Cyberpunk Neon Rain</option>
+                                    <option value="matrix">Matrix Data Stream</option>
+                                    <option value="synthwave">Retro Synthwave Sunset</option>
+                                    <option value="quantum">Quantum Core</option>
+                                    <option value="circuit">Cybernetic Circuit</option>
                                 </optgroup>
                                 <optgroup label="Nature & Earth">
-                                    <option value="forest">🌲 Enchanted Emerald Forest (Fireflies)</option>
-                                    <option value="aurora">🌌 Aurora Borealis (Light Whorls)</option>
-                                    <option value="volcanic">🌋 Volcanic Ash & Ember (Fire Embers)</option>
-                                    <option value="bamboo">🎋 Zen Bamboo Garden (Falling Leaves)</option>
-                                    <option value="canyon">🏜️ Desert Red Canyon (Dust Motes)</option>
-                                    <option value="savanna">🦁 Golden Savanna Dusk (Pollen Seeds)</option>
+                                    <option value="forest">Enchanted Emerald Forest</option>
+                                    <option value="aurora">Aurora Borealis</option>
+                                    <option value="volcanic">Volcanic Ash & Ember</option>
+                                    <option value="bamboo">Zen Bamboo Garden</option>
+                                    <option value="canyon">Desert Red Canyon</option>
+                                    <option value="savanna">Golden Savanna Dusk</option>
                                 </optgroup>
                                 <optgroup label="Cosmic & Space">
-                                    <option value="nebula">🌠 Sunset Nebula (Comets & Stars)</option>
-                                    <option value="supernova">✨ Supernova Explosion (Stellar Shards)</option>
-                                    <option value="eclipse">🌑 Solar Eclipse (Corona Rings)</option>
-                                    <option value="deepspace">🌌 Deep Space Void (Asteroids)</option>
-                                    <option value="galaxy">🌀 Andromeda Spiral (Mini Galaxies)</option>
+                                    <option value="nebula">Sunset Nebula</option>
+                                    <option value="supernova">Supernova Explosion</option>
+                                    <option value="eclipse">Solar Eclipse</option>
+                                    <option value="deepspace">Deep Space Void</option>
+                                    <option value="galaxy">Andromeda Spiral</option>
                                 </optgroup>
                                 <optgroup label="Abstract & Moody">
-                                    <option value="vaporwave">🏛️ Vaporwave Statuary (Floating Busts)</option>
-                                    <option value="midnight">🌙 Midnight Velvet (Night Moths)</option>
-                                    <option value="amethyst">🔮 Amethyst Crystal Cave (Gem Shards)</option>
-                                    <option value="obsidian">🪙 Obsidian Gold (Gold Leaf Flakes)</option>
-                                    <option value="toxic">☢️ Toxic Wasteland (Mutant Spores)</option>
+                                    <option value="vaporwave">Vaporwave Statuary</option>
+                                    <option value="midnight">Midnight Velvet</option>
+                                    <option value="amethyst">Amethyst Crystal Cave</option>
+                                    <option value="obsidian">Obsidian Gold</option>
+                                    <option value="toxic">Toxic Wasteland</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -267,7 +258,7 @@
             </div>
         </header>
 
-        <!-- 2. TICKERS & WORLD CLOCKS -->
+        <!-- TICKERS & WORLD CLOCKS -->
         <div class="bg-darkBg/20 backdrop-blur border-b border-white/5 px-6 py-1.5 flex flex-wrap items-center justify-between text-xs overflow-hidden gap-4">
             <div class="flex items-center space-x-6 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5 flex-1">
                 <span class="text-[#00ffcc] font-bold flex items-center"><i class="fa-solid fa-bullhorn mr-1.5 animate-pulse"></i> LIVE FEED:</span>
@@ -284,7 +275,7 @@
             </div>
         </div>
 
-        <!-- 3. MAIN TOOLBAR -->
+        <!-- MAIN TOOLBAR -->
         <div class="bg-cardBg/20 backdrop-blur border-b border-white/5 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center space-x-3 gap-y-2">
                 <div>
@@ -319,7 +310,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="flex items-center space-x-3 text-xs">
                 <button onclick="triggerManualRefresh()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded font-medium transition flex items-center active:scale-95 shadow backdrop-blur">
                     <i class="fa-solid fa-rotate mr-1.5"></i> Refresh Chart
@@ -331,210 +321,312 @@
             </div>
         </div>
 
-        <!-- 4. DASHBOARD GRID LAYOUT -->
-        <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto">
+        <!-- DASHBOARD GRID LAYOUT -->
+        <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto" style="display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start;">
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Expanded Proportionate Price Chart & RSI Sub-Chart Card -->
-                <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
-                    <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/5 to-transparent pointer-events-none animate-scan"></div>
-                    
-                    <!-- Main Price Chart Section -->
-                    <div class="flex flex-col">
-                        <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
-                            <div class="flex items-center space-x-2">
-                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - Twelve Data Feed</h2>
-                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live API Synced</span>
-                            </div>
-                            <div class="text-xs font-mono text-[#00ffcc] flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> Volume & SMC Active
-                            </div>
-                        </div>
-                        <div class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
-                            <canvas id="mainPriceChart"></canvas>
-                            
-                            <div id="chartBadgeEntry" class="absolute left-16 top-1/3 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-[#00ffcc] text-[10px] font-mono px-2 py-1 rounded shadow-lg animate-bounce pointer-events-none">
-                                🎯 ENTRY: <span id="overlayEntryPrice">1.1042</span>
-                            </div>
-                            <div id="chartBadgeTP" class="absolute right-20 top-16 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-emerald-200 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
-                                💰 TP: <span id="overlayTpPrice">1.1120</span>
-                            </div>
-                            <div id="chartBadgeSL" class="absolute right-20 bottom-16 bg-darkBg/80 backdrop-blur border border-red-500 text-red-300 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
-                                🛑 SL: <span id="overlaySlPrice">1.1010</span>
-                            </div>
-                        </div>
+            <!-- Sidebar: Assets & Strategy Notes -->
+            <div class="panel glass-card rounded-2xl p-4 shadow-xl space-y-4">
+                <h2 class="text-xs font-bold text-gray-300 uppercase border-b border-white/10 pb-2 flex items-center justify-between">
+                    <span>Institutional Feeds</span><i class="fa-solid fa-list text-[#00ffcc]"></i>
+                </h2>
+                <div class="asset-list" id="assetList" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div class="asset-item active" data-symbol="EUR/USD" onclick="selectAsset('EUR/USD')">
+                        <span class="asset-symbol font-semibold text-sm">EUR/USD</span>
+                        <span class="asset-price font-mono text-xs text-[#00ffcc]" id="price-EUR-USD">1.0845</span>
                     </div>
-
-                    <!-- RSI Sub-Chart Section -->
-                    <div class="flex flex-col">
-                        <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
-                            <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
-                            <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
-                        </div>
-                        <div class="relative w-full h-[140px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
-                            <canvas id="rsiSubChart"></canvas>
-                        </div>
+                    <div class="asset-item" data-symbol="GBP/USD" onclick="selectAsset('GBP/USD')">
+                        <span class="asset-symbol font-semibold text-sm">GBP/USD</span>
+                        <span class="asset-price font-mono text-xs text-[#00ffcc]" id="price-GBP-USD">1.2670</span>
+                    </div>
+                    <div class="asset-item" data-symbol="USD/JPY" onclick="selectAsset('USD/JPY')">
+                        <span class="asset-symbol font-semibold text-sm">USD/JPY</span>
+                        <span class="asset-price font-mono text-xs text-[#00ffcc]" id="price-USD-JPY">147.85</span>
+                    </div>
+                    <div class="asset-item" data-symbol="XAU/USD" onclick="selectAsset('XAU/USD')">
+                        <span class="asset-symbol font-semibold text-sm">XAU/USD</span>
+                        <span class="asset-price font-mono text-xs text-[#00ffcc]" id="price-XAU-USD">2335.40</span>
+                    </div>
+                    <div class="asset-item" data-symbol="XAG/USD" onclick="selectAsset('XAG/USD')">
+                        <span class="asset-symbol font-semibold text-sm">XAG/USD</span>
+                        <span class="asset-price font-mono text-xs text-[#00ffcc]" id="price-XAG-USD">28.90</span>
+                    </div>
+                    <div class="asset-item" data-symbol="BTC/USD" onclick="selectAsset('BTC/USD')">
+                        <span class="asset-symbol font-semibold text-sm">BTC/USD</span>
+                        <span class="asset-price font-mono text-xs text-[#00ffcc]" id="price-BTC-USD">64210.00</span>
                     </div>
                 </div>
+                <div class="strategy-notes text-[11px] text-gray-400 leading-relaxed border-t border-white/10 pt-3">
+                    <p class="mb-2"><i class="fa-solid fa-circle-info text-[#00ffcc] mr-1"></i> <strong class="text-gray-300">Strategy Note:</strong></p>
+                    Executing trend continuations and structural shifts via filtered liquidity sweeps and confirmed order block interaction. Volume confirmation required on all entries.
+                </div>
+            </div>
 
-                <!-- Signal Card, Market Structure Panel, Volume Widget & Multi-Timeframe Matrix -->
-                <div class="space-y-6">
-                    
-                    <!-- NEW: Volume Participation & Pullback Analyzer Widget -->
-                    <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
-                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
-                            <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
+            <!-- Right Workspace Column -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- Price Chart & RSI Sub-Chart Card -->
+                    <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
+                        <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/5 to-transparent pointer-events-none animate-scan"></div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
+                                <div class="flex items-center space-x-2">
+                                    <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD — Twelve Data Feed</h2>
+                                    <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live API Synced</span>
+                                </div>
+                                <div class="text-xs font-mono text-[#00ffcc] flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> Volume & SMC Active
+                                </div>
+                            </div>
+                            <div class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
+                                <canvas id="mainPriceChart"></canvas>
+                                <div id="chartBadgeEntry" class="absolute left-16 top-1/3 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-[#00ffcc] text-[10px] font-mono px-2 py-1 rounded shadow-lg animate-bounce pointer-events-none">
+                                    🎯 ENTRY: <span id="overlayEntryPrice">1.1042</span>
+                                </div>
+                                <div id="chartBadgeTP" class="absolute right-20 top-16 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-emerald-200 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
+                                    💰 TP: <span id="overlayTpPrice">1.1120</span>
+                                </div>
+                                <div id="chartBadgeSL" class="absolute right-20 bottom-16 bg-darkBg/80 backdrop-blur border border-red-500 text-red-300 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
+                                    🛑 SL: <span id="overlaySlPrice">1.1010</span>
+                                </div>
+                            </div>
                         </div>
-                        <p id="volDescText" class="text-xs text-slate-300">Increasing buy volume with decreasing sell volume on pullback (High continuation probability)</p>
-                        <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
-                            <span>Pullback Impact:</span>
-                            <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
+                                <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
+                                <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
+                            </div>
+                            <div class="relative w-full h-[140px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
+                                <canvas id="rsiSubChart"></canvas>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- SMC Structure & CHoCH / BOS Panel -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chess-board text-[#00ffcc] mr-2"></i>SMC Structure State</h2>
-                            <span id="smcStateBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">BULLISH BOS</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                            <div class="bg-darkBg/40 backdrop-blur p-2.5 rounded-xl border border-white/5">
-                                <span class="text-[9px] text-gray-400 block mb-0.5">RANGE HIGH</span>
-                                <strong id="smcRangeHigh" class="text-emerald-400 text-xs">1.10850</strong>
-                            </div>
-                            <div class="bg-darkBg/40 backdrop-blur p-2.5 rounded-xl border border-white/5">
-                                <span class="text-[9px] text-gray-400 block mb-0.5">RANGE LOW</span>
-                                <strong id="smcRangeLow" class="text-red-400 text-xs">1.10120</strong>
-                            </div>
-                        </div>
-                        <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-white/5 text-[11px] font-mono flex items-center justify-between">
-                            <span class="text-gray-400">Latest Event:</span>
-                            <strong id="smcLatestEvent" class="text-[#00ffcc]">Break of Structure (Body Close)</strong>
-                        </div>
-                    </div>
+                    <!-- Signal Card, Market Structure Panel, Volume Widget & Multi-Timeframe Matrix -->
+                    <div class="space-y-6">
 
-                    <!-- Signal & Risk Calculator Card -->
-                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-2xl">
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between pb-2 border-b border-white/10">
-                                <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
-                                <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse">BUY SIGNAL</span>
+                        <!-- Volume Participation Widget -->
+                        <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
+                            <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
+                                <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
                             </div>
-                            <div class="flex items-center justify-between bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5">
-                                <div>
-                                    <div class="text-[10px] uppercase font-semibold text-gray-400">Confidence Score</div>
-                                    <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">94.8%</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[10px] uppercase font-semibold text-gray-400">License Tier</div>
-                                    <div id="licenseTierDisplay" class="text-xs font-bold text-white font-mono mt-1">Institutional Pro</div>
-                                </div>
+                            <p id="volDescText" class="text-xs text-slate-300">Increasing buy volume with decreasing sell volume on pullback (High continuation probability)</p>
+                            <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
+                                <span>Pullback Impact:</span>
+                                <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
+                            </div>
+                        </div>
+
+                        <!-- SMC Structure Panel -->
+                        <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chess-board text-[#00ffcc] mr-2"></i>SMC Structure State</h2>
+                                <span id="smcStateBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">BULLISH BOS</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-red-500/30 hover:border-red-500 transition">
-                                    <span class="text-gray-400 block text-[10px]">STOP LOSS (SL)</span>
-                                    <strong id="slVal" class="text-red-400 text-sm">1.10100</strong>
+                                <div class="bg-darkBg/40 backdrop-blur p-2.5 rounded-xl border border-white/5">
+                                    <span class="text-[9px] text-gray-400 block mb-0.5">RANGE HIGH</span>
+                                    <strong id="smcRangeHigh" class="text-emerald-400 text-xs">1.10850</strong>
                                 </div>
-                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-[#00ffcc]/30 hover:border-[#00ffcc] transition">
-                                    <span class="text-gray-400 block text-[10px]">TAKE PROFIT (TP)</span>
-                                    <strong id="tpVal" class="text-[#00ffcc] text-sm">1.11200</strong>
+                                <div class="bg-darkBg/40 backdrop-blur p-2.5 rounded-xl border border-white/5">
+                                    <span class="text-[9px] text-gray-400 block mb-0.5">RANGE LOW</span>
+                                    <strong id="smcRangeLow" class="text-red-400 text-xs">1.10120</strong>
                                 </div>
                             </div>
+                            <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-white/5 text-[11px] font-mono flex items-center justify-between">
+                                <span class="text-gray-400">Latest Event:</span>
+                                <strong id="smcLatestEvent" class="text-[#00ffcc]">Break of Structure (Body Close)</strong>
+                            </div>
+                        </div>
 
-                            <!-- Dynamic Risk-Reward Position Sizing Calculator -->
-                            <div class="bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
-                                <div class="text-[11px] font-bold text-white uppercase flex items-center justify-between border-b border-white/10 pb-1">
-                                    <span>Risk-Reward Sizing</span>
-                                    <i class="fa-solid fa-calculator text-[#00ffcc]"></i>
+                        <!-- Signal & Risk Calculator Card -->
+                        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-2xl">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                                    <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
+                                    <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse">BUY SIGNAL</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
+                                <div class="flex items-center justify-between bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5">
                                     <div>
-                                        <label class="block text-[9px] text-gray-400">Account Size ($)</label>
-                                        <input type="number" id="calcAccountSize" value="25000" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                        <div class="text-[10px] uppercase font-semibold text-gray-400">Confidence Score</div>
+                                        <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">94.8%</div>
                                     </div>
-                                    <div>
-                                        <label class="block text-[9px] text-gray-400">Risk Tolerance (%)</label>
-                                        <input type="number" step="0.1" id="calcRiskPct" value="1.0" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                    <div class="text-right">
+                                        <div class="text-[10px] uppercase font-semibold text-gray-400">License Tier</div>
+                                        <div id="licenseTierDisplay" class="text-xs font-bold text-white font-mono mt-1">Institutional Pro</div>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-between pt-1 text-[11px]">
-                                    <span class="text-gray-400">Recommended Size:</span>
-                                    <strong id="calcLotSizeResult" class="text-[#00ffcc]">2.50 Lots</strong>
+
+                                <!-- Metric Cards Grid -->
+                                <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+                                    <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-white/5">
+                                        <div class="text-[9px] text-gray-400 block mb-0.5">Entry Price</div>
+                                        <div class="text-xs font-bold text-white" id="val-entry">1.08420</div>
+                                    </div>
+                                    <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-red-500/30">
+                                        <div class="text-[9px] text-gray-400 block mb-0.5">Stop Loss</div>
+                                        <div class="text-xs font-bold text-red-400" id="val-sl">1.08150</div>
+                                    </div>
+                                    <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-[#00ffcc]/30">
+                                        <div class="text-[9px] text-gray-400 block mb-0.5">Risk-to-Reward</div>
+                                        <div class="text-xs font-bold text-[#00ffcc]" id="val-rr">1 : 2.85</div>
+                                    </div>
+                                </div>
+
+                                <!-- SL / TP Legacy Row -->
+                                <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                                    <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-red-500/30 hover:border-red-500 transition">
+                                        <span class="text-gray-400 block text-[10px]">STOP LOSS (SL)</span>
+                                        <strong id="slVal" class="text-red-400 text-sm">1.10100</strong>
+                                    </div>
+                                    <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-[#00ffcc]/30 hover:border-[#00ffcc] transition">
+                                        <span class="text-gray-400 block text-[10px]">TAKE PROFIT (TP)</span>
+                                        <strong id="tpVal" class="text-[#00ffcc] text-sm">1.11200</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Risk-Reward Position Sizing Calculator -->
+                                <div class="bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
+                                    <div class="text-[11px] font-bold text-white uppercase flex items-center justify-between border-b border-white/10 pb-1">
+                                        <span>Risk-Reward Sizing</span><i class="fa-solid fa-calculator text-[#00ffcc]"></i>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-[9px] text-gray-400">Account Size ($)</label>
+                                            <input type="number" id="calcAccountSize" value="25000" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[9px] text-gray-400">Risk Tolerance (%)</label>
+                                            <input type="number" step="0.1" id="calcRiskPct" value="1.0" oninput="calculatePositionSize()" class="w-full bg-darkBg/50 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-1 text-[11px]">
+                                        <span class="text-gray-400">Recommended Size:</span>
+                                        <strong id="calcLotSizeResult" class="text-[#00ffcc]">2.50 Lots</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 active:scale-95 backdrop-blur">
+                                Dispatch Institutional Order
+                            </button>
+                        </div>
+
+                        <!-- Multi-Timeframe Correlation Matrix -->
+                        <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix</h2>
+                                <span class="text-[10px] text-gray-400">Confluence Scanner</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
+                                <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
+                                    <span class="text-[10px] text-gray-400 block mb-1">15 MIN</span>
+                                    <span id="mtf15m" class="font-bold text-[#00ffcc]">BULLISH</span>
+                                </div>
+                                <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
+                                    <span class="text-[10px] text-gray-400 block mb-1">1 HOUR</span>
+                                    <span id="mtf1h" class="font-bold text-[#00ffcc]">BULLISH</span>
+                                </div>
+                                <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
+                                    <span class="text-[10px] text-gray-400 block mb-1">4 HOUR</span>
+                                    <span id="mtf4h" class="font-bold text-amber-400">NEUTRAL</span>
                                 </div>
                             </div>
                         </div>
-
-                        <button onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 active:scale-95 backdrop-blur">
-                            Dispatch Institutional Order
-                        </button>
-                    </div>
-
-                    <!-- Multi-Timeframe Correlation Matrix -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix</h2>
-                            <span class="text-[10px] text-gray-400">Confluence Scanner</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
-                            <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
-                                <span class="text-[10px] text-gray-400 block mb-1">15 MIN</span>
-                                <span id="mtf15m" class="font-bold text-[#00ffcc]">BULLISH</span>
-                            </div>
-                            <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
-                                <span class="text-[10px] text-gray-400 block mb-1">1 HOUR</span>
-                                <span id="mtf1h" class="font-bold text-[#00ffcc]">BULLISH</span>
-                            </div>
-                            <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
-                                <span class="text-[10px] text-gray-400 block mb-1">4 HOUR</span>
-                                <span id="mtf4h" class="font-bold text-amber-400">NEUTRAL</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
-            </div>
-
-            <!-- Signal Log Table -->
-            <div class="glass-card rounded-2xl p-4 shadow-xl">
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
-                    <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-history text-[#00ffcc] mr-2"></i>Institutional Telemetry Log</h2>
-                    <span class="text-xs text-gray-400">Audit Trail Active</span>
+                <!-- Signal Log Table -->
+                <div class="glass-card rounded-2xl p-4 shadow-xl">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                        <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-history text-[#00ffcc] mr-2"></i>Institutional Telemetry Log</h2>
+                        <span class="text-xs text-gray-400">Audit Trail Active</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-gray-400 text-[10px] uppercase">
+                                <tr><th class="pb-2">Timestamp (UTC)</th><th class="pb-2">Pair</th><th class="pb-2">Direction</th><th class="pb-2">Price</th><th class="pb-2">Status</th></tr>
+                            </thead>
+                            <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono"></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono"></tbody>
-                    </table>
-                </div>
             </div>
-
         </main>
     </div>
 
-    <!-- JAVASCRIPT ENGINE -->
     <script>
-        class VolumePullbackAnalyzer {
-            constructor() {}
+        // ==================== MARKET STATUS ENGINE (File 2) ====================
+        function evaluateMarketStatus() {
+            const now = new Date();
+            const utcDay = now.getUTCDay(); // 0 = Sun, 6 = Sat
+            const utcHour = now.getUTCHours();
+            if (utcDay === 6) return true; // Saturday
+            if (utcDay === 0 && utcHour < 22) return true; // Sunday pre-open
+            if (utcDay === 5 && utcHour >= 21) return true; // Friday post-close
+            return false;
+        }
 
+        function updateMarketStatusBanner() {
+            const banner = document.getElementById('marketStatusBanner');
+            const icon = document.getElementById('marketStatusIcon');
+            const title = document.getElementById('marketStatusTitle');
+            const eurStatus = document.getElementById('statusEURUSD');
+            const gbpStatus = document.getElementById('statusGBPUSD');
+            const jpyStatus = document.getElementById('statusUSDJPY');
+            const xauStatus = document.getElementById('statusXAUUSD');
+            if (!banner) return;
+            if (evaluateMarketStatus()) {
+                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-red-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
+                icon.className = "w-3 h-3 rounded-full bg-red-400 animate-pulse";
+                title.innerText = "MARKET CLOSED — Weekend Session";
+                if (eurStatus) { eurStatus.innerText = "CLOSED"; eurStatus.className = "text-red-400"; }
+                if (gbpStatus) { gbpStatus.innerText = "CLOSED"; gbpStatus.className = "text-red-400"; }
+                if (jpyStatus) { jpyStatus.innerText = "CLOSED"; jpyStatus.className = "text-red-400"; }
+                if (xauStatus) { xauStatus.innerText = "CLOSED"; xauStatus.className = "text-red-400"; }
+            } else {
+                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
+                icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
+                title.innerText = "🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS";
+                if (eurStatus) { eurStatus.innerText = "OPEN"; eurStatus.className = "text-emerald-400"; }
+                if (gbpStatus) { gbpStatus.innerText = "OPEN"; gbpStatus.className = "text-emerald-400"; }
+                if (jpyStatus) { jpyStatus.innerText = "OPEN"; jpyStatus.className = "text-emerald-400"; }
+                if (xauStatus) { xauStatus.innerText = "OPEN"; xauStatus.className = "text-emerald-400"; }
+            }
+        }
+
+        // ==================== ASSET SELECTION (Unified Sidebar + Dropdown) ====================
+        function selectAsset(symbol) {
+            currentPair = symbol;
+            document.querySelectorAll('.asset-item').forEach(i => i.classList.remove('active'));
+            const selectedItem = document.querySelector(`.asset-item[data-symbol="${symbol}"]`);
+            if (selectedItem) selectedItem.classList.add('active');
+            const mainSelect = document.getElementById('mainPairSelect');
+            if (mainSelect && mainSelect.value !== symbol) mainSelect.value = symbol;
+            document.getElementById('chartCardTitle').innerText = `${symbol} — Twelve Data Feed`;
+            initCharts();
+            updateMTFMatrix();
+        }
+
+        function onPairChange() {
+            selectAsset(document.getElementById('mainPairSelect').value);
+        }
+
+        // ==================== VOLUME PULLBACK ANALYZER ====================
+        class VolumePullbackAnalyzer {
             analyzePullbackHealth(candles) {
                 if (!candles || candles.length < 5) return { status: 'INSUFFICIENT_DATA', probabilityBonus: 0, description: 'Gathering volume stream...' };
-
                 let recentMoves = candles.slice(-5);
                 let impulseVolumeIncreasing = true;
                 let pullbackVolumeDecreasing = true;
                 let highSellingPressure = false;
-
                 let impulseCandles = recentMoves.slice(0, 2);
                 let pullbackCandles = recentMoves.slice(2);
-
                 for (let i = 1; i < impulseCandles.length; i++) {
                     if (impulseCandles[i].volume <= impulseCandles[i - 1].volume && impulseCandles[i].close > impulseCandles[i].open) {
                         impulseVolumeIncreasing = false;
                     }
                 }
-
                 let redVolumes = pullbackCandles.filter(c => c.close < c.open).map(c => c.volume);
                 if (redVolumes.length >= 2) {
                     if (redVolumes[1] > redVolumes[0]) {
@@ -542,27 +634,12 @@
                         highSellingPressure = true;
                     }
                 }
-
-                let analysisResult = {
-                    status: 'NEUTRAL',
-                    probabilityBonus: 0,
-                    description: 'Standard volume distribution across candles'
-                };
-
+                let analysisResult = { status: 'NEUTRAL', probabilityBonus: 0, description: 'Standard volume distribution across candles' };
                 if (impulseVolumeIncreasing && pullbackVolumeDecreasing) {
-                    analysisResult = {
-                        status: 'HEALTHY_PULLBACK',
-                        probabilityBonus: 4.0, 
-                        description: 'Increasing buy volume with decreasing sell volume on pullback (High continuation probability)'
-                    };
+                    analysisResult = { status: 'HEALTHY_PULLBACK', probabilityBonus: 4.0, description: 'Increasing buy volume with decreasing sell volume on pullback (High continuation probability)' };
                 } else if (impulseVolumeIncreasing && highSellingPressure) {
-                    analysisResult = {
-                        status: 'HIGH_REVERSAL_RISK',
-                        probabilityBonus: -5.0, 
-                        description: 'Warning: Increasing red volume during pullback signals strong distribution pressure'
-                    };
+                    analysisResult = { status: 'HIGH_REVERSAL_RISK', probabilityBonus: -5.0, description: 'Warning: Increasing red volume during pullback signals strong distribution pressure' };
                 }
-
                 return analysisResult;
             }
 
@@ -572,11 +649,9 @@
                 const bonus = document.getElementById('volBonusDisplay');
                 const container = document.getElementById('volumeWidgetContainer');
                 if (!badge) return;
-
                 badge.innerText = analysis.status;
                 desc.innerText = analysis.description;
                 bonus.innerText = `${analysis.probabilityBonus > 0 ? '+' : ''}${analysis.probabilityBonus}% Confluence`;
-
                 if (analysis.status === 'HEALTHY_PULLBACK') {
                     badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
                     container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30";
@@ -589,16 +664,15 @@
                 }
             }
         }
-
         const globalVolumeAnalyzer = new VolumePullbackAnalyzer();
 
+        // ==================== TELEMETRY ENGINE ====================
         class InstitutionalTelemetryEngine {
             constructor(apiKey, maxCalls = 1000) {
                 this.apiKey = apiKey;
                 this.maxCalls = maxCalls;
                 this.callCount = 0;
             }
-
             async fetchTimeSeries(symbol, interval) {
                 const startTime = performance.now();
                 if (this.callCount >= this.maxCalls) {
@@ -606,26 +680,21 @@
                     setDataSourceBadge(false);
                     return this.getFallbackTelemetry();
                 }
-
                 const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
                 const url = `https://api.twelvedata.com/time_series?symbol=${formattedSymbol}&interval=${interval}&outputsize=30&apikey=${this.apiKey}`;
-
                 try {
                     this.callCount++;
                     const response = await fetch(url);
                     const data = await response.json();
-
                     const endTime = performance.now();
                     const jitter = Math.round(endTime - startTime + Math.random() * 8);
                     const latencyElem = document.getElementById('latencyDisplay');
                     if (latencyElem) latencyElem.innerText = `${jitter}ms`;
-
                     if (data.code === 429 || data.status === 'error') {
                         showToast("TwelveData Rate Limit / Error. Using Fallback Telemetry.", "warning");
                         setDataSourceBadge(false);
                         return this.getFallbackTelemetry();
                     }
-
                     if (data.values && Array.isArray(data.values)) {
                         setDataSourceBadge(true);
                         return data.values.reverse();
@@ -638,7 +707,6 @@
                     return this.getFallbackTelemetry();
                 }
             }
-
             getFallbackTelemetry() {
                 let basePrice = 1.1040;
                 let fallbackValues = [];
@@ -676,23 +744,21 @@
             const toast = document.createElement('div');
             let borderColor = type === 'warning' ? 'border-amber-500/40 text-amber-300' : 'border-[#00ffcc]/40 text-[#00ffcc]';
             let icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
-            
             toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border ${borderColor} text-xs flex items-center space-x-2 transition-all duration-300 translate-y-2 opacity-0`;
             toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
-            
             container.appendChild(toast);
             setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-2', 'opacity-0');
                 setTimeout(() => { toast.remove(); }, 300);
             }, 4000);
-
             if (type === 'warning') {
                 const audio = document.getElementById('alertBeep');
                 if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
             }
         }
 
+        // ==================== GLOBAL STATE ====================
         let mainChart = null;
         let rsiChart = null;
         let currentPair = 'EUR/USD';
@@ -703,7 +769,6 @@
         let countdownSec = 30;
         let currentThemeMode = 'ocean';
         let telemetryEngine = null;
-        
         let activeFullCode = '';
         let activeApiKey = '';
         let activeLicenseExpiryTimestamp = null;
@@ -723,7 +788,7 @@
             }
         });
 
-        // SECURE BACKEND GATEWAY INTEGRATION
+        // ==================== AUTH & LICENSE ====================
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const apiKey = document.getElementById('loginApiKey').value;
@@ -731,20 +796,15 @@
             const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
             const errElem = document.getElementById('licenseErrorMsg');
             const statusIndicator = document.getElementById('authStatusIndicator');
-
             errElem.classList.add('hidden');
             if (statusIndicator) statusIndicator.textContent = "Checking key...";
-
             try {
                 let isValid = true;
                 let message = "License validated successfully.";
-
                 if (statusIndicator) statusIndicator.textContent = "Success!";
                 showToast("Success! " + message);
-
                 activeFullCode = licenseKeyInput;
                 activeApiKey = apiKey;
-
                 if (rememberDevice) {
                     localStorage.setItem('quah_api_key', apiKey);
                     localStorage.setItem('quah_license_key', licenseKeyInput);
@@ -752,7 +812,6 @@
                     localStorage.removeItem('quah_api_key');
                     localStorage.removeItem('quah_license_key');
                 }
-
                 try {
                     const parts = licenseKeyInput.split('-');
                     if (parts.length >= 2) {
@@ -766,13 +825,11 @@
                 } catch (err) {
                     activeLicenseExpiryTimestamp = Date.now() + 604800000;
                 }
-
                 telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
                 showToast("Institutional Pro Terminal Initialized");
                 initApp();
-
             } catch (error) {
                 errElem.textContent = "Error connecting to the server.";
                 errElem.classList.remove('hidden');
@@ -797,6 +854,7 @@
             document.getElementById('profileMenu').classList.toggle('hidden');
         }
 
+        // ==================== CANVAS BACKGROUND ANIMATIONS ====================
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let entities = [];
@@ -842,15 +900,12 @@
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.ellipse(0, 0, e.size, e.size * 0.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            ctx.fill(); ctx.stroke();
             ctx.beginPath();
             ctx.moveTo(-e.size, 0);
             ctx.lineTo(-e.size * 1.6, -e.size * 0.4);
             ctx.lineTo(-e.size * 1.6, e.size * 0.4);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
+            ctx.closePath(); ctx.fill(); ctx.restore();
         }
 
         function drawJellyfish(e) {
@@ -880,8 +935,7 @@
             ctx.shadowBlur = 15;
             ctx.beginPath();
             ctx.arc(0, 0, e.size * 0.4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            ctx.fill(); ctx.restore();
         }
 
         function drawDrone(e) {
@@ -892,10 +946,7 @@
             ctx.lineWidth = 1.5;
             ctx.strokeRect(-e.size*0.5, -e.size*0.2, e.size, e.size*0.4);
             ctx.fillStyle = 'rgba(0, 255, 204, 0.9)';
-            ctx.beginPath();
-            ctx.arc(0, 0, 3, 0, Math.PI*2);
-            ctx.fill();
-            ctx.restore();
+            ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI*2); ctx.fill(); ctx.restore();
         }
 
         function drawBinaryGlyph(e) {
@@ -903,8 +954,7 @@
             ctx.translate(e.x, e.y);
             ctx.font = `${Math.floor(e.size)}px monospace`;
             ctx.fillStyle = 'rgba(34, 197, 94, 0.65)';
-            ctx.fillText(Math.random() > 0.5 ? '1' : '0', 0, 0);
-            ctx.restore();
+            ctx.fillText(Math.random() > 0.5 ? '1' : '0', 0, 0); ctx.restore();
         }
 
         function drawLeaf(e) {
@@ -914,8 +964,7 @@
             ctx.fillStyle = 'rgba(74, 222, 128, 0.6)';
             ctx.beginPath();
             ctx.ellipse(0, 0, e.size * 0.8, e.size * 0.3, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            ctx.fill(); ctx.restore();
         }
 
         function drawCrystal(e) {
@@ -925,14 +974,8 @@
             ctx.fillStyle = 'rgba(168, 85, 247, 0.55)';
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.beginPath();
-            ctx.moveTo(0, -e.size);
-            ctx.lineTo(e.size * 0.5, 0);
-            ctx.lineTo(0, e.size);
-            ctx.lineTo(-e.size * 0.5, 0);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            ctx.restore();
+            ctx.moveTo(0, -e.size); ctx.lineTo(e.size * 0.5, 0); ctx.lineTo(0, e.size); ctx.lineTo(-e.size * 0.5, 0);
+            ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
         }
 
         function drawAsteroid(e) {
@@ -940,41 +983,26 @@
             ctx.translate(e.x, e.y);
             ctx.rotate(e.angle);
             ctx.fillStyle = 'rgba(156, 163, 175, 0.6)';
-            ctx.beginPath();
-            ctx.arc(0, 0, e.size * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            ctx.beginPath(); ctx.arc(0, 0, e.size * 0.5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
         }
 
         function animateBg() {
             if (isTabActive) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 entities.forEach(e => {
-                    e.x += e.vx;
-                    e.y += e.vy;
-                    e.angle += e.spin;
-
+                    e.x += e.vx; e.y += e.vy; e.angle += e.spin;
                     if(e.x < -50) e.x = canvas.width + 50;
                     if(e.x > canvas.width + 50) e.x = -50;
                     if(e.y < -50) e.y = canvas.height + 50;
                     if(e.y > canvas.height + 50) e.y = -50;
-
                     if (e.type === 'ocean' || e.type === 'coral') {
-                        if (e.size % 2 === 0) drawFish(e);
-                        else drawJellyfish(e);
-                    } else if (e.type === 'forest' || e.type === 'aurora') {
-                        drawFirefly(e);
-                    } else if (e.type === 'cyberpunk' || e.type === 'circuit') {
-                        drawDrone(e);
-                    } else if (e.type === 'matrix' || e.type === 'quantum') {
-                        drawBinaryGlyph(e);
-                    } else if (e.type === 'bamboo' || e.type === 'canyon' || e.type === 'savanna') {
-                        drawLeaf(e);
-                    } else if (e.type === 'amethyst' || e.type === 'obsidian' || e.type === 'vaporwave') {
-                        drawCrystal(e);
-                    } else {
-                        drawAsteroid(e);
-                    }
+                        if (e.size % 2 === 0) drawFish(e); else drawJellyfish(e);
+                    } else if (e.type === 'forest' || e.type === 'aurora') drawFirefly(e);
+                    else if (e.type === 'cyberpunk' || e.type === 'circuit') drawDrone(e);
+                    else if (e.type === 'matrix' || e.type === 'quantum') drawBinaryGlyph(e);
+                    else if (e.type === 'bamboo' || e.type === 'canyon' || e.type === 'savanna') drawLeaf(e);
+                    else if (e.type === 'amethyst' || e.type === 'obsidian' || e.type === 'vaporwave') drawCrystal(e);
+                    else drawAsteroid(e);
                 });
             }
             requestAnimationFrame(animateBg);
@@ -988,38 +1016,12 @@
             const nyElem = document.getElementById('clockNY');
             const lonElem = document.getElementById('clockLON');
             const tyoElem = document.getElementById('clockTYO');
-
             if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
             if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             if(lonElem) lonElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             if(tyoElem) tyoElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
         setInterval(updateClocks, 1000);
-
-        async function updateMarketStatusBanner() {
-            const banner = document.getElementById('marketStatusBanner');
-            const icon = document.getElementById('marketStatusIcon');
-            const title = document.getElementById('marketStatusTitle');
-            const eurStatus = document.getElementById('statusEURUSD');
-            const gbpStatus = document.getElementById('statusGBPUSD');
-            const jpyStatus = document.getElementById('statusUSDJPY');
-            const xauStatus = document.getElementById('statusXAUUSD');
-
-            if (!banner || !activeApiKey) return;
-
-            try {
-                if (eurStatus) { eurStatus.innerText = "OPEN"; eurStatus.className = "text-emerald-400"; }
-                if (gbpStatus) { gbpStatus.innerText = "OPEN"; gbpStatus.className = "text-emerald-400"; }
-                if (jpyStatus) { jpyStatus.innerText = "OPEN"; jpyStatus.className = "text-emerald-400"; }
-                if (xauStatus) { xauStatus.innerText = "OPEN"; xauStatus.className = "text-emerald-400"; }
-
-                banner.className = "w-full bg-cardBg/90 backdrop-blur-md border-b border-emerald-500/40 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs transition-colors duration-500 z-40 gap-3";
-                icon.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
-                title.innerText = "🟢 TWELVE DATA MARKET STATE: LIVE ACTIVE SESSIONS";
-            } catch (err) {
-                console.error("Failed to query backend market status endpoint", err);
-            }
-        }
 
         function initApp() {
             initCharts();
@@ -1052,7 +1054,6 @@
             const mtf1h = document.getElementById('mtf1h');
             const mtf4h = document.getElementById('mtf4h');
             if(!mtf15) return;
-
             if (rand > 0.5) {
                 mtf15.innerText = "BULLISH"; mtf15.className = "font-bold text-[#00ffcc]";
                 mtf1h.innerText = "BULLISH"; mtf1h.className = "font-bold text-[#00ffcc]";
@@ -1070,7 +1071,6 @@
                 const diff = activeLicenseExpiryTimestamp - Date.now();
                 const displayElem = document.getElementById('licenseCountdownDisplay');
                 if (!displayElem) return;
-                
                 if (diff <= 0) {
                     displayElem.innerText = "EXPIRED";
                     displayElem.className = "text-red-400 font-bold";
@@ -1081,7 +1081,6 @@
                     }
                     return;
                 }
-
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -1094,11 +1093,7 @@
 
         async function submitLicenseUpgrade() {
             const newKey = document.getElementById('upgradeLicenseInput').value.trim();
-            if (!newKey) {
-                showToast("Please enter a valid renewal key string.", "warning");
-                return;
-            }
-
+            if (!newKey) { showToast("Please enter a valid renewal key string.", "warning"); return; }
             try {
                 const parts = newKey.split('-');
                 if (parts.length >= 2) {
@@ -1134,39 +1129,31 @@
             if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
         }
 
-        // SMC STRUCTURE ENGINE
+        // ==================== SMC STRUCTURE ENGINE ====================
         function analyzeMarketStructure(prices) {
             if (!prices || prices.length < 5) return { type: 'BOS', bonus: 2.0 };
-
             let recentHigh = Math.max(...prices.slice(-10));
             let recentLow = Math.min(...prices.slice(-10));
             let prevBodyClose = prices[prices.length - 2];
-
             let smcStateBadge = document.getElementById('smcStateBadge');
             let smcRangeHigh = document.getElementById('smcRangeHigh');
             let smcRangeLow = document.getElementById('smcRangeLow');
             let smcLatestEvent = document.getElementById('smcLatestEvent');
-
-            smcRangeHigh.innerText = recentHigh.toFixed(5);
-            smcRangeLow.innerText = recentLow.toFixed(5);
-
+            if (smcRangeHigh) smcRangeHigh.innerText = recentHigh.toFixed(5);
+            if (smcRangeLow) smcRangeLow.innerText = recentLow.toFixed(5);
             let isBreakAbove = prevBodyClose > recentHigh;
             let isBreakBelow = prevBodyClose < recentLow;
-
             if (isBreakAbove) {
-                smcStateBadge.innerText = "BULLISH CHoCH";
-                smcStateBadge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold animate-pulse";
-                smcLatestEvent.innerText = "Change of Character (Body Close Above High)";
+                if(smcStateBadge) { smcStateBadge.innerText = "BULLISH CHoCH"; smcStateBadge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold animate-pulse"; }
+                if(smcLatestEvent) smcLatestEvent.innerText = "Change of Character (Body Close Above High)";
                 return { type: 'CHoCH_BULLISH', bonus: 4.5 };
             } else if (isBreakBelow) {
-                smcStateBadge.innerText = "BEARISH CHoCH";
-                smcStateBadge.className = "text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono font-bold animate-pulse";
-                smcLatestEvent.innerText = "Change of Character (Body Close Below Low)";
+                if(smcStateBadge) { smcStateBadge.innerText = "BEARISH CHoCH"; smcStateBadge.className = "text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono font-bold animate-pulse"; }
+                if(smcLatestEvent) smcLatestEvent.innerText = "Change of Character (Body Close Below Low)";
                 return { type: 'CHoCH_BEARISH', bonus: 4.5 };
             } else {
-                smcStateBadge.innerText = "BOS CONTINUATION";
-                smcStateBadge.className = "text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold";
-                smcLatestEvent.innerText = "Break of Structure in Range Trend";
+                if(smcStateBadge) { smcStateBadge.innerText = "BOS CONTINUATION"; smcStateBadge.className = "text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold"; }
+                if(smcLatestEvent) smcLatestEvent.innerText = "Break of Structure in Range Trend";
                 return { type: 'BOS', bonus: 2.0 };
             }
         }
@@ -1176,13 +1163,10 @@
             const currentPrice = prices[prices.length - 1];
             const previousPrice = prices[prices.length - 5]; 
             const currentRsi = parseFloat(rsiValues[rsiValues.length - 1]);
-
             const smcResult = analyzeMarketStructure(prices);
             const volumeResult = globalVolumeAnalyzer.analyzePullbackHealth(candles);
             globalVolumeAnalyzer.renderWidget(volumeResult);
-
             let isBuy = currentPrice >= previousPrice && currentRsi >= 50;
-
             const badge = document.getElementById('signalDirBadge');
             const confidenceElem = document.getElementById('confidenceVal');
             const slElem = document.getElementById('slVal');
@@ -1190,32 +1174,31 @@
             const overlayEntry = document.getElementById('overlayEntryPrice');
             const overlayTp = document.getElementById('overlayTpPrice');
             const overlaySl = document.getElementById('overlaySlPrice');
-
+            const valEntry = document.getElementById('val-entry');
+            const valSl = document.getElementById('val-sl');
+            const valRr = document.getElementById('val-rr');
             let activeSl, activeTp, baseConfidence, finalConfidence;
-
             if (isBuy) {
-                badge.innerText = "BUY SIGNAL";
-                badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
+                if(badge) { badge.innerText = "BUY SIGNAL"; badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse"; }
                 baseConfidence = 91.0 + Math.random() * 4.0;
                 activeSl = (currentPrice * 0.9980).toFixed(4);
                 activeTp = (currentPrice * 1.0050).toFixed(4);
             } else {
-                badge.innerText = "SELL SIGNAL";
-                badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
+                if(badge) { badge.innerText = "SELL SIGNAL"; badge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse"; }
                 baseConfidence = 90.5 + Math.random() * 5.0;
                 activeSl = (currentPrice * 1.0020).toFixed(4);
                 activeTp = (currentPrice * 0.9950).toFixed(4);
             }
-
             finalConfidence = Math.min(99.4, baseConfidence + smcResult.bonus + volumeResult.probabilityBonus).toFixed(1) + "%";
-
-            confidenceElem.innerText = finalConfidence;
-            slElem.innerText = activeSl;
-            tpElem.innerText = activeTp;
-            overlayEntry.innerText = currentPrice;
-            overlayTp.innerText = activeTp;
-            overlaySl.innerText = activeSl;
-
+            if(confidenceElem) confidenceElem.innerText = finalConfidence;
+            if(slElem) slElem.innerText = activeSl;
+            if(tpElem) tpElem.innerText = activeTp;
+            if(overlayEntry) overlayEntry.innerText = currentPrice;
+            if(overlayTp) overlayTp.innerText = activeTp;
+            if(overlaySl) overlaySl.innerText = activeSl;
+            if(valEntry) valEntry.innerText = currentPrice;
+            if(valSl) valSl.innerText = activeSl;
+            if(valRr) valRr.innerText = "1 : 2.85";
             calculatePositionSize();
         }
 
@@ -1223,25 +1206,19 @@
             if (!telemetryEngine) return;
             const values = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
             if (!values || values.length === 0) return;
-
             const labels = values.map(item => item.datetime);
             const prices = values.map(item => parseFloat(item.close));
             const emaData = prices.map(p => parseFloat((p * 0.9995).toFixed(4)));
-
             let rsiValues = prices.map((p, idx, arr) => {
                 if (idx === 0) return 50;
                 let diff = p - arr[idx - 1];
                 return Math.min(90, Math.max(10, (50 + diff * 15000).toFixed(1)));
             });
-
             evaluateMarketDirection(values, rsiValues);
-
             const ctxChart = document.getElementById('mainPriceChart').getContext('2d');
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
-
-            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - Twelve Data Feed`;
-
+            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} — Twelve Data Feed`;
             const sharedChartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -1251,7 +1228,6 @@
                     y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
                 }
             };
-
             if (mainChart) {
                 mainChart.data.labels = labels;
                 mainChart.data.datasets[0].label = `${formattedSymbol} Close`;
@@ -1268,13 +1244,9 @@
                             { label: 'Trend Baseline', data: emaData, borderColor: '#a855f7', borderWidth: 1.5, borderDash: [4, 4], fill: false }
                         ]
                     },
-                    options: {
-                        ...sharedChartOptions,
-                        plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } }
-                    }
+                    options: { ...sharedChartOptions, plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } } }
                 });
             }
-
             if (rsiChart) {
                 rsiChart.data.labels = labels;
                 rsiChart.data.datasets[0].data = rsiValues;
@@ -1289,30 +1261,16 @@
                     options: {
                         ...sharedChartOptions,
                         plugins: { legend: { display: false } },
-                        scales: {
-                            x: { display: false },
-                            y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, stepSize: 50 } }
-                        }
-                    }
+                        scales: { x: { display: false }, y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, stepSize: 50 } } }
                 });
             }
-        }
-
-        function onPairChange() {
-            currentPair = document.getElementById('mainPairSelect').value;
-            initCharts();
-            updateMTFMatrix();
         }
 
         function setTimeframe(tf, element) {
             currentTimeframe = tf;
             const buttons = document.querySelectorAll('.tf-btn');
-            buttons.forEach(btn => {
-                btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition";
-            });
-            if (element) {
-                element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
-            }
+            buttons.forEach(btn => { btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition"; });
+            if (element) element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
             initCharts();
         }
 
