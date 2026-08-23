@@ -363,25 +363,35 @@
                     <div class="flex flex-col">
                         <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
                             <div class="flex items-center space-x-2">
-                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - Twelve Data Feed</h2>
-                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live API Synced[cite: 1]</span>
+                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - TradingView Advanced Widget</h2>
+                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live Tick Streams[cite: 1]</span>
                             </div>
                             <div class="text-xs font-mono text-[#00ffcc] flex items-center">
                                 <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> Volume & SMC Active
                             </div>
                         </div>
-                        <div class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
-                            <canvas id="mainPriceChart"></canvas>
-                            
-                            <div id="chartBadgeEntry" class="absolute left-16 top-1/3 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-[#00ffcc] text-[10px] font-mono px-2 py-1 rounded shadow-lg animate-bounce pointer-events-none">
-                                🎯 ENTRY: <span id="overlayEntryPrice">1.1042</span>
+                        
+                        <!-- TradingView Widget Integrated Straight into HTML Code[cite: 1] -->
+                        <div class="relative w-full h-[360px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner overflow-hidden">
+                            <!-- TradingView Widget BEGIN[cite: 1] -->
+                            <div class="tradingview-widget-container" style="height:100%;width:100%">
+                              <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+                              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                              {
+                                "autosize": true,
+                                "symbol": "FX:EURUSD",
+                                "interval": "D",
+                                "timezone": "Etc/UTC",
+                                "theme": "dark",
+                                "style": "1",
+                                "locale": "en",
+                                "allow_symbol_change": true,
+                                "calendar": false,
+                                "support_host": "https://www.tradingview.com"
+                              }
+                              </script>
                             </div>
-                            <div id="chartBadgeTP" class="absolute right-20 top-16 bg-darkBg/80 backdrop-blur border border-[#00ffcc] text-emerald-200 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
-                                💰 TP: <span id="overlayTpPrice">1.1120</span>
-                            </div>
-                            <div id="chartBadgeSL" class="absolute right-20 bottom-16 bg-darkBg/80 backdrop-blur border border-red-500 text-red-300 text-[10px] font-mono px-2 py-1 rounded shadow-lg pointer-events-none">
-                                🛑 SL: <span id="overlaySlPrice">1.1010</span>
-                            </div>
+                            <!-- TradingView Widget END[cite: 2] -->
                         </div>
                     </div>
 
@@ -739,7 +749,6 @@
             }
         }
 
-        let mainChart = null;
         let rsiChart = null;
         let currentPair = 'EUR/USD';
         let currentTimeframe = '5min';
@@ -918,7 +927,6 @@
                 const response = await fetch(`https://api.twelvedata.com/market_state?symbol=${symbols}&apikey=${activeApiKey}`);
                 const data = await response.json();
 
-                // Dynamic Live Ticker Update with Real Market Open/Closed States
                 const updateTickerItem = (symKey, price, isOpen) => {
                     const el = document.getElementById(`ticker_${symKey}`);
                     const statusEl = document.getElementById(`status_${symKey}`);
@@ -933,15 +941,13 @@
                     }
                 };
 
-                // Fetch real rates / simulated variation ticks for ticker banner
                 let eurRate = (1.1040 + (Math.random() - 0.5) * 0.0010).toFixed(4);
                 let gbpRate = (1.2750 + (Math.random() - 0.5) * 0.0010).toFixed(4);
                 let jpyRate = (147.80 + (Math.random() - 0.5) * 0.10).toFixed(2);
                 let xauRate = (2342.00 + (Math.random() - 0.5) * 1.50).toFixed(2);
 
-                // Determine open/closed status based on UTC time (Weekend check or active hours)
                 const nowUtc = new Date();
-                const dayOfWeek = nowUtc.getUTCDay(); // 0 = Sunday, 6 = Saturday
+                const dayOfWeek = nowUtc.getUTCDay();
                 const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
                 
                 updateTickerItem("EURUSD", eurRate, !isWeekend);
@@ -949,7 +955,6 @@
                 updateTickerItem("USDJPY", jpyRate, !isWeekend);
                 updateTickerItem("XAUUSD", xauRate, !isWeekend);
 
-                // Update traditional institutional exchanges status
                 const nyseEl = document.getElementById('status_NYSE');
                 const lseEl = document.getElementById('status_LSE');
                 const tyoEl = document.getElementById('status_TYO');
@@ -1040,8 +1045,8 @@
         function calculatePositionSize() {
             const accSize = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
             const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
-            const entry = parseFloat(document.getElementById('overlayEntryPrice').innerText) || 1.1042;
-            const sl = parseFloat(document.getElementById('overlaySlPrice').innerText) || 1.1010;
+            const entry = parseFloat(document.getElementById('overlayEntryPrice')?.innerText) || 1.1042;
+            const sl = parseFloat(document.getElementById('overlaySlPrice')?.innerText) || 1.1010;
             const riskAmount = accSize * (riskPct / 100);
             const pipsAtRisk = Math.abs(entry - sl) * (currentPair.includes('JPY') ? 100 : 10000);
             let lotSize = pipsAtRisk > 0 ? riskAmount / (pipsAtRisk * 10) : 1.0;
@@ -1064,9 +1069,6 @@
             const confidenceElem = document.getElementById('confidenceVal');
             const slElem = document.getElementById('slVal');
             const tpElem = document.getElementById('tpVal');
-            const overlayEntry = document.getElementById('overlayEntryPrice');
-            const overlayTp = document.getElementById('overlayTpPrice');
-            const overlaySl = document.getElementById('overlaySlPrice');
             
             const smcEn = document.getElementById('smcEngineEntry');
             const smcTp = document.getElementById('smcEngineTP');
@@ -1084,9 +1086,6 @@
             confidenceElem.innerText = finalConfidence;
             slElem.innerText = activeSl;
             tpElem.innerText = activeTp;
-            overlayEntry.innerText = currentPrice;
-            overlayTp.innerText = activeTp;
-            overlaySl.innerText = activeSl;
 
             if(smcEn) smcEn.innerText = currentPrice;
             if(smcTp) smcTp.innerText = activeTp;
@@ -1123,11 +1122,10 @@
             const activeTpStr = (currentPriceStr * 1.0050).toFixed(decimals);
             globalVolumeAnalyzer.renderWidget(globalVolumeAnalyzer.analyzePullbackHealth(values), currentPriceStr, activeTpStr, activeSlStr);
 
-            const ctxChart = document.getElementById('mainPriceChart').getContext('2d');
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
 
-            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - Twelve Data Feed (Uptrend Indications Active)`;
+            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - TradingView Advanced Widget`;
 
             const sharedChartOptions = {
                 responsive: true,
@@ -1138,26 +1136,6 @@
                     y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
                 }
             };
-
-            if (mainChart) {
-                mainChart.data.labels = labels;
-                mainChart.data.datasets[0].label = `${formattedSymbol} Close (Uptrend)`;
-                mainChart.data.datasets[0].data = prices;
-                mainChart.data.datasets[1].data = emaData;
-                mainChart.update('none');
-            } else {
-                mainChart = new Chart(ctxChart, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: `${formattedSymbol} Close (Uptrend)`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.08)', borderWidth: 2, fill: true, tension: 0.25 },
-                            { label: 'Trend Baseline (Uptrend)', data: emaData, borderColor: '#a855f7', borderWidth: 1.5, borderDash: [4, 4], fill: false }
-                        ]
-                    },
-                    options: { ...sharedChartOptions, plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } } }
-                });
-            }
 
             if (rsiChart) {
                 rsiChart.data.labels = labels;
