@@ -829,7 +829,8 @@
         let activeApiKey = '';
         let activeLicenseExpiryTimestamp = null;
         let isTabActive = true;
-        let chartAnimationTick = 0; // Driving variable for dramatic pulsing/jumping animation on Entry, TP, and SL lines
+        let chartAnimationTick = 0;
+        let animationFrameId = null;
 
         document.addEventListener('visibilitychange', () => {
             isTabActive = !document.hidden;
@@ -893,6 +894,7 @@
 
         function logout() {
             if (licenseTimerInterval) clearInterval(licenseTimerInterval);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
             localStorage.removeItem('quah_api_key');
             localStorage.removeItem('quah_license_key');
             document.getElementById('expiryUpgradeModal').classList.add('hidden');
@@ -1030,6 +1032,7 @@
             startLicenseCountdownTimer();
             setInterval(updateMarketStatusBannerLocally, 10000);
             updateClocks();
+            fetchAndRenderOnDemand();
         }
 
         function startLicenseCountdownTimer() {
@@ -1184,7 +1187,7 @@
 
             document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - On-Demand Data Stream`;
 
-            // Enhanced Chart Overlay Plugin featuring dramatic jumping/pulsing visual animation and clear display for Entry, TP, and SL
+            // Robust Custom Chart Overlay Plugin with safe coordinate bounding across any timeframe or chart selection
             const chartOverlayPlugin = {
                 id: 'chartOverlayPlugin',
                 afterDraw: (chart) => {
@@ -1193,9 +1196,8 @@
                     const xAxis = chart.scales.x;
                     if (!yAxis || !xAxis || !signalData) return;
 
-                    // Increment animation tick for jumping/pulsing effect
                     chartAnimationTick += 0.1;
-                    const pulseIntensity = Math.sin(chartAnimationTick) * 4; // Jumping / pulsing pixel offset
+                    const pulseIntensity = Math.sin(chartAnimationTick) * 4;
 
                     const slVal = parseFloat(signalData.activeSl);
                     const tpVal = parseFloat(signalData.activeTp);
@@ -1203,6 +1205,9 @@
 
                     const drawAnimatedHorizontalLine = (val, color, labelText, isPulsing = false) => {
                         const baseCoord = yAxis.getPixelForValue(val);
+                        // Prevent out-of-bounds rendering glitches when chart scales are recalculating
+                        if (isNaN(baseCoord) || baseCoord === undefined) return;
+                        
                         const yCoord = isPulsing ? baseCoord + pulseIntensity : baseCoord;
 
                         if (yCoord >= yAxis.top && yCoord <= yAxis.bottom) {
@@ -1215,7 +1220,6 @@
                             ctx.lineTo(xAxis.right, yCoord);
                             ctx.stroke();
                             
-                            // Glowing Tag Badge
                             ctx.fillStyle = color;
                             ctx.shadowColor = color;
                             ctx.shadowBlur = isPulsing ? 12 : 4;
@@ -1229,15 +1233,9 @@
                         }
                     };
 
-                    // Render Entry, Take Profit (TP), and Stop Loss (SL) with active jumping/pulsing animation
                     drawAnimatedHorizontalLine(entryVal, '#00ffcc', 'ENTRY', true);
                     drawAnimatedHorizontalLine(tpVal, '#089981', 'TP', false);
                     drawAnimatedHorizontalLine(slVal, '#f23645', 'SL', false);
-
-                    // Request continuous chart frame update to keep the jump/pulse animation running smoothly
-                    requestAnimationFrame(() => {
-                        if (mainTimeSeriesChart) mainTimeSeriesChart.draw();
-                    });
                 }
             };
 
@@ -1245,8 +1243,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: {
-                    duration: 1200,
-                    easing: 'easeOutQuart'
+                    duration: 600
                 },
                 layout: { padding: { top: 10, bottom: 5, left: 10, right: 100 } },
                 scales: {
@@ -1292,6 +1289,16 @@
                     }
                 });
             }
+
+            // Continuous animation loop runner to guarantee smooth overlay updates across timeframes
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            function runOverlayLoop() {
+                if (mainTimeSeriesChart && isTabActive) {
+                    mainTimeSeriesChart.draw();
+                }
+                animationFrameId = requestAnimationFrame(runOverlayLoop);
+            }
+            runOverlayLoop();
 
             const mtf15 = document.getElementById('mtf15m');
             const mtf1h = document.getElementById('mtf1h');
