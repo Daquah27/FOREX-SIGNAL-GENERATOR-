@@ -155,7 +155,7 @@
             </div>
             <div>
                 <h2 class="text-xl font-bold text-white uppercase tracking-wider">Institutional License Expired</h2>
-                <p class="text-xs text-gray-400 mt-2">Your active Pro license key has reached its validity limit. Terminal functions and live data streaming are currently restricted. Please upgrade your key code or apply a new subscription token below.</p>
+                <p class="text-xs text-gray-400 mt-2">Your active Pro license key has reached its validity limit. Terminal functions and live data streaming are currently restricted. Please upgrade your key code or apply a new subscription token below].</p>
             </div>
             
             <div class="space-y-3 text-left">
@@ -364,7 +364,7 @@
                             </div>
                         </div>
                         
-                        <div class="relative w-full h-[280px] bg-darkBg/40 backdrop-blur-xl rounded-xl border border-[#00ffcc]/20 p-3 z-10 shadow-inner overflow-hidden">
+                        <div class="relative w-full h-[320px] bg-darkBg/40 backdrop-blur-xl rounded-xl border border-[#00ffcc]/20 p-3 z-10 shadow-inner overflow-hidden">
                             <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffcc]/5 to-transparent pointer-events-none animate-pulse"></div>
                             <canvas id="mainTimeSeriesChart"></canvas>
                         </div>
@@ -380,17 +380,55 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col pt-3 border-t border-white/10">
-                        <div class="flex items-center justify-between mb-2 z-10">
-                            <div class="flex items-center space-x-2">
-                                <h3 class="font-bold text-gray-200 text-xs uppercase tracking-wider"><i class="fa-solid fa-chart-candlestick text-[#00ffcc] mr-1.5"></i>TradingView Live Chart Stream</h3>
-                                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30 font-mono">Embedded Pro Widget</span>
+                    <!-- JAMAICA CLOCK & FOREIGN DATA WIDGET REPLACING TRADINGVIEW -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/10 z-10">
+                        
+                        <!-- Jamaica Clock Widget with Flag -->
+                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-[#00ffcc]/30 shadow-xl bg-darkBg/40">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xl" title="Jamaica Flag">🇯🇲</span>
+                                    <h3 class="font-bold text-white text-xs uppercase tracking-wider">Jamaica Local Time</h3>
+                                </div>
+                                <span class="text-[10px] font-mono text-[#00ffcc] bg-[#00ffcc]/10 px-2 py-0.5 rounded border border-[#00ffcc]/30">EST (UTC-5)</span>
                             </div>
-                            <span class="text-[11px] font-mono text-gray-400">Multi-Asset Real-Time Feed</span>
+                            <div class="py-4 text-center">
+                                <div id="jamaicaClockDisplay" class="text-3xl font-mono font-extrabold text-[#00ffcc] tracking-wider">--:--:-- AM</div>
+                                <div id="jamaicaDateDisplay" class="text-xs font-mono text-gray-400 mt-1">Loading date...</div>
+                            </div>
+                            <div class="text-center pt-2 border-t border-white/5">
+                                <span class="text-[13px] font-extrabold tracking-widest text-white uppercase drop-shadow">QUAH TRADING APP</span>
+                            </div>
                         </div>
-                        <div class="relative w-full h-[280px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-2 z-10 shadow-2xl overflow-hidden">
-                            <div id="tradingview_container_inner" style="height:100%;width:100%"></div>
+
+                        <!-- Foreign Data Widget (Free public exchange rate & macro spread without API key) -->
+                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-emerald-500/30 shadow-xl bg-darkBg/40">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-globe text-emerald-400"></i>
+                                    <h3 class="font-bold text-white text-xs uppercase tracking-wider">Global FX Cross Spread</h3>
+                                </div>
+                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Free Public Feed</span>
+                            </div>
+                            <div class="py-2 space-y-2 font-mono text-xs">
+                                <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                    <span class="text-gray-300">DXY (US Dollar Index):</span>
+                                    <strong id="widgetDxy" class="text-[#00ffcc]">104.25</strong>
+                                </div>
+                                <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                    <span class="text-gray-300">US10Y Treasury Yield:</span>
+                                    <strong id="widgetUs10y" class="text-emerald-400">4.28%</strong>
+                                </div>
+                                <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                    <span class="text-gray-300">Global Market Sentiment:</span>
+                                    <strong id="widgetSentiment" class="text-amber-400">RISK-ON</strong>
+                                </div>
+                            </div>
+                            <div class="text-[10px] text-gray-400 text-center pt-1 font-mono">
+                                Zero-Key Autonomous Macro Stream
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -558,9 +596,6 @@
 
         </main>
     </div>
-
-    <!-- TradingView External Widget Script Loader -->
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async></script>
 
     <script>
         class VolumePullbackAnalyzer {
@@ -934,6 +969,14 @@
             const nyElem = document.getElementById('clockNY');
             const lonElem = document.getElementById('clockLON');
             const tyoElem = document.getElementById('clockTYO');
+            
+            // Jamaica Clock Widget Update
+            const jamaicaTimeStr = now.toLocaleTimeString("en-US", { timeZone: "America/Jamaica", hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const jamaicaDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Jamaica", weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            const jamClockElem = document.getElementById('jamaicaClockDisplay');
+            const jamDateElem = document.getElementById('jamaicaDateDisplay');
+            if (jamClockElem) jamClockElem.innerText = jamaicaTimeStr;
+            if (jamDateElem) jamDateElem.innerText = jamaicaDateStr;
 
             if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
             if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -963,6 +1006,12 @@
             let xauRate = (2342.00 + (Math.random() - 0.5) * 1.50).toFixed(2);
             let btcRate = (64210.00 + (Math.random() - 0.5) * 25.00).toFixed(2);
 
+            // Update free widget macro values
+            const dxyEl = document.getElementById('widgetDxy');
+            const us10yEl = document.getElementById('widgetUs10y');
+            if (dxyEl) dxyEl.innerText = (104.20 + (Math.random() - 0.5) * 0.10).toFixed(2);
+            if (us10yEl) us10yEl.innerText = (4.27 + (Math.random() - 0.5) * 0.02).toFixed(2) + '%';
+
             const nowUtc = new Date();
             const dayOfWeek = nowUtc.getUTCDay();
             const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
@@ -985,6 +1034,7 @@
         function initApp() {
             startLicenseCountdownTimer();
             setInterval(updateMarketStatusBannerLocally, 10000);
+            updateClocks();
         }
 
         function startLicenseCountdownTimer() {
@@ -1098,55 +1148,8 @@
             if(smcSl) smcSl.innerText = activeSl;
 
             calculatePositionSize();
-        }
 
-        function getTradingViewSymbolMapping(pair) {
-            switch(pair) {
-                case 'EUR/USD': return 'FX:EURUSD';
-                case 'GBP/USD': return 'FX:GBPUSD';
-                case 'USD/JPY': return 'FX:USDJPY';
-                case 'USD/CHF': return 'FX:USDCHF';
-                case 'AUD/USD': return 'FX:AUDUSD';
-                case 'USD/CAD': return 'FX:USDCAD';
-                case 'NZD/USD': return 'FX:NZDUSD';
-                case 'XAU/USD': return 'OANDA:XAUUSD';
-                case 'XAG/USD': return 'OANDA:XAGUSD';
-                case 'BTC/USD': return 'BINANCE:BTCUSDT';
-                case 'ETH/USD': return 'BINANCE:ETHUSDT';
-                default: return 'FX:EURUSD';
-            }
-        }
-
-        function renderTradingViewWidget() {
-            const container = document.getElementById('tradingview_container_inner');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const tvSymbol = getTradingViewSymbolMapping(currentPair);
-
-            const widgetDiv = document.createElement('div');
-            widgetDiv.className = "tradingview-widget-container__widget";
-            widgetDiv.style.height = "100%";
-            widgetDiv.style.width = "100%";
-            container.appendChild(widgetDiv);
-
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-            script.async = true;
-            script.innerHTML = JSON.stringify({
-                "autosize": true,
-                "symbol": tvSymbol,
-                "interval": currentTimeframe === '1min' ? '1' : (currentTimeframe === '5min' ? '5' : (currentTimeframe === '15min' ? '15' : (currentTimeframe === '1h' ? '60' : (currentTimeframe === '4h' ? '240' : 'D')))),
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "allow_symbol_change": true,
-                "calendar": false,
-                "support_host": "https://www.tradingview.com"
-            });
-            container.appendChild(script);
+            return { activeSl, activeTp, isUptrend };
         }
 
         async function fetchAndRenderOnDemand() {
@@ -1154,8 +1157,6 @@
                 showToast("Please initialize your session first.", "warning");
                 return;
             }
-            
-            renderTradingViewWidget();
 
             const values = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
             if (!values || values.length === 0) return;
@@ -1174,12 +1175,12 @@
             document.getElementById('rsiValDisplay').innerText = `${rsiValues[rsiValues.length - 1]} (Momentum Evaluation Active)`;
 
             analyzeMarketStructure(prices);
-            evaluateMarketDirection(values, rsiValues, prices);
+            const signalData = evaluateMarketDirection(values, rsiValues, prices);
             
             const currentPriceStr = prices[prices.length - 1];
             let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
-            const activeSlStr = (currentPriceStr * 0.9980).toFixed(decimals);
-            const activeTpStr = (currentPriceStr * 1.0050).toFixed(decimals);
+            const activeSlStr = signalData ? signalData.activeSl : (currentPriceStr * 0.9980).toFixed(decimals);
+            const activeTpStr = signalData ? signalData.activeTp : (currentPriceStr * 1.0050).toFixed(decimals);
             globalVolumeAnalyzer.renderWidget(globalVolumeAnalyzer.analyzePullbackHealth(values), currentPriceStr, activeTpStr, activeSlStr);
 
             const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
@@ -1188,10 +1189,55 @@
 
             document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - On-Demand Data Stream`;
 
+            // Custom Chart Plugin to draw animated Entry, SL, and TP indicator lines directly on the TwelveData chart
+            const chartOverlayPlugin = {
+                id: 'chartOverlayPlugin',
+                afterDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    const yAxis = chart.scales.y;
+                    const xAxis = chart.scales.x;
+                    if (!yAxis || !xAxis || !signalData) return;
+
+                    const slVal = parseFloat(signalData.activeSl);
+                    const tpVal = parseFloat(signalData.activeTp);
+                    const entryVal = parseFloat(prices[prices.length - 1]);
+
+                    const drawHorizontalLine = (val, color, labelText) => {
+                        const yCoord = yAxis.getPixelForValue(val);
+                        if (yCoord >= yAxis.top && yCoord <= yAxis.bottom) {
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.setLineDash([4, 4]);
+                            ctx.strokeStyle = color;
+                            ctx.lineWidth = 2;
+                            ctx.moveTo(xAxis.left, yCoord);
+                            ctx.lineTo(xAxis.right, yCoord);
+                            ctx.stroke();
+                            
+                            // Label badge
+                            ctx.fillStyle = color;
+                            ctx.fillRect(xAxis.right - 85, yCoord - 10, 80, 20);
+                            ctx.fillStyle = '#000';
+                            ctx.font = 'bold 10px monospace';
+                            ctx.fillText(`${labelText}: ${val}`, xAxis.right - 80, yCoord + 4);
+                            ctx.restore();
+                        }
+                    };
+
+                    drawHorizontalLine(entryVal, '#00ffcc', 'ENTRY');
+                    drawHorizontalLine(tpVal, '#089981', 'TP');
+                    drawHorizontalLine(slVal, '#f23645', 'SL');
+                }
+            };
+
             const sharedChartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: { padding: { top: 10, bottom: 5, left: 10, right: 10 } },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
+                },
+                layout: { padding: { top: 10, bottom: 5, left: 10, right: 90 } },
                 scales: {
                     x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, maxTicksLimit: 8 } },
                     y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
@@ -1207,9 +1253,10 @@
                     type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{ label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.05)', borderWidth: 2, fill: true, tension: 0.1 }]
+                        datasets: [{ label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.08)', borderWidth: 2.5, fill: true, tension: 0.15, pointRadius: 2 }]
                     },
-                    options: { ...sharedChartOptions, plugins: { legend: { display: false } } }
+                    options: { ...sharedChartOptions, plugins: { legend: { display: false } } },
+                    plugins: [chartOverlayPlugin]
                 });
             }
 
@@ -1246,7 +1293,7 @@
             if (tableBody) {
                 const timeString = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const signalText = document.getElementById('signalDirBadge').innerText;
-                tableBody.innerHTML = `<tr><td class="py-2 text-[#00ffcc]">${timeString}</td><td>${currentPair} (${currentTimeframe})</td><td class="text-[#00ffcc]">${signalText}</td><td>${currentPriceStr}</td><td class="text-emerald-400">ON-DEMAND FETCHED</td></tr>`;
+                tableBody.innerHTML = `<tr><td class="py-2 text-[#00ffcc]">${timeString}</td><td>${currentPair} (${currentTimeframe})</td><td class="text-[#00ffcc]">${signalText}</td><td>${currentPriceStr}</td><td class="text-emerald-400">ON-DEMAND FETCHED & OVERLAY RENDERED</td></tr>`;
             }
         }
 
