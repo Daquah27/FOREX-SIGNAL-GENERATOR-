@@ -1187,7 +1187,6 @@
 
             document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - On-Demand Data Stream`;
 
-            // Robust Custom Chart Overlay Plugin with safe coordinate bounding across any timeframe or chart selection
             const chartOverlayPlugin = {
                 id: 'chartOverlayPlugin',
                 afterDraw: (chart) => {
@@ -1205,7 +1204,6 @@
 
                     const drawAnimatedHorizontalLine = (val, color, labelText, isPulsing = false) => {
                         const baseCoord = yAxis.getPixelForValue(val);
-                        // Prevent out-of-bounds rendering glitches when chart scales are recalculating
                         if (isNaN(baseCoord) || baseCoord === undefined) return;
                         
                         const yCoord = isPulsing ? baseCoord + pulseIntensity : baseCoord;
@@ -1255,6 +1253,7 @@
             if (mainTimeSeriesChart) {
                 mainTimeSeriesChart.data.labels = labels;
                 mainTimeSeriesChart.data.datasets[0].data = prices;
+                mainTimeSeriesChart.data.datasets[0].label = `${formattedSymbol} Close`;
                 mainTimeSeriesChart.update();
             } else {
                 mainTimeSeriesChart = new Chart(ctxMain, {
@@ -1290,7 +1289,6 @@
                 });
             }
 
-            // Continuous animation loop runner to guarantee smooth overlay updates across timeframes
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             function runOverlayLoop() {
                 if (mainTimeSeriesChart && isTabActive) {
@@ -1315,9 +1313,12 @@
             }
         }
 
+        // FIXED: The instrument dropdown and chart now work hand-in-hand. 
+        // Changing the pair updates the state and automatically fetches/renders the new chart data.
         function onPairChange() {
             currentPair = document.getElementById('mainPairSelect').value;
-            showToast(`Instrument changed to ${currentPair}. Click "Load Signal / Analyze" to execute request.`);
+            showToast(`Instrument changed to ${currentPair}. Fetching telemetry...`);
+            fetchAndRenderOnDemand();
         }
 
         function setTimeframe(tf, element) {
@@ -1328,7 +1329,8 @@
             if (element) {
                 element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
             }
-            showToast(`Timeframe changed to ${tf}. Click "Load Signal / Analyze" to execute request.`);
+            showToast(`Timeframe changed to ${tf}. Fetching telemetry...`);
+            fetchAndRenderOnDemand();
         }
 
         function triggerManualRefresh() {
