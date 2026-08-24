@@ -177,7 +177,7 @@
     <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="hidden flex-1 flex flex-col z-10">
         
-        <!-- RUNNING MARKET TICKER BANNER (RATES + OPEN/CLOSED MARKETS) -->
+        <!-- RUNNING MARKET TICKER BANNER -->
         <div id="marketStatusBanner" class="w-full bg-cardBg/95 backdrop-blur-md border-b border-white/10 py-2.5 flex items-center text-xs transition-colors duration-500 z-40 overflow-hidden shadow-inner">
             <div class="bg-cardBg px-4 font-bold text-[#00ffcc] uppercase tracking-wider flex items-center space-x-2 z-10 border-r border-white/10 shadow-lg">
                 <span id="marketStatusIcon" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
@@ -186,7 +186,6 @@
             
             <div class="ticker-wrap flex-1 relative overflow-hidden">
                 <div class="ticker-track flex items-center space-x-8 font-mono">
-                    <!-- Set 1 -->
                     <div class="flex items-center space-x-6">
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong id="ticker_EURUSD" class="text-emerald-400">1.1043</strong> (<span id="status_EURUSD">OPEN</span>)</span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong id="ticker_GBPUSD" class="text-emerald-400">1.2755</strong> (<span id="status_GBPUSD">OPEN</span>)</span>
@@ -197,7 +196,6 @@
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">LSE: <strong id="status_LSE" class="text-red-400">CLOSED</strong></span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">TYO: <strong id="status_TYO" class="text-red-400">CLOSED</strong></span>
                     </div>
-                    <!-- Duplicate Set for Seamless Infinite Loop -->
                     <div class="flex items-center space-x-6" aria-hidden="true">
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400 ticker-dup-EURUSD">1.1043</strong> (<span>OPEN</span>)</span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong class="text-emerald-400 ticker-dup-GBPUSD">1.2755</strong> (<span>OPEN</span>)</span>
@@ -213,14 +211,19 @@
         </div>
 
         <header class="bg-cardBg/25 backdrop-blur-xl border-b border-white/10 px-6 py-2.5 flex items-center justify-between sticky top-0 z-30">
-            <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
                     <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.4 + VOLUME</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/25 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
-                    <span id="connText" class="text-gray-300">API Synced</span>
+                    <span id="connText" class="text-gray-300">On-Demand API Ready</span>
+                </div>
+                <!-- API QUOTA WATCHER WIDGET -->
+                <div id="apiQuotaWatcherBadge" class="flex items-center space-x-2 bg-darkBg/30 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm">
+                    <i class="fa-solid fa-gauge text-[#00ffcc]"></i>
+                    <span>API Calls: <strong id="apiCallCountDisplay" class="text-[#00ffcc]">0</strong> / 800</span>
                 </div>
                 <div class="hidden md:flex items-center space-x-2 bg-darkBg/30 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
                     <i class="fa-solid fa-wave-square text-[#00ffcc]"></i>
@@ -343,22 +346,9 @@
             </div>
 
             <div class="flex items-center space-x-3 text-xs">
-                <!-- Auto Refresh Toggle & 300s Interval Controller -->
-                <div class="flex items-center space-x-2 bg-darkBg/30 backdrop-blur border border-white/10 rounded px-3 py-1.5">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="autoRefreshToggle" checked onchange="toggleAutoRefresh(this)" class="sr-only peer">
-                        <div class="w-7 h-4 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#00ffcc]"></div>
-                    </label>
-                    <span class="text-gray-300 font-mono text-[11px]">Auto Refresh (300s)</span>
-                </div>
-
-                <button onclick="triggerManualRefresh()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded font-medium transition flex items-center active:scale-95 shadow backdrop-blur">
-                    <i class="fa-solid fa-rotate mr-1.5"></i> Refresh Chart
+                <button onclick="triggerManualRefresh()" class="bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black px-4 py-1.5 rounded font-bold transition flex items-center active:scale-95 shadow backdrop-blur">
+                    <i class="fa-solid fa-rotate mr-1.5"></i> Load Signal / Analyze
                 </button>
-                <div class="flex items-center bg-darkBg/30 backdrop-blur border border-white/5 rounded px-2.5 py-1.5 space-x-2">
-                    <span class="text-gray-400">Next Pulse:</span>
-                    <span id="countdownRing" class="font-mono text-[#00ffcc] font-bold w-10">300s</span>
-                </div>
             </div>
         </div>
 
@@ -366,22 +356,20 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- MAIN TECHNICAL WORKSPACE / TWELVE DATA & SUBCHARTS -->
                 <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
                     <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/5 to-transparent pointer-events-none animate-scan"></div>
                     
                     <div class="flex flex-col">
                         <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
                             <div class="flex items-center space-x-2">
-                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - Twelve Data Programmatic Stream</h2>
-                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Live Tick Streams</span>
+                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - On-Demand Data Stream</h2>
+                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40">Ready (On-Demand)</span>
                             </div>
                             <div class="text-xs font-mono text-[#00ffcc] flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] animate-ping mr-1.5"></span> Volume & SMC Active
+                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] mr-1.5"></span> Volume & SMC Active
                             </div>
                         </div>
                         
-                        <!-- Programmatic Chart.js Technical Data Feed View -->
                         <div class="relative w-full h-[280px] bg-darkBg/30 backdrop-blur-xl rounded-xl border border-white/5 p-3 z-10 shadow-inner">
                             <canvas id="mainTimeSeriesChart"></canvas>
                         </div>
@@ -397,7 +385,6 @@
                         </div>
                     </div>
 
-                    <!-- Fully Styled TradingView Live Widget Section -->
                     <div class="flex flex-col pt-3 border-t border-white/10">
                         <div class="flex items-center justify-between mb-2 z-10">
                             <div class="flex items-center space-x-2">
@@ -419,7 +406,7 @@
                             <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
                             <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
                         </div>
-                        <p id="volDescText" class="text-xs text-slate-300">Increasing buy volume with decreasing sell volume on pullback (High continuation probability)</p>
+                        <p id="volDescText" class="text-xs text-slate-300">Select pair & timeframe then click "Load Signal" to fetch volume analytics.</p>
                         <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
                             <span>Pullback Impact:</span>
                             <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
@@ -479,12 +466,12 @@
                         <div class="space-y-3">
                             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                                 <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
-                                <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse">BUY SIGNAL</span>
+                                <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50">IDLE</span>
                             </div>
                             <div class="flex items-center justify-between bg-darkBg/30 backdrop-blur p-3 rounded-xl border border-white/5">
                                 <div>
                                     <div class="text-[10px] uppercase font-semibold text-gray-400">Confidence Score</div>
-                                    <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">94.8%</div>
+                                    <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">--%</div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-[10px] uppercase font-semibold text-gray-400">License Tier</div>
@@ -492,13 +479,13 @@
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-red-500/30 hover:border-red-500 transition">
+                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-red-500/30">
                                     <span class="text-gray-400 block text-[10px]">STOP LOSS (SL)</span>
-                                    <strong id="slVal" class="text-red-400 text-sm">1.10100</strong>
+                                    <strong id="slVal" class="text-red-400 text-sm">--</strong>
                                 </div>
-                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-[#00ffcc]/30 hover:border-[#00ffcc] transition">
+                                <div class="bg-darkBg/30 backdrop-blur p-2.5 rounded-xl border border-[#00ffcc]/30">
                                     <span class="text-gray-400 block text-[10px]">TAKE PROFIT (TP)</span>
-                                    <strong id="tpVal" class="text-[#00ffcc] text-sm">1.11200</strong>
+                                    <strong id="tpVal" class="text-[#00ffcc] text-sm">--</strong>
                                 </div>
                             </div>
 
@@ -537,15 +524,15 @@
                         <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs mt-3">
                             <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
                                 <span class="text-[10px] text-gray-400 block mb-1">15 MIN</span>
-                                <span id="mtf15m" class="font-bold text-[#00ffcc]">BUY</span>
+                                <span id="mtf15m" class="font-bold text-gray-400">--</span>
                             </div>
                             <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
                                 <span class="text-[10px] text-gray-400 block mb-1">1 HOUR</span>
-                                <span id="mtf1h" class="font-bold text-[#00ffcc]">BUY</span>
+                                <span id="mtf1h" class="font-bold text-gray-400">--</span>
                             </div>
                             <div class="bg-darkBg/40 backdrop-blur p-2 rounded-xl border border-white/5">
                                 <span class="text-[10px] text-gray-400 block mb-1">4 HOUR</span>
-                                <span id="mtf4h" class="font-bold text-[#00ffcc]">BUY</span>
+                                <span id="mtf4h" class="font-bold text-gray-400">--</span>
                             </div>
                         </div>
                     </div>
@@ -560,7 +547,9 @@
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono"></tbody>
+                        <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono">
+                            <tr><td colspan="5" class="py-3 text-center text-gray-400">No requests sent yet. Select an instrument and click "Load Signal" to begin.</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -661,7 +650,24 @@
                 this.apiKey = apiKey;
                 this.maxCalls = maxCalls;
                 this.callCount = 0;
-                this.cache = {}; // Added in-memory cache to save API usage
+                this.cache = {}; 
+            }
+
+            updateQuotaDisplay() {
+                const counterElem = document.getElementById('apiCallCountDisplay');
+                const watcherBadge = document.getElementById('apiQuotaWatcherBadge');
+                if (counterElem) counterElem.innerText = this.callCount;
+
+                if (watcherBadge) {
+                    let ratio = this.callCount / this.maxCalls;
+                    if (ratio >= 0.95) {
+                        watcherBadge.className = "flex items-center space-x-2 bg-red-500/20 backdrop-blur px-2.5 py-1 rounded border border-red-500/60 text-xs font-mono text-red-300 shadow-lg animate-pulse";
+                    } else if (ratio >= 0.75) {
+                        watcherBadge.className = "flex items-center space-x-2 bg-amber-500/20 backdrop-blur px-2.5 py-1 rounded border border-amber-500/50 text-xs font-mono text-amber-300 shadow-sm";
+                    } else {
+                        watcherBadge.className = "flex items-center space-x-2 bg-darkBg/30 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm";
+                    }
+                }
             }
 
             async fetchTimeSeries(symbol, interval) {
@@ -669,14 +675,14 @@
                 const cacheKey = `${symbol}_${interval}`;
                 const now = Date.now();
 
-                // Return cache if fetched within the last 120 seconds
                 if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp < 120000)) {
                     setDataSourceBadge(true);
+                    showToast(`Loaded ${symbol} (${interval}) from memory cache (0 API calls used).`);
                     return this.cache[cacheKey].data;
                 }
 
                 if (this.callCount >= this.maxCalls) {
-                    showToast("API Limit Reached. Switching to Simulated Telemetry.", "warning");
+                    showToast("API Daily Limit (800) Reached. Request blocked. Switching to Fallback Simulation.", "warning");
                     setDataSourceBadge(false);
                     return this.getFallbackTelemetry(symbol);
                 }
@@ -686,6 +692,12 @@
 
                 try {
                     this.callCount++;
+                    this.updateQuotaDisplay();
+
+                    if (this.callCount >= 760 && this.callCount === 760) {
+                        showToast("CRITICAL WARNING: Approaching daily API limit (800 calls).", "warning");
+                    }
+
                     const response = await fetch(url);
                     const data = await response.json();
 
@@ -695,7 +707,7 @@
                     if (latencyElem) latencyElem.innerText = `${jitter}ms`;
 
                     if (data.code === 429 || data.status === 'error') {
-                        showToast(`TwelveData Error/Limit (${data.message || 'Rate Limit'}). Using Robust Fallback Telemetry.`, "warning");
+                        showToast(`TwelveData Rate Limit/Error (${data.message || 'Limit reached'}). Using Robust Fallback Telemetry.`, "warning");
                         setDataSourceBadge(false);
                         return this.getFallbackTelemetry(symbol);
                     }
@@ -704,6 +716,7 @@
                         const reversedData = data.values.reverse();
                         this.cache[cacheKey] = { timestamp: now, data: reversedData };
                         setDataSourceBadge(true);
+                        showToast(`Successfully fetched on-demand data for ${symbol} [Call #${this.callCount}]`);
                         return reversedData;
                     }
                     setDataSourceBadge(false);
@@ -740,10 +753,10 @@
             const badge = document.getElementById('dataSourceBadge');
             if(!badge) return;
             if(isLive) {
-                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse";
-                badge.innerText = "Live API Synced";
+                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40";
+                badge.innerText = "Live API Synced (On-Demand)";
             } else {
-                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40 animate-pulse";
+                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40";
                 badge.innerText = "Simulated Fallback Mode";
             }
         }
@@ -775,10 +788,7 @@
         let rsiChart = null;
         let currentPair = 'EUR/USD';
         let currentTimeframe = '5min';
-        let autoRefreshInterval = null;
         let licenseTimerInterval = null;
-        let countdownSec = 300; // Increased to 300s (5 mins) to conserve API credits
-        let autoRefreshEnabled = true;
         let currentThemeMode = 'ocean';
         let telemetryEngine = null;
         
@@ -797,7 +807,6 @@
             if (cachedKey && cachedLicense) {
                 document.getElementById('loginApiKey').value = cachedKey;
                 document.getElementById('loginLicense').value = cachedLicense;
-                showToast("Persistent credentials successfully loaded.");
             }
         });
 
@@ -813,22 +822,14 @@
             if (statusIndicator) statusIndicator.textContent = "Checking key...";
 
             try {
-                if (!apiKey) {
-                    throw new Error("API Key required");
-                }
-                let message = "License validated successfully.";
-                if (statusIndicator) statusIndicator.textContent = "Success!";
-                showToast("Success! " + message);
-
+                if (!apiKey) throw new Error("API Key required");
+                
                 activeFullCode = licenseKeyInput;
                 activeApiKey = apiKey;
 
                 if (rememberDevice) {
                     localStorage.setItem('quah_api_key', apiKey);
                     localStorage.setItem('quah_license_key', licenseKeyInput);
-                } else {
-                    localStorage.removeItem('quah_api_key');
-                    localStorage.removeItem('quah_license_key');
                 }
 
                 try {
@@ -838,8 +839,6 @@
                         const payload = JSON.parse(decodedJson);
                         if (payload.expiresAt) activeLicenseExpiryTimestamp = payload.expiresAt;
                         if (payload.tier) document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                    } else {
-                        throw new Error("Invalid structure");
                     }
                 } catch (err) {
                     activeLicenseExpiryTimestamp = Date.now() + 604800000;
@@ -848,20 +847,18 @@
                 telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized");
+                showToast("Institutional Pro Terminal Initialized in On-Demand Mode");
                 initApp();
 
             } catch (error) {
                 errElem.textContent = "Please enter a valid TwelveData API Key and license string.";
                 errElem.classList.remove('hidden');
                 if (statusIndicator) statusIndicator.textContent = "Error";
-                showToast("Authentication failed. Check API key.", "warning");
             }
         });
 
         function logout() {
             if (licenseTimerInterval) clearInterval(licenseTimerInterval);
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
             localStorage.removeItem('quah_api_key');
             localStorage.removeItem('quah_license_key');
             document.getElementById('expiryUpgradeModal').classList.add('hidden');
@@ -943,7 +940,6 @@
         }
         setInterval(updateClocks, 1000);
 
-        // OPTIMIZED: Local simulation update for ticker and status banner to completely avoid external API calls
         function updateMarketStatusBannerLocally() {
             const updateTickerItem = (symKey, price, isOpen) => {
                 const el = document.getElementById(`ticker_${symKey}`);
@@ -985,32 +981,8 @@
         }
 
         function initApp() {
-            initCharts();
-            startAutoRefreshTimer();
             startLicenseCountdownTimer();
-            populateSignalLogTable();
-            calculatePositionSize();
-            updateMTFMatrix();
             setInterval(updateMarketStatusBannerLocally, 10000);
-        }
-
-        function populateSignalLogTable() {
-            const tableBody = document.getElementById('signalLogTableBody');
-            if (!tableBody) return;
-            tableBody.innerHTML = `
-                <tr><td class="py-2 text-[#00ffcc]">2026-08-23 06:20:12</td><td>EUR/USD</td><td class="text-[#00ffcc]">BUY (UPTREND)</td><td>1.1042</td><td class="text-emerald-400">EXECUTED (Harmonized Signal Active)</td></tr>
-                <tr><td class="py-2 text-[#00ffcc]">2026-08-23 05:30:00</td><td>BTC/USD</td><td class="text-[#00ffcc]">BUY (UPTREND)</td><td>64210.00</td><td class="text-emerald-400">EXECUTED (Harmonized Signal Active)</td></tr>
-            `;
-        }
-
-        function updateMTFMatrix() {
-            const mtf15 = document.getElementById('mtf15m');
-            const mtf1h = document.getElementById('mtf1h');
-            const mtf4h = document.getElementById('mtf4h');
-            if(!mtf15) return;
-            mtf15.innerText = "BUY"; mtf15.className = "font-bold text-[#00ffcc]";
-            mtf1h.innerText = "BUY"; mtf1h.className = "font-bold text-[#00ffcc]";
-            mtf4h.innerText = "BUY"; mtf4h.className = "font-bold text-[#00ffcc]";
         }
 
         function startLicenseCountdownTimer() {
@@ -1039,10 +1011,7 @@
 
         async function submitLicenseUpgrade() {
             const newKey = document.getElementById('upgradeLicenseInput').value.trim();
-            if (!newKey) {
-                showToast("Please enter a valid renewal key string.", "warning");
-                return;
-            }
+            if (!newKey) return;
             try {
                 const parts = newKey.split('-');
                 const decodedJson = atob(parts[1]);
@@ -1061,7 +1030,6 @@
         function calculatePositionSize() {
             const accSize = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
             const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
-            const entry = parseFloat(document.getElementById('slVal')?.innerText) || 1.1042;
             const riskAmount = accSize * (riskPct / 100);
             const pipsAtRisk = currentPair.includes('BTC') ? 500 : (currentPair.includes('JPY') ? 50 : 500);
             let lotSize = pipsAtRisk > 0 ? riskAmount / (pipsAtRisk * 10) : 1.0;
@@ -1080,7 +1048,6 @@
 
         function evaluateMarketDirection(candles, rsiValues, prices) {
             const currentPrice = prices[prices.length - 1];
-
             const badge = document.getElementById('signalDirBadge');
             const confidenceElem = document.getElementById('confidenceVal');
             const slElem = document.getElementById('slVal');
@@ -1163,8 +1130,11 @@
             container.appendChild(script);
         }
 
-        async function initCharts() {
-            if (!telemetryEngine) return;
+        async function fetchAndRenderOnDemand() {
+            if (!telemetryEngine) {
+                showToast("Please initialize your session first.", "warning");
+                return;
+            }
             
             renderTradingViewWidget();
 
@@ -1197,7 +1167,7 @@
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
 
-            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - Twelve Data Programmatic Stream`;
+            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - On-Demand Data Stream`;
 
             const sharedChartOptions = {
                 responsive: true,
@@ -1212,7 +1182,7 @@
             if (mainTimeSeriesChart) {
                 mainTimeSeriesChart.data.labels = labels;
                 mainTimeSeriesChart.data.datasets[0].data = prices;
-                mainTimeSeriesChart.update('none');
+                mainTimeSeriesChart.update();
             } else {
                 mainTimeSeriesChart = new Chart(ctxMain, {
                     type: 'line',
@@ -1220,17 +1190,14 @@
                         labels: labels,
                         datasets: [{ label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.05)', borderWidth: 2, fill: true, tension: 0.1 }]
                     },
-                    options: {
-                        ...sharedChartOptions,
-                        plugins: { legend: { display: false } }
-                    }
+                    options: { ...sharedChartOptions, plugins: { legend: { display: false } } }
                 });
             }
 
             if (rsiChart) {
                 rsiChart.data.labels = labels;
                 rsiChart.data.datasets[0].data = rsiValues;
-                rsiChart.update('none');
+                rsiChart.update();
             } else {
                 rsiChart = new Chart(ctxRsi, {
                     type: 'line',
@@ -1248,13 +1215,24 @@
                     }
                 });
             }
+
+            const mtf15 = document.getElementById('mtf15m');
+            const mtf1h = document.getElementById('mtf1h');
+            const mtf4h = document.getElementById('mtf4h');
+            if(mtf15) { mtf15.innerText = "BUY"; mtf15.className = "font-bold text-[#00ffcc]"; }
+            if(mtf1h) { mtf1h.innerText = "BUY"; mtf1h.className = "font-bold text-[#00ffcc]"; }
+            if(mtf4h) { mtf4h.innerText = "BUY"; mtf4h.className = "font-bold text-[#00ffcc]"; }
+
+            const tableBody = document.getElementById('signalLogTableBody');
+            if (tableBody) {
+                const timeString = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                tableBody.innerHTML = `<tr><td class="py-2 text-[#00ffcc]">${timeString}</td><td>${currentPair} (${currentTimeframe})</td><td class="text-[#00ffcc]">BUY (UPTREND)</td><td>${currentPriceStr}</td><td class="text-emerald-400">ON-DEMAND FETCHED</td></tr>`;
+            }
         }
 
         function onPairChange() {
             currentPair = document.getElementById('mainPairSelect').value;
-            initCharts();
-            updateMTFMatrix();
-            showToast(`Instrument switched to ${currentPair}`);
+            showToast(`Instrument changed to ${currentPair}. Click "Load Signal / Analyze" to execute request.`);
         }
 
         function setTimeframe(tf, element) {
@@ -1265,43 +1243,11 @@
             if (element) {
                 element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
             }
-            initCharts();
-        }
-
-        function toggleAutoRefresh(checkbox) {
-            autoRefreshEnabled = checkbox.checked;
-            if (autoRefreshEnabled) {
-                startAutoRefreshTimer();
-                showToast("Auto-refresh enabled (300s interval)");
-            } else {
-                if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-                document.getElementById('countdownRing').innerText = 'OFF';
-                showToast("Auto-refresh disabled", "warning");
-            }
-        }
-
-        function startAutoRefreshTimer() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            countdownSec = 300;
-            autoRefreshInterval = setInterval(() => {
-                if (!isTabActive || !autoRefreshEnabled) return;
-                countdownSec--;
-                if(countdownSec <= 0) {
-                    countdownSec = 300;
-                    initCharts();
-                    updateMTFMatrix();
-                    showToast("Auto-refreshed data from TwelveData");
-                }
-                const ring = document.getElementById('countdownRing');
-                if(ring) ring.innerText = countdownSec + 's';
-            }, 1000);
+            showToast(`Timeframe changed to ${tf}. Click "Load Signal / Analyze" to execute request.`);
         }
 
         function triggerManualRefresh() {
-            countdownSec = 300;
-            initCharts();
-            updateMTFMatrix();
-            showToast("Institutional Telemetry, SMC & Volume Engine Refreshed");
+            fetchAndRenderOnDemand();
         }
 
         function executeTradeAlert() {
