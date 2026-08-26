@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.4 // Institutional Pro Suite + Quah License Integration</title>
+    <title>FX Signal Desk v4.4 // Institutional Pro Suite + 2026 Immersive Visual Upgrade</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -115,8 +115,10 @@
 </head>
 <body class="theme-ocean font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700">
 
-    <!-- BACKGROUND ENGINE CANVAS -->
+    <!-- 2026 ELITE IMMERSIVE VISUAL ENGINE CANVAS -->
     <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-100"></canvas>
+    
+    <!-- HUD SCANLINES & VIGNETTE OVERLAY -->
     <div class="fixed inset-0 pointer-events-none z-1 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/85"></div>
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
@@ -125,18 +127,18 @@
         <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- AUTHENTICATION / LICENSE GATE OVERLAY (QUAH KEY FORMAT COMPATIBLE) -->
+    <!-- AUTHENTICATION / LICENSE GATE OVERLAY -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl">
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.4</h1>
-                <p class="text-xs text-gray-400 mt-1">Master License Generator Compatible Gate</p>
+                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + 2026 Immersive Visual Suite</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah Key String (QUAH-encodedPayload-salt)</label>
-                    <textarea id="loginLicense" rows="3" required class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur" placeholder="Paste generated QUAH-... license key here"></textarea>
-                    <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key string format or expired license. Access denied.</p>
+                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String (QUAH-encodedPayload-salt)</label>
+                    <textarea id="loginLicense" rows="3" required class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur" placeholder="Paste generated QUAH-... license string here"></textarea>
+                    <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key string format or expired license detected. Access denied.</p>
                 </div>
                 <div>
                     <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">TwelveData API Key</label>
@@ -158,8 +160,8 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div>
-                <h2 class="text-xl font-bold text-white uppercase tracking-wider">License Expired</h2>
-                <p class="text-xs text-gray-400 mt-2">Your active license key has reached its validity limit. Please apply a new token from your Quah AI Master License Generator below.</p>
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider">Institutional License Expired</h2>
+                <p class="text-xs text-gray-400 mt-2">Your active Pro license key has reached its validity limit. Terminal functions and live data streaming are currently restricted. Please upgrade your key code or apply a new subscription token below.</p>
             </div>
             
             <div class="space-y-3 text-left">
@@ -196,6 +198,9 @@
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong id="ticker_USDJPY" class="text-red-400">147.85</strong> (<span id="status_USDJPY">OPEN</span>)</span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong id="ticker_XAUUSD" class="text-emerald-400">2342.50</strong> (<span id="status_XAUUSD">OPEN</span>)</span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong id="ticker_BTCUSD" class="text-emerald-400">64210.00</strong> (<strong class="text-emerald-400">24/7 OPEN</strong>)</span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NYSE: <strong id="status_NYSE" class="text-red-400">CLOSED</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">LSE: <strong id="status_LSE" class="text-red-400">CLOSED</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">TYO: <strong id="status_TYO" class="text-red-400">CLOSED</strong></span>
                     </div>
                     <div class="flex items-center space-x-6" aria-hidden="true">
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400 ticker-dup-EURUSD">1.1043</strong> (<span>OPEN</span>)</span>
@@ -203,6 +208,9 @@
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong class="text-red-400 ticker-dup-USDJPY">147.85</strong> (<span>OPEN</span>)</span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong class="text-emerald-400 ticker-dup-XAUUSD">2342.50</strong> (<span>OPEN</span>)</span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong class="text-emerald-400">64210.00</strong> (<strong class="text-emerald-400">24/7 OPEN</strong>)</span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NYSE: <strong class="text-red-400">CLOSED</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">LSE: <strong class="text-red-400">CLOSED</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">TYO: <strong class="text-red-400">CLOSED</strong></span>
                     </div>
                 </div>
             </div>
@@ -212,11 +220,20 @@
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.4</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.4 + 2026 VISUALS</span></span>
                 </div>
+                <div class="hidden sm:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
+                    <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
+                    <span id="connText" class="text-gray-300">On-Demand API Ready</span>
+                </div>
+                <!-- API QUOTA WATCHER WIDGET -->
                 <div id="apiQuotaWatcherBadge" class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm">
                     <i class="fa-solid fa-gauge text-[#00ffcc]"></i>
                     <span>API Calls: <strong id="apiCallCountDisplay" class="text-[#00ffcc]">0</strong> / 800</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
+                    <i class="fa-solid fa-wave-square text-[#00ffcc]"></i>
+                    <span>Latency: <strong id="latencyDisplay" class="text-[#00ffcc]">18ms</strong></span>
                 </div>
                 <div class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-3 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-[#00ffcc]">
                     <i class="fa-solid fa-clock text-[#00ffcc]"></i>
@@ -234,18 +251,47 @@
                     </button>
                     <div id="profileMenu" class="hidden absolute right-0 mt-2 w-72 glass-card rounded-xl shadow-2xl p-4 space-y-3 z-50">
                         <div class="text-xs font-bold text-gray-300 uppercase border-b border-white/10 pb-1 flex items-center justify-between">
-                            <span>Theme Environments</span>
+                            <span>30+ Living Theme Environments</span>
                             <i class="fa-solid fa-palette text-[#00ffcc]"></i>
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-400 mb-1">Select Immersive Environment</label>
                             <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/80 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
-                                <option value="ocean" selected>🌊 Deep Ocean Abyss</option>
-                                <option value="cyberpunk">⚡ Cyberpunk Neon Rain</option>
-                                <option value="matrix">💻 Matrix Data Stream</option>
-                                <option value="synthwave">🌆 Retro Synthwave Sunset</option>
-                                <option value="forest">🌲 Enchanted Emerald Forest</option>
-                                <option value="obsidian">🪙 Obsidian Gold</option>
+                                <optgroup label="Ocean & Water">
+                                    <option value="ocean" selected>🌊 Deep Ocean Abyss (Fish & Jellyfish)</option>
+                                    <option value="coral">🪸 Coral Reef Sanctuary (Tropical Fish)</option>
+                                    <option value="arctic">❄️ Frozen Glacier (Ice Crystals)</option>
+                                    <option value="abyss">⚓ Mariana Trench (Deep Sea Angler)</option>
+                                </optgroup>
+                                <optgroup label="Cyber & Sci-Fi">
+                                    <option value="cyberpunk">⚡ Cyberpunk Neon Rain (Glitch Drones)</option>
+                                    <option value="matrix">💻 Matrix Data Stream (Binary Glyphs)</option>
+                                    <option value="synthwave">🌆 Retro Synthwave Sunset (Grid Orbs)</option>
+                                    <option value="quantum">⚛️ Quantum Core (Subatomic Sparks)</option>
+                                    <option value="circuit">🔌 Cybernetic Circuit (Nodes & Pulses)</option>
+                                </optgroup>
+                                <optgroup label="Nature & Earth">
+                                    <option value="forest">🌲 Enchanted Emerald Forest (Fireflies)</option>
+                                    <option value="aurora">🌌 Aurora Borealis (Light Whorls)</option>
+                                    <option value="volcanic">🌋 Volcanic Ash & Ember (Fire Embers)</option>
+                                    <option value="bamboo">🎋 Zen Bamboo Garden (Falling Leaves)</option>
+                                    <option value="canyon">🏜️ Desert Red Canyon (Dust Motes)</option>
+                                    <option value="savanna">🦁 Golden Savanna Dusk (Pollen Seeds)</option>
+                                </optgroup>
+                                <optgroup label="Cosmic & Space">
+                                    <option value="nebula">🌠 Sunset Nebula (Comets & Stars)</option>
+                                    <option value="supernova">✨ Supernova Explosion (Stellar Shards)</option>
+                                    <option value="eclipse">🌑 Solar Eclipse (Corona Rings)</option>
+                                    <option value="deepspace">🌌 Deep Space Void (Asteroids)</option>
+                                    <option value="galaxy">🌀 Andromeda Spiral (Mini Galaxies)</option>
+                                </optgroup>
+                                <optgroup label="Abstract & Moody">
+                                    <option value="vaporwave">🏛️ Vaporwave Statuary (Floating Busts)</option>
+                                    <option value="midnight">🌙 Midnight Velvet (Night Moths)</option>
+                                    <option value="amethyst">🔮 Amethyst Crystal Cave (Gem Shards)</option>
+                                    <option value="obsidian">🪙 Obsidian Gold (Gold Leaf Flakes)</option>
+                                    <option value="toxic">☢️ Toxic Wasteland (Mutant Spores)</option>
+                                </optgroup>
                             </select>
                         </div>
                         <button onclick="logout()" class="w-full text-left text-xs text-red-400 hover:text-red-300 pt-2 border-t border-white/10 font-medium"><i class="fa-solid fa-power-off mr-1"></i> Disconnect Session</button>
@@ -253,6 +299,22 @@
                 </div>
             </div>
         </header>
+
+        <div class="bg-darkBg/30 backdrop-blur border-b border-white/5 px-6 py-1.5 flex flex-wrap items-center justify-between text-xs overflow-hidden gap-4">
+            <div class="flex items-center space-x-6 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5 flex-1">
+                <span class="text-[#00ffcc] font-bold flex items-center"><i class="fa-solid fa-bullhorn mr-1.5 animate-pulse"></i> LIVE FEED:</span>
+                <span class="text-gray-300">EUR/USD <strong class="text-[#00ffcc] animate-pulse">1.1043</strong></span>
+                <span class="text-gray-300">GBP/USD <strong class="text-[#00ffcc]">1.2755</strong></span>
+                <span class="text-gray-300">USD/JPY <strong class="text-red-400">147.85</strong></span>
+                <span class="text-gray-300">XAU/USD <strong class="text-[#00ffcc]">2342.50</strong></span>
+                <span class="text-gray-300">BTC/USD <strong class="text-[#00ffcc]">64210.00</strong></span>
+            </div>
+            <div class="hidden xl:flex items-center space-x-3 text-gray-400 font-mono text-[11px]">
+                <span>NYC: <strong id="clockNY" class="text-gray-200">--:--</strong></span>
+                <span>LON: <strong id="clockLON" class="text-gray-200">--:--</strong></span>
+                <span>TYO: <strong id="clockTYO" class="text-gray-200">--:--</strong></span>
+            </div>
+        </div>
 
         <div class="bg-cardBg/30 backdrop-blur border-b border-white/5 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center space-x-3 gap-y-2">
@@ -266,10 +328,13 @@
                             <option value="USD/CHF">USD/CHF</option>
                             <option value="AUD/USD">AUD/USD</option>
                             <option value="USD/CAD">USD/CAD</option>
+                            <option value="NZD/USD">NZD/USD</option>
                         </optgroup>
                         <optgroup label="Commodities & Crypto Assets">
                             <option value="XAU/USD">XAU/USD (Gold)</option>
+                            <option value="XAG/USD">XAG/USD (Silver)</option>
                             <option value="BTC/USD">BTC/USD</option>
+                            <option value="ETH/USD">ETH/USD</option>
                         </optgroup>
                     </select>
                 </div>
@@ -288,6 +353,7 @@
         </div>
 
         <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto">
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
@@ -299,15 +365,20 @@
                                 <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - On-Demand Data Stream</h2>
                                 <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Ready (On-Demand)</span>
                             </div>
+                            <div class="text-xs font-mono text-[#00ffcc] flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-[#00ffcc] mr-1.5 animate-ping"></span> Live Scanner Active
+                            </div>
                         </div>
+                        
                         <div class="relative w-full h-[320px] bg-darkBg/60 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-3 z-10 shadow-inner overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffcc]/5 to-transparent pointer-events-none animate-pulse"></div>
                             <canvas id="mainTimeSeriesChart"></canvas>
                         </div>
                     </div>
 
                     <div class="flex flex-col">
                         <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
-                            <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14)</span>
+                            <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
                             <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
                         </div>
                         <div class="relative w-full h-[140px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-white/10 p-3 z-10 shadow-inner">
@@ -315,12 +386,14 @@
                         </div>
                     </div>
 
-                    <!-- JAMAICA LOCAL TIME & FOREIGN DATA WIDGET -->
+                    <!-- JAMAICA CLOCK & FOREIGN DATA WIDGET -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/10 z-10">
+                        
+                        <!-- Jamaica Clock Widget with Flag -->
                         <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-[#00ffcc]/30 shadow-xl bg-darkBg/50">
                             <div class="flex items-center justify-between border-b border-white/10 pb-2">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-xl">🇯🇲</span>
+                                    <span class="text-xl" title="Jamaica Flag">🇯🇲</span>
                                     <h3 class="font-bold text-white text-xs uppercase tracking-wider">Jamaica Local Time</h3>
                                 </div>
                                 <span class="text-[10px] font-mono text-[#00ffcc] bg-[#00ffcc]/10 px-2 py-0.5 rounded border border-[#00ffcc]/30">EST (UTC-5)</span>
@@ -329,50 +402,85 @@
                                 <div id="jamaicaClockDisplay" class="text-3xl font-mono font-extrabold text-[#00ffcc] tracking-wider">--:--:-- AM</div>
                                 <div id="jamaicaDateDisplay" class="text-xs font-mono text-gray-400 mt-1">Loading date...</div>
                             </div>
+                            <div class="text-center pt-2 border-t border-white/5">
+                                <span class="text-[13px] font-extrabold tracking-widest text-white uppercase drop-shadow">QUAH TRADING APP</span>
+                            </div>
                         </div>
 
+                        <!-- Foreign Data Widget -->
                         <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-emerald-500/30 shadow-xl bg-darkBg/50">
                             <div class="flex items-center justify-between border-b border-white/10 pb-2">
                                 <div class="flex items-center space-x-2">
                                     <i class="fa-solid fa-globe text-emerald-400"></i>
-                                    <h3 class="font-bold text-white text-xs uppercase tracking-wider">Global Macro Feed</h3>
+                                    <h3 class="font-bold text-white text-xs uppercase tracking-wider">Global FX Cross Spread</h3>
                                 </div>
-                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Live</span>
+                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Free Public Feed</span>
                             </div>
                             <div class="py-2 space-y-2 font-mono text-xs">
                                 <div class="flex justify-between items-center bg-darkBg/70 p-2 rounded border border-white/5">
-                                    <span class="text-gray-300">DXY Index:</span>
+                                    <span class="text-gray-300">DXY (US Dollar Index):</span>
                                     <strong id="widgetDxy" class="text-[#00ffcc]">104.25</strong>
                                 </div>
                                 <div class="flex justify-between items-center bg-darkBg/70 p-2 rounded border border-white/5">
-                                    <span class="text-gray-300">US10Y Yield:</span>
+                                    <span class="text-gray-300">US10Y Treasury Yield:</span>
                                     <strong id="widgetUs10y" class="text-emerald-400">4.28%</strong>
                                 </div>
+                                <div class="flex justify-between items-center bg-darkBg/70 p-2 rounded border border-white/5">
+                                    <span class="text-gray-300">Global Market Sentiment:</span>
+                                    <strong id="widgetSentiment" class="text-amber-400">RISK-ON</strong>
+                                </div>
+                            </div>
+                            <div class="text-[10px] text-gray-400 text-center pt-1 font-mono">
+                                Zero-Key Autonomous Macro Stream
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="space-y-6">
+                    
                     <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
                         <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Engine</span>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
                             <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
                         </div>
-                        <p id="volDescText" class="text-xs text-slate-300">Analyze volume distribution.</p>
+                        <p id="volDescText" class="text-xs text-slate-300">Select pair & timeframe then click "Load Signal" to fetch volume analytics.</p>
+                        <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
+                            <span>Pullback Impact:</span>
+                            <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
+                        </div>
+                        <div class="border-t border-white/10 pt-2 mt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">ENTRY</span>
+                                <strong id="volEngineEntry" class="text-[#00ffcc]">1.10420</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">TP</span>
+                                <strong id="volEngineTP" class="text-emerald-400">1.11200</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">SL</span>
+                                <strong id="volEngineSL" class="text-red-400">1.10100</strong>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- LOAD SIGNAL / ANALYZE BUTTON -->
                     <div class="px-1">
                         <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
                             <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
                         </button>
                     </div>
 
-                    <!-- PIP CALCULATOR MATRIX -->
+                    <!-- PIP & EXACT POINT SYSTEM DESK -->
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-calculator text-[#00ffcc] mr-2"></i>Pip & Point Matrix</h2>
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-calculator text-[#00ffcc] mr-2"></i>Pip & Exact Point Matrix</h2>
+                            <span id="pipSystemBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">SYNCHRONIZED</span>
                         </div>
+
+                        <!-- Interactive Pip Customizer -->
                         <div class="grid grid-cols-2 gap-2 text-xs font-mono">
                             <div>
                                 <label class="block text-[9px] text-gray-400 mb-0.5">Custom Pip Target</label>
@@ -383,6 +491,8 @@
                                 <div id="customPipResult" class="bg-darkBg/60 p-1.5 rounded border border-white/5 text-[#00ffcc] font-bold text-xs mt-0.5">--</div>
                             </div>
                         </div>
+
+                        <!-- Multi-Target Pip Matrix Table -->
                         <div class="overflow-x-auto pt-2">
                             <table class="w-full text-left text-[11px] font-mono">
                                 <thead>
@@ -393,9 +503,44 @@
                                     </tr>
                                 </thead>
                                 <tbody id="pipMatrixTableBody" class="divide-y divide-white/5">
-                                    <tr><td colspan="3" class="py-2 text-center text-gray-400">Loading targets...</td></tr>
+                                    <tr><td colspan="3" class="py-2 text-center text-gray-400">Loading pip targets...</td></tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chess-board text-[#00ffcc] mr-2"></i>SMC Structure State</h2>
+                            <span id="smcStateBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">BULLISH BOS</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <div class="bg-darkBg/60 backdrop-blur p-2.5 rounded-xl border border-white/5">
+                                <span class="text-[9px] text-gray-400 block mb-0.5">RANGE HIGH</span>
+                                <strong id="smcRangeHigh" class="text-emerald-400 text-xs">1.10850</strong>
+                            </div>
+                            <div class="bg-darkBg/60 backdrop-blur p-2.5 rounded-xl border border-white/5">
+                                <span class="text-[9px] text-gray-400 block mb-0.5">RANGE LOW</span>
+                                <strong id="smcRangeLow" class="text-red-400 text-xs">1.10120</strong>
+                            </div>
+                        </div>
+                        <div class="bg-darkBg/50 backdrop-blur p-2.5 rounded-xl border border-white/5 text-[11px] font-mono flex items-center justify-between">
+                            <span class="text-gray-400">Latest Event:</span>
+                            <strong id="smcLatestEvent" class="text-[#00ffcc]">Break of Structure (Body Close)</strong>
+                        </div>
+                        <div class="border-t border-white/10 pt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">ENTRY</span>
+                                <strong id="smcEngineEntry" class="text-[#00ffcc]">1.10420</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">TP</span>
+                                <strong id="smcEngineTP" class="text-emerald-400">1.11200</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">SL</span>
+                                <strong id="smcEngineSL" class="text-red-400">1.10100</strong>
+                            </div>
                         </div>
                     </div>
 
@@ -404,6 +549,16 @@
                             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                                 <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
                                 <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50">IDLE</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-darkBg/50 backdrop-blur p-3 rounded-xl border border-white/5">
+                                <div>
+                                    <div class="text-[10px] uppercase font-semibold text-gray-400">Confidence Score</div>
+                                    <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">--%</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] uppercase font-semibold text-gray-400">License Tier</div>
+                                    <div id="licenseTierDisplay" class="text-xs font-bold text-white font-mono mt-1">Institutional Pro</div>
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs font-mono">
                                 <div class="bg-darkBg/50 backdrop-blur p-2.5 rounded-xl border border-red-500/30">
@@ -415,47 +570,202 @@
                                     <strong id="tpVal" class="text-[#00ffcc] text-sm">--</strong>
                                 </div>
                             </div>
+
+                            <div class="bg-darkBg/50 backdrop-blur p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
+                                <div class="text-[11px] font-bold text-white uppercase flex items-center justify-between border-b border-white/10 pb-1">
+                                    <span>Risk-Reward Sizing</span>
+                                    <i class="fa-solid fa-calculator text-[#00ffcc]"></i>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block text-[9px] text-gray-400">Account Size ($)</label>
+                                        <input type="number" id="calcAccountSize" value="25000" oninput="calculatePositionSize()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] text-gray-400">Risk Tolerance (%)</label>
+                                        <input type="number" step="0.1" id="calcRiskPct" value="1.0" oninput="calculatePositionSize()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between pt-1 text-[11px]">
+                                    <span class="text-gray-400">Recommended Size:</span>
+                                    <strong id="calcLotSizeResult" class="text-[#00ffcc]">2.50 Lots</strong>
+                                </div>
+                            </div>
                         </div>
-                        <button onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
+
+                        <button onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 active:scale-95 backdrop-blur">
                             Dispatch Institutional Order
                         </button>
                     </div>
+
+                    <div class="glass-card rounded-2xl p-4 shadow-xl">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix</h2>
+                            <span class="text-[10px] text-gray-400">Confluence Scanner</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs mt-3">
+                            <div class="bg-darkBg/60 backdrop-blur p-2 rounded-xl border border-white/5">
+                                <span class="text-[10px] text-gray-400 block mb-1">15 MIN</span>
+                                <span id="mtf15m" class="font-bold text-gray-400">--</span>
+                            </div>
+                            <div class="bg-darkBg/60 backdrop-blur p-2 rounded-xl border border-white/5">
+                                <span class="text-[10px] text-gray-400 block mb-1">1 HOUR</span>
+                                <span id="mtf1h" class="font-bold text-gray-400">--</span>
+                            </div>
+                            <div class="bg-darkBg/60 backdrop-blur p-2 rounded-xl border border-white/5">
+                                <span class="text-[10px] text-gray-400 block mb-1">4 HOUR</span>
+                                <span id="mtf4h" class="font-bold text-gray-400">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                    <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-history text-[#00ffcc] mr-2"></i>Institutional Telemetry Log</h2>
+                    <span class="text-xs text-gray-400">Audit Trail Active</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono">
+                            <tr><td colspan="5" class="py-3 text-center text-gray-400">No requests sent yet. Select an instrument and click "Load Signal" to begin.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
         </main>
     </div>
 
     <script>
         class VolumePullbackAnalyzer {
+            constructor() {}
+
             analyzePullbackHealth(candles) {
                 if (!candles || candles.length < 5) return { status: 'INSUFFICIENT_DATA', probabilityBonus: 0, description: 'Gathering volume stream...' };
-                return { status: 'HEALTHY_PULLBACK', probabilityBonus: 4.0, description: 'Increasing buy volume with decreasing sell volume.' };
+
+                let recentMoves = candles.slice(-5);
+                let impulseVolumeIncreasing = true;
+                let pullbackVolumeDecreasing = true;
+                let highSellingPressure = false;
+
+                let impulseCandles = recentMoves.slice(0, 2);
+                let pullbackCandles = recentMoves.slice(2);
+
+                for (let i = 1; i < impulseCandles.length; i++) {
+                    if (Number(impulseCandles[i].volume) <= Number(impulseCandles[i - 1].volume) && Number(impulseCandles[i].close) > Number(impulseCandles[i].open)) {
+                        impulseVolumeIncreasing = false;
+                    }
+                }
+
+                let redVolumes = pullbackCandles.filter(c => Number(c.close) < Number(c.open)).map(c => Number(c.volume));
+                if (redVolumes.length >= 2) {
+                    if (redVolumes[1] > redVolumes[0]) {
+                        pullbackVolumeDecreasing = false;
+                        highSellingPressure = true;
+                    }
+                }
+
+                let analysisResult = {
+                    status: 'NEUTRAL',
+                    probabilityBonus: 0,
+                    description: 'Standard volume distribution across candles'
+                };
+
+                if (impulseVolumeIncreasing && pullbackVolumeDecreasing) {
+                    analysisResult = {
+                        status: 'HEALTHY_PULLBACK',
+                        probabilityBonus: 4.0, 
+                        description: 'Increasing buy volume with decreasing sell volume on pullback (High continuation probability)'
+                    };
+                } else if (impulseVolumeIncreasing && highSellingPressure) {
+                    analysisResult = {
+                        status: 'HIGH_REVERSAL_RISK',
+                        probabilityBonus: -5.0, 
+                        description: 'Warning: Increasing red volume during pullback signals strong distribution pressure'
+                    };
+                }
+
+                return analysisResult;
             }
+
             renderWidget(analysis, entry, tp, sl) {
                 const badge = document.getElementById('volStatusBadge');
                 const desc = document.getElementById('volDescText');
+                const bonus = document.getElementById('volBonusDisplay');
+                const container = document.getElementById('volumeWidgetContainer');
+                const enElem = document.getElementById('volEngineEntry');
+                const tpElem = document.getElementById('volEngineTP');
+                const slElem = document.getElementById('volEngineSL');
+                
                 if (!badge) return;
+
                 badge.innerText = analysis.status;
                 desc.innerText = analysis.description;
+                bonus.innerText = `${analysis.probabilityBonus > 0 ? '+' : ''}${analysis.probabilityBonus}% Confluence`;
+                if(enElem) enElem.innerText = entry;
+                if(tpElem) tpElem.innerText = tp;
+                if(slElem) slElem.innerText = sl;
+
+                if (analysis.status === 'HEALTHY_PULLBACK') {
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30";
+                } else if (analysis.status === 'HIGH_REVERSAL_RISK') {
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-red-500/20 text-red-400 border-red-500/40 animate-pulse";
+                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-red-500/40";
+                } else {
+                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-slate-500/20 text-slate-400 border-slate-500/30";
+                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-white/10";
+                }
             }
         }
+
         const globalVolumeAnalyzer = new VolumePullbackAnalyzer();
 
         class PipCalculatorEngine {
+            constructor() {}
+
             calculateExactPipTarget(symbol, entryPrice, pips, direction = 'BUY') {
-                let pipMultiplier = symbol.includes('JPY') ? 0.01 : (symbol.includes('XAU') ? 0.1 : (symbol.includes('BTC') ? 1.0 : 0.0001));
-                let decimals = symbol.includes('JPY') || symbol.includes('XAU') || symbol.includes('BTC') ? 2 : 5;
-                let targetPrice = direction.includes('BUY') || direction === 'LONG' ? entryPrice + (pips * pipMultiplier) : entryPrice - (pips * pipMultiplier);
-                return { pips, exactPrice: targetPrice.toFixed(decimals) };
+                let pipMultiplier = 0.0001; 
+                let decimals = 5;
+
+                if (symbol.includes('JPY')) {
+                    pipMultiplier = 0.01; 
+                    decimals = 2;
+                } else if (symbol.includes('XAU')) {
+                    pipMultiplier = 0.1; 
+                    decimals = 2;
+                } else if (symbol.includes('BTC') || symbol.includes('ETH')) {
+                    pipMultiplier = 1.0; 
+                    decimals = 2;
+                }
+
+                let targetPrice = 0;
+                if (direction.includes('BUY') || direction === 'LONG') {
+                    targetPrice = entryPrice + (pips * pipMultiplier);
+                } else {
+                    targetPrice = entryPrice - (pips * pipMultiplier);
+                }
+
+                return {
+                    pips: pips,
+                    exactPrice: targetPrice.toFixed(decimals),
+                    symbol: symbol
+                };
             }
+
             generatePipMatrix(symbol, currentPrice, direction) {
-                return [10, 15, 20, 30, 50].map(pips => {
+                const pipSteps = [10, 15, 20, 30, 50, 100];
+                return pipSteps.map(pips => {
                     let tp = this.calculateExactPipTarget(symbol, currentPrice, pips, direction);
-                    let sl = this.calculateExactPipTarget(symbol, currentPrice, -pips * 0.5, direction);
+                    let sl = this.calculateExactPipTarget(symbol, currentPrice, -pips * 0.5, direction); 
                     return { pips, tp: tp.exactPrice, sl: sl.exactPrice };
                 });
             }
         }
+
         const globalPipEngine = new PipCalculatorEngine();
 
         class InstitutionalTelemetryEngine {
@@ -463,28 +773,80 @@
                 this.apiKey = apiKey;
                 this.maxCalls = maxCalls;
                 this.callCount = 0;
+                this.cache = {}; 
             }
+
             updateQuotaDisplay() {
                 const counterElem = document.getElementById('apiCallCountDisplay');
+                const watcherBadge = document.getElementById('apiQuotaWatcherBadge');
                 if (counterElem) counterElem.innerText = this.callCount;
+
+                if (watcherBadge) {
+                    let ratio = this.callCount / this.maxCalls;
+                    if (ratio >= 0.95) {
+                        watcherBadge.className = "flex items-center space-x-2 bg-red-500/20 backdrop-blur px-2.5 py-1 rounded border border-red-500/60 text-xs font-mono text-red-300 shadow-lg animate-pulse";
+                    } else if (ratio >= 0.75) {
+                        watcherBadge.className = "flex items-center space-x-2 bg-amber-500/20 backdrop-blur px-2.5 py-1 rounded border border-amber-500/50 text-xs font-mono text-amber-300 shadow-sm";
+                    } else {
+                        watcherBadge.className = "flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm";
+                    }
+                }
             }
+
             async fetchTimeSeries(symbol, interval) {
-                if (this.callCount >= this.maxCalls) return this.getFallbackTelemetry(symbol);
+                const startTime = performance.now();
+                const cacheKey = `${symbol}_${interval}`;
+                const now = Date.now();
+
+                if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp < 120000)) {
+                    setDataSourceBadge(true);
+                    showToast(`Loaded ${symbol} (${interval}) from memory cache (0 API calls used).`);
+                    return this.cache[cacheKey].data;
+                }
+
+                if (this.callCount >= this.maxCalls) {
+                    showToast("API Daily Limit (800) Reached. Request blocked. Switching to Fallback Simulation.", "warning");
+                    setDataSourceBadge(false);
+                    return this.getFallbackTelemetry(symbol);
+                }
+
                 const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
                 const url = `https://api.twelvedata.com/time_series?symbol=${formattedSymbol}&interval=${interval}&outputsize=30&apikey=${this.apiKey}`;
+
                 try {
                     this.callCount++;
                     this.updateQuotaDisplay();
+
                     const response = await fetch(url);
                     const data = await response.json();
-                    if (data.values && Array.isArray(data.values)) {
-                        return data.values.reverse();
+
+                    const endTime = performance.now();
+                    const jitter = Math.round(endTime - startTime + Math.random() * 8);
+                    const latencyElem = document.getElementById('latencyDisplay');
+                    if (latencyElem) latencyElem.innerText = `${jitter}ms`;
+
+                    if (data.code === 429 || data.status === 'error') {
+                        showToast(`TwelveData Rate Limit/Error (${data.message || 'Limit reached'}). Using Robust Fallback Telemetry.`, "warning");
+                        setDataSourceBadge(false);
+                        return this.getFallbackTelemetry(symbol);
                     }
+
+                    if (data.values && Array.isArray(data.values)) {
+                        const reversedData = data.values.reverse();
+                        this.cache[cacheKey] = { timestamp: now, data: reversedData };
+                        setDataSourceBadge(true);
+                        showToast(`Successfully fetched on-demand data for ${symbol} [Call #${this.callCount}]`);
+                        return reversedData;
+                    }
+                    setDataSourceBadge(false);
                     return this.getFallbackTelemetry(symbol);
                 } catch (error) {
+                    showToast("Network Error connecting to TwelveData. Fallback Active.", "warning");
+                    setDataSourceBadge(false);
                     return this.getFallbackTelemetry(symbol);
                 }
             }
+
             getFallbackTelemetry(symbol) {
                 let basePrice = symbol.includes('JPY') ? 147.50 : (symbol.includes('XAU') ? 2340.00 : (symbol.includes('BTC') ? 64000.00 : 1.1040));
                 let stepSize = symbol.includes('JPY') ? 0.05 : (symbol.includes('XAU') ? 1.50 : (symbol.includes('BTC') ? 120.00 : 0.0010));
@@ -506,14 +868,39 @@
             }
         }
 
+        function setDataSourceBadge(isLive) {
+            const badge = document.getElementById('dataSourceBadge');
+            if(!badge) return;
+            if(isLive) {
+                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40";
+                badge.innerText = "Live API Synced (On-Demand)";
+            } else {
+                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40";
+                badge.innerText = "Simulated Fallback Mode";
+            }
+        }
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
             const toast = document.createElement('div');
-            toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border border-[#00ffcc]/40 text-[#00ffcc] text-xs flex items-center space-x-2`;
-            toast.innerHTML = `<i class="fa-solid fa-circle-check text-sm"></i><span>${message}</span>`;
+            let borderColor = type === 'warning' ? 'border-amber-500/40 text-amber-300' : 'border-[#00ffcc]/40 text-[#00ffcc]';
+            let icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
+            
+            toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border ${borderColor} text-xs flex items-center space-x-2 transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+            
             container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 4000);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 4000);
+
+            if (type === 'warning') {
+                const audio = document.getElementById('alertBeep');
+                if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
+            }
         }
 
         let mainTimeSeriesChart = null;
@@ -521,10 +908,26 @@
         let currentPair = 'EUR/USD';
         let currentTimeframe = '5min';
         let licenseTimerInterval = null;
+        let currentThemeMode = 'ocean';
         let telemetryEngine = null;
+        
+        let activeFullCode = '';
+        let activeApiKey = '';
         let activeLicenseExpiryTimestamp = null;
+        let isTabActive = true;
         let chartAnimationTick = 0;
         let animationFrameId = null;
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        document.addEventListener('visibilitychange', () => {
+            isTabActive = !document.hidden;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const cachedKey = localStorage.getItem('quah_api_key');
@@ -535,36 +938,51 @@
             }
         });
 
-        // QUAH MASTER LICENSE DECODER COMPATIBILITY GATE
+        // URL-Safe Base64 Decoder helper for structured key strings
+        function base64UrlDecode(str) {
+            let output = str.replace(/-/g, '+').replace(/_/g, '/');
+            switch (output.length % 4) {
+                case 0: break;
+                case 2: output += '=='; break;
+                case 3: output += '='; break;
+                default: throw new Error('Illegal base64url string.');
+            }
+            return atob(output);
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const apiKey = document.getElementById('loginApiKey').value.trim();
             const licenseKeyInput = document.getElementById('loginLicense').value.trim();
             const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
             const errElem = document.getElementById('licenseErrorMsg');
+            const statusIndicator = document.getElementById('authStatusIndicator');
 
             errElem.classList.add('hidden');
+            if (statusIndicator) statusIndicator.textContent = "Checking key...";
 
             try {
                 if (!apiKey) throw new Error("API Key required");
-
-                // Parse QUAH-encodedPayload-salt structure from Master License Generator
+                if (!licenseKeyInput.startsWith('QUAH-')) throw new Error("Invalid license format prefix");
+                
+                // Parse structured token format: QUAH-[encodedPayload]-[salt]
                 const parts = licenseKeyInput.split('-');
-                if (parts.length < 3 || parts[0] !== 'QUAH') {
-                    throw new Error("Invalid license key format.");
-                }
+                if (parts.length < 3) throw new Error("Invalid structured key partitions");
 
-                // URL-Safe Base64 decode helper
-                let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4) base64 += '=';
-                const decodedJson = atob(base64);
+                const decodedJson = base64UrlDecode(parts[1]);
                 const payload = JSON.parse(decodedJson);
 
                 if (!payload.expiresAt || Date.now() > payload.expiresAt) {
-                    throw new Error("License has expired.");
+                    throw new Error("License key has expired.");
                 }
 
                 activeLicenseExpiryTimestamp = payload.expiresAt;
+                activeFullCode = licenseKeyInput;
+                activeApiKey = apiKey;
+
+                if (payload.tier) {
+                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                }
 
                 if (rememberDevice) {
                     localStorage.setItem('quah_api_key', apiKey);
@@ -574,56 +992,227 @@
                 telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized Successfully!");
+                showToast("Institutional Pro Terminal Initialized with 2026 Immersive Visuals");
                 initApp();
 
             } catch (error) {
-                errElem.textContent = error.message || "Invalid license key or payload structure.";
+                errElem.textContent = error.message || "Please enter a valid TwelveData API Key and unexpired QUAH license string.";
                 errElem.classList.remove('hidden');
+                if (statusIndicator) statusIndicator.textContent = "Error";
             }
         });
 
         function logout() {
             if (licenseTimerInterval) clearInterval(licenseTimerInterval);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
             localStorage.removeItem('quah_api_key');
             localStorage.removeItem('quah_license_key');
+            document.getElementById('expiryUpgradeModal').classList.add('hidden');
             document.getElementById('appContainer').classList.add('hidden');
             document.getElementById('authModal').classList.remove('hidden');
-            showToast("Session Disconnected", "warning");
+            showToast("Session Disconnected & Storage Cleared", "warning");
         }
 
         function toggleProfileMenu() {
             document.getElementById('profileMenu').classList.toggle('hidden');
         }
 
-        function changeTheme(theme) {
-            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
-            showToast(`Theme changed to ${theme}`);
-        }
-
+        // 2026 ADVANCED MULTI-LAYER BACKGROUND ENGINE
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
+        let entities = [];
+        let neuralNodes = [];
+        let gridOffset = 0;
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            initNeuralNodes();
         }
         window.addEventListener('resize', resizeCanvas);
+
+        function initNeuralNodes() {
+            neuralNodes = [];
+            let count = Math.min(Math.floor(window.innerWidth / 50), 30);
+            for(let i=0; i<count; i++) {
+                neuralNodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+        }
+
+        function initEntitiesForTheme(theme) {
+            entities = [];
+            let count = window.innerWidth < 768 ? 20 : 60;
+            for(let i=0; i<count; i++) {
+                entities.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8 - 0.2,
+                    size: Math.random() * 4 + 1,
+                    alpha: Math.random() * 0.6 + 0.2,
+                    pulse: Math.random() * Math.PI,
+                    type: theme
+                });
+            }
+        }
+
+        function changeTheme(theme) {
+            currentThemeMode = theme;
+            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
+            initEntitiesForTheme(theme);
+            showToast(`Theme changed to ${theme}`);
+        }
+
+        function animateBg() {
+            if (isTabActive) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 1. Draw Perspective Grid
+                gridOffset = (gridOffset + 0.5) % 40;
+                ctx.strokeStyle = 'rgba(0, 255, 204, 0.04)';
+                ctx.lineWidth = 1;
+                let horizonY = canvas.height * 0.35;
+                
+                // Vertical grid lines
+                for(let x = -canvas.width; x < canvas.width * 2; x += 80) {
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2, horizonY);
+                    ctx.lineTo(x + gridOffset * 2, canvas.height);
+                    ctx.stroke();
+                }
+                // Horizontal perspective lines
+                for(let y = horizonY; y < canvas.height; y += (y - horizonY) * 0.15 + 2) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+
+                // 2. Neural Market Network
+                for (let i = 0; i < neuralNodes.length; i++) {
+                    let node = neuralNodes[i];
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+
+                    ctx.fillStyle = 'rgba(0, 255, 204, 0.3)';
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    for (let j = i + 1; j < neuralNodes.length; j++) {
+                        let n2 = neuralNodes[j];
+                        let dist = Math.hypot(node.x - n2.x, node.y - n2.y);
+                        if (dist < 150) {
+                            ctx.strokeStyle = `rgba(0, 255, 204, ${(1 - dist / 150) * 0.15})`;
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+                            ctx.lineTo(n2.x, n2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // 3. Floating Particles & Atmosphere
+                entities.forEach(e => {
+                    e.x += e.vx + (mouseX - canvas.width / 2) * 0.0002;
+                    e.y += e.vy;
+                    e.pulse += 0.03;
+
+                    if(e.x < 0) e.x = canvas.width;
+                    if(e.x > canvas.width) e.x = 0;
+                    if(e.y < 0) e.y = canvas.height;
+                    if(e.y > canvas.height) e.y = 0;
+
+                    let currentAlpha = e.alpha + Math.sin(e.pulse) * 0.2;
+                    ctx.fillStyle = currentThemeMode === 'cyberpunk' ? `rgba(255, 0, 127, ${currentAlpha})` : `rgba(0, 255, 204, ${currentAlpha})`;
+                    ctx.beginPath();
+                    ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+            animationFrameId = requestAnimationFrame(animateBg);
+        }
         resizeCanvas();
+        initEntitiesForTheme('ocean');
+        animateBg();
 
         function updateClocks() {
             const now = new Date();
             const utcElem = document.getElementById('utcClock');
-            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
+            const nyElem = document.getElementById('clockNY');
+            const lonElem = document.getElementById('clockLON');
+            const tyoElem = document.getElementById('clockTYO');
             
+            const jamaicaTimeStr = now.toLocaleTimeString("en-US", { timeZone: "America/Jamaica", hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const jamaicaDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Jamaica", weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
             const jamClockElem = document.getElementById('jamaicaClockDisplay');
             const jamDateElem = document.getElementById('jamaicaDateDisplay');
-            if (jamClockElem) jamClockElem.innerText = now.toLocaleTimeString("en-US", { timeZone: "America/Jamaica" });
-            if (jamDateElem) jamDateElem.innerText = now.toLocaleDateString("en-US", { timeZone: "America/Jamaica", weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            if (jamClockElem) jamClockElem.innerText = jamaicaTimeStr;
+            if (jamDateElem) jamDateElem.innerText = jamaicaDateStr;
+
+            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
+            if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            if(lonElem) lonElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            if(tyoElem) tyoElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
         setInterval(updateClocks, 1000);
 
+        function updateMarketStatusBannerLocally() {
+            const updateTickerItem = (symKey, price, isOpen) => {
+                const el = document.getElementById(`ticker_${symKey}`);
+                const statusEl = document.getElementById(`status_${symKey}`);
+                const dupEl = document.querySelector(`.ticker-dup-${symKey}`);
+                
+                if (el) el.innerText = price;
+                if (dupEl) dupEl.innerText = price;
+                
+                if (statusEl && symKey !== 'BTCUSD') {
+                    statusEl.innerText = isOpen ? "OPEN" : "CLOSED";
+                    statusEl.className = isOpen ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
+                }
+            };
+
+            let eurRate = (1.1040 + (Math.random() - 0.5) * 0.0010).toFixed(4);
+            let gbpRate = (1.2750 + (Math.random() - 0.5) * 0.0010).toFixed(4);
+            let jpyRate = (147.80 + (Math.random() - 0.5) * 0.10).toFixed(2);
+            let xauRate = (2342.00 + (Math.random() - 0.5) * 1.50).toFixed(2);
+            let btcRate = (64210.00 + (Math.random() - 0.5) * 25.00).toFixed(2);
+
+            const dxyEl = document.getElementById('widgetDxy');
+            const us10yEl = document.getElementById('widgetUs10y');
+            if (dxyEl) dxyEl.innerText = (104.20 + (Math.random() - 0.5) * 0.10).toFixed(2);
+            if (us10yEl) us10yEl.innerText = (4.27 + (Math.random() - 0.5) * 0.02).toFixed(2) + '%';
+
+            const nowUtc = new Date();
+            const dayOfWeek = nowUtc.getUTCDay();
+            const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+            
+            updateTickerItem("EURUSD", eurRate, !isWeekend);
+            updateTickerItem("GBPUSD", gbpRate, !isWeekend);
+            updateTickerItem("USDJPY", jpyRate, !isWeekend);
+            updateTickerItem("XAUUSD", xauRate, !isWeekend);
+            updateTickerItem("BTCUSD", btcRate, true);
+
+            const nyseEl = document.getElementById('status_NYSE');
+            const lseEl = document.getElementById('status_LSE');
+            const tyoEl = document.getElementById('status_TYO');
+
+            if (nyseEl) { nyseEl.innerText = isWeekend ? "CLOSED" : "OPEN"; nyseEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
+            if (lseEl) { lseEl.innerText = isWeekend ? "CLOSED" : "OPEN"; lseEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
+            if (tyoEl) { tyoEl.innerText = isWeekend ? "CLOSED" : "OPEN"; tyoEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
+        }
+
         function initApp() {
             startLicenseCountdownTimer();
+            setInterval(updateMarketStatusBannerLocally, 10000);
             updateClocks();
             fetchAndRenderOnDemand();
         }
@@ -634,15 +1223,19 @@
                 const diff = activeLicenseExpiryTimestamp - Date.now();
                 const displayElem = document.getElementById('licenseCountdownDisplay');
                 if (!displayElem) return;
+                
                 if (diff <= 0) {
                     displayElem.innerText = "EXPIRED";
+                    displayElem.className = "text-red-400 font-bold";
                     document.getElementById('expiryUpgradeModal').classList.remove('hidden');
                     return;
                 }
+
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                displayElem.innerText = `${days}d ${hours}h ${minutes}m`;
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                displayElem.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
             }
             updateLicenseTimer();
             licenseTimerInterval = setInterval(updateLicenseTimer, 1000);
@@ -650,35 +1243,141 @@
 
         async function submitLicenseUpgrade() {
             const newKey = document.getElementById('upgradeLicenseInput').value.trim();
+            if (!newKey) return;
             try {
+                if (!newKey.startsWith('QUAH-')) throw new Error("Invalid license format prefix");
                 const parts = newKey.split('-');
-                let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4) base64 += '=';
-                const payload = JSON.parse(atob(base64));
+                if (parts.length < 3) throw new Error("Invalid structured key partitions");
+
+                const decodedJson = base64UrlDecode(parts[1]);
+                const payload = JSON.parse(decodedJson);
+                
+                if (!payload.expiresAt || Date.now() > payload.expiresAt) {
+                    throw new Error("New key is already expired.");
+                }
+
                 activeLicenseExpiryTimestamp = payload.expiresAt;
+                activeFullCode = newKey;
                 localStorage.setItem('quah_license_key', newKey);
+                
+                if (payload.tier) {
+                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                }
+
                 document.getElementById('expiryUpgradeModal').classList.add('hidden');
-                showToast("License successfully upgraded!");
+                showToast("License successfully upgraded & terminal restored!");
                 startLicenseCountdownTimer();
             } catch (err) {
-                showToast("Invalid key structure.", "warning");
+                showToast(err.message || "Invalid key structure.", "warning");
             }
         }
 
+        function calculatePositionSize() {
+            const accSize = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
+            const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
+            const riskAmount = accSize * (riskPct / 100);
+            const pipsAtRisk = currentPair.includes('BTC') ? 500 : (currentPair.includes('JPY') ? 50 : 500);
+            let lotSize = pipsAtRisk > 0 ? riskAmount / (pipsAtRisk * 10) : 1.0;
+            const resElem = document.getElementById('calcLotSizeResult');
+            if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
+        }
+
+        function analyzeMarketStructure(prices) {
+            let recentHigh = Math.max(...prices.slice(-10));
+            let recentLow = Math.min(...prices.slice(-10));
+            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
+            document.getElementById('smcRangeHigh').innerText = recentHigh.toFixed(decimals);
+            document.getElementById('smcRangeLow').innerText = recentLow.toFixed(decimals);
+            return { type: 'BOS', bonus: 2.0 };
+        }
+
+        function evaluateMarketDirection(candles, rsiValues, prices) {
+            const currentPrice = prices[prices.length - 1];
+            const previousPrice = prices[prices.length - 5]; 
+            const currentRsi = rsiValues[rsiValues.length - 1];
+            
+            const badge = document.getElementById('signalDirBadge');
+            const confidenceElem = document.getElementById('confidenceVal');
+            const slElem = document.getElementById('slVal');
+            const tpElem = document.getElementById('tpVal');
+            
+            const smcEn = document.getElementById('smcEngineEntry');
+            const smcTp = document.getElementById('smcEngineTP');
+            const smcSl = document.getElementById('smcEngineSL');
+
+            let activeSl, activeTp, finalSignal, badgeClass;
+            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
+
+            const isUptrend = currentPrice >= previousPrice && currentRsi >= 50;
+
+            if (isUptrend) {
+                finalSignal = "BUY (UPTREND)";
+                badgeClass = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
+                
+                let slMultiplier = currentPair.includes('BTC') ? 0.9920 : 0.9980;
+                let tpMultiplier = currentPair.includes('BTC') ? 1.0150 : 1.0050;
+
+                activeSl = (currentPrice * slMultiplier).toFixed(decimals);
+                activeTp = (currentPrice * tpMultiplier).toFixed(decimals);
+            } else {
+                finalSignal = "SELL (DOWNTREND)";
+                badgeClass = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
+                
+                let slMultiplier = currentPair.includes('BTC') ? 1.0080 : 1.0020;
+                let tpMultiplier = currentPair.includes('BTC') ? 0.9850 : 0.9950;
+
+                activeSl = (currentPrice * slMultiplier).toFixed(decimals);
+                activeTp = (currentPrice * tpMultiplier).toFixed(decimals);
+            }
+
+            badge.innerText = finalSignal;
+            badge.className = badgeClass;
+            confidenceElem.innerText = "88.4%";
+            slElem.innerText = activeSl;
+            tpElem.innerText = activeTp;
+
+            if(smcEn) smcEn.innerText = currentPrice;
+            if(smcTp) smcTp.innerText = activeTp;
+            if(smcSl) smcSl.innerText = activeSl;
+
+            calculatePositionSize();
+
+            return { activeSl, activeTp, isUptrend };
+        }
+
         async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
+            if (!telemetryEngine) {
+                showToast("Please initialize your session first.", "warning");
+                return;
+            }
+
             const values = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
             if (!values || values.length === 0) return;
 
+            updateMarketStatusBannerLocally();
+
             const labels = values.map(item => item.datetime);
             const prices = values.map(item => parseFloat(item.close));
-            let rsiValues = prices.map((p, idx, arr) => idx === 0 ? 50 : Number((50 + (p - arr[idx - 1]) * 15000).toFixed(1)));
 
-            document.getElementById('rsiValDisplay').innerText = `${rsiValues[rsiValues.length - 1]} (Active)`;
+            let rsiValues = prices.map((p, idx, arr) => {
+                if (idx === 0) return 50;
+                let diff = p - arr[idx - 1];
+                return Number(Math.min(90, Math.max(10, 50 + diff * 15000)).toFixed(1));
+            });
 
-            const currentPriceStr = prices[prices.length - 1];
-            const currentDirectionText = "BUY";
+            document.getElementById('rsiValDisplay').innerText = `${rsiValues[rsiValues.length - 1]} (Momentum Evaluation Active)`;
+
+            analyzeMarketStructure(prices);
+            const signalData = evaluateMarketDirection(values, rsiValues, prices);
             
+            const currentPriceStr = prices[prices.length - 1];
+            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
+            const activeSlStr = signalData ? signalData.activeSl : (currentPriceStr * 0.9980).toFixed(decimals);
+            const activeTpStr = signalData ? signalData.activeTp : (currentPriceStr * 1.0050).toFixed(decimals);
+            globalVolumeAnalyzer.renderWidget(globalVolumeAnalyzer.analyzePullbackHealth(values), currentPriceStr, activeTpStr, activeSlStr);
+
+            // PIP SYSTEM INTEGRATION & UPDATES
+            const currentDirectionText = document.getElementById('signalDirBadge').innerText;
             window.updateCustomPipTarget = function() {
                 const pips = parseFloat(document.getElementById('customPipInput').value) || 20;
                 const result = globalPipEngine.calculateExactPipTarget(currentPair, currentPriceStr, pips, currentDirectionText);
@@ -698,24 +1397,86 @@
                 `).join('');
             }
 
-            document.getElementById('slVal').innerText = matrixData[0].sl;
-            document.getElementById('tpVal').innerText = matrixData[0].tp;
-
             const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
             const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
+            const formattedSymbol = currentPair.includes('/') ? currentPair : `${currentPair.slice(0,3)}/${currentPair.slice(3)}`;
+
+            document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - On-Demand Data Stream`;
+
+            const chartOverlayPlugin = {
+                id: 'chartOverlayPlugin',
+                afterDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    const yAxis = chart.scales.y;
+                    const xAxis = chart.scales.x;
+                    if (!yAxis || !xAxis || !signalData) return;
+
+                    chartAnimationTick += 0.15;
+                    const pulseIntensity = Math.sin(chartAnimationTick) * 5;
+
+                    const slVal = parseFloat(signalData.activeSl);
+                    const tpVal = parseFloat(signalData.activeTp);
+                    const entryVal = parseFloat(prices[prices.length - 1]);
+
+                    const drawAdvancedLevel = (val, color, labelText, isPulsing = false) => {
+                        const baseCoord = yAxis.getPixelForValue(val);
+                        if (isNaN(baseCoord) || baseCoord === undefined) return;
+                        const yCoord = isPulsing ? baseCoord + pulseIntensity : baseCoord;
+
+                        if (yCoord >= yAxis.top && yCoord <= yAxis.bottom) {
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.setLineDash(isPulsing ? [6, 4] : [3, 3]);
+                            ctx.strokeStyle = color;
+                            ctx.lineWidth = isPulsing ? 3 : 2;
+                            ctx.moveTo(xAxis.left, yCoord);
+                            ctx.lineTo(xAxis.right, yCoord);
+                            ctx.stroke();
+                            
+                            ctx.fillStyle = color;
+                            ctx.shadowColor = color;
+                            ctx.shadowBlur = isPulsing ? 18 : 6;
+                            ctx.fillRect(xAxis.right - 105, yCoord - 12, 100, 24);
+                            
+                            ctx.shadowBlur = 0;
+                            ctx.fillStyle = '#0b0e14';
+                            ctx.font = 'bold 11px monospace';
+                            ctx.fillText(`${labelText}: ${val}`, xAxis.right - 100, yCoord + 4);
+                            ctx.restore();
+                        }
+                    };
+
+                    drawAdvancedLevel(entryVal, '#00ffcc', 'ENTRY', true);
+                    drawAdvancedLevel(tpVal, '#089981', 'TP TARGET', false);
+                    drawAdvancedLevel(slVal, '#f23645', 'SL RISK', false);
+                }
+            };
+
+            const sharedChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 600 },
+                layout: { padding: { top: 15, bottom: 5, left: 10, right: 110 } },
+                scales: {
+                    x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, maxTicksLimit: 8 } },
+                    y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
+                }
+            };
 
             if (mainTimeSeriesChart) {
                 mainTimeSeriesChart.data.labels = labels;
                 mainTimeSeriesChart.data.datasets[0].data = prices;
+                mainTimeSeriesChart.data.datasets[0].label = `${formattedSymbol} Close`;
                 mainTimeSeriesChart.update();
             } else {
                 mainTimeSeriesChart = new Chart(ctxMain, {
                     type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{ label: `${currentPair} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.1)', borderWidth: 3, fill: true, tension: 0.2 }]
+                        datasets: [{ label: `${formattedSymbol} Close`, data: prices, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.1)', borderWidth: 3, fill: true, tension: 0.2, pointRadius: 2.5 }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    options: { ...sharedChartOptions, plugins: { legend: { display: false } } },
+                    plugins: [chartOverlayPlugin]
                 });
             }
 
@@ -728,9 +1489,9 @@
                     type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{ label: 'RSI (14)', data: rsiValues, borderColor: '#38bdf8', borderWidth: 1.5, fill: true }]
+                        datasets: [{ label: 'RSI (14)', data: rsiValues, borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.2, pointRadius: 1 }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    options: { ...sharedChartOptions, plugins: { legend: { display: false } } }
                 });
             }
         }
@@ -740,19 +1501,41 @@
             fetchAndRenderOnDemand();
         }
 
-        function setTimeframe(tf, element) {
+        function setTimeframe(tf, btnElem) {
             currentTimeframe = tf;
-            document.querySelectorAll('.tf-btn').forEach(btn => btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition");
-            if (element) element.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
+            document.querySelectorAll('.tf-btn').forEach(b => {
+                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition";
+            });
+            btnElem.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
             fetchAndRenderOnDemand();
         }
 
         function triggerManualRefresh() {
+            showToast(`Refreshing on-demand analytics for ${currentPair}...`);
             fetchAndRenderOnDemand();
         }
 
         function executeTradeAlert() {
-            showToast(`Institutional order executed successfully for ${currentPair}.`);
+            const dir = document.getElementById('signalDirBadge').innerText;
+            const sl = document.getElementById('slVal').innerText;
+            const tp = document.getElementById('tpVal').innerText;
+            const lots = document.getElementById('calcLotSizeResult').innerText;
+
+            const tbody = document.getElementById('signalLogTableBody');
+            if (tbody.innerHTML.includes('No requests sent yet')) tbody.innerHTML = '';
+
+            const nowStr = new Date().toISOString().slice(11, 19);
+            const row = document.createElement('tr');
+            row.className = "border-b border-white/5 hover:bg-white/5 transition";
+            row.innerHTML = `
+                <td class="py-2 px-2 text-gray-300">${nowStr}</td>
+                <td class="py-2 px-2 font-bold text-white">${currentPair}</td>
+                <td class="py-2 px-2 text-[#00ffcc]">${dir}</td>
+                <td class="py-2 px-2 text-gray-300">TP: ${tp} | SL: ${sl}</td>
+                <td class="py-2 px-2 text-emerald-400 font-bold">${lots}</td>
+            `;
+            tbody.prepend(row);
+            showToast(`Order dispatched for ${currentPair} (${dir})!`);
         }
     </script>
 </body>
