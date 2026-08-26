@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.5 // Institutional Pro Suite + Dynamic Pip Scalping System</title>
+    <title>FX Signal Desk v4.5 // Institutional Pro Suite + Universal Pip Calculation Engine</title>
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -132,7 +132,7 @@
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.5</h1>
-                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Pip Scalping System</p>
+                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Universal Pip Engine</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
@@ -220,7 +220,7 @@
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.5 + PIP SYSTEM</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.5 + PIP ENGINE</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
@@ -321,14 +321,33 @@
                 <div>
                     <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Instrument</label>
                     <select id="mainPairSelect" onchange="onPairChange()" class="bg-darkBg/60 border border-white/10 rounded px-3 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-[#00ffcc] backdrop-blur">
-                        <optgroup label="Major Forex Pairs">
+                        <optgroup label="Universal Forex Pairs (Majors, Minors & Crosses)">
                             <option value="EUR/USD" selected>EUR/USD</option>
                             <option value="GBP/USD">GBP/USD</option>
                             <option value="USD/JPY">USD/JPY</option>
                             <option value="USD/CHF">USD/CHF</option>
                             <option value="AUD/USD">AUD/USD</option>
-                            <option value="USD/CAD">USD/CAD</option>
                             <option value="NZD/USD">NZD/USD</option>
+                            <option value="USD/CAD">USD/CAD</option>
+                            <option value="EUR/GBP">EUR/GBP</option>
+                            <option value="EUR/JPY">EUR/JPY</option>
+                            <option value="GBP/JPY">GBP/JPY</option>
+                            <option value="AUD/JPY">AUD/JPY</option>
+                            <option value="CHF/JPY">CHF/JPY</option>
+                            <option value="CAD/JPY">CAD/JPY</option>
+                            <option value="NZD/JPY">NZD/JPY</option>
+                            <option value="EUR/AUD">EUR/AUD</option>
+                            <option value="EUR/CAD">EUR/CAD</option>
+                            <option value="EUR/CHF">EUR/CHF</option>
+                            <option value="GBP/AUD">GBP/AUD</option>
+                            <option value="GBP/CAD">GBP/CAD</option>
+                            <option value="GBP/CHF">GBP/CHF</option>
+                            <option value="AUD/CAD">AUD/CAD</option>
+                            <option value="AUD/CHF">AUD/CHF</option>
+                            <option value="AUD/NZD">AUD/NZD</option>
+                            <option value="CAD/CHF">CAD/CHF</option>
+                            <option value="NZD/CAD">NZD/CAD</option>
+                            <option value="NZD/CHF">NZD/CHF</option>
                         </optgroup>
                         <optgroup label="Commodities & Crypto Assets">
                             <option value="XAU/USD">XAU/USD (Gold)</option>
@@ -440,26 +459,71 @@
 
                 <div class="space-y-6">
                     
-                    <!-- NEW PIP SYSTEM / SCALPING ENGINE WIDGET -->
-                    <div id="pipSystemWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/40">
+                    <!-- NEW: UNIVERSAL PIP ANALYTICS DASHBOARD WIDGET (Requirement 9) -->
+                    <div id="pipDashboardWidget" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/40">
                         <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-crosshairs text-[#00ffcc] mr-2"></i>1M/5M Dynamic Pip System</span>
-                            <span id="pipModeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-[#00ffcc]/20 text-[#00ffcc] border-[#00ffcc]/40">SCALP OPTIMIZED</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-calculator text-[#00ffcc] mr-2"></i>Pip Analytics Engine</span>
+                            <span id="pipDashboardDirBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-[#00ffcc]/20 text-[#00ffcc] border-[#00ffcc]/40">▲ BUY</span>
                         </div>
-                        <p class="text-[11px] text-slate-300">Calculates precise micro-pips for rapid 1M/5M execution aligned with SMC confirmations.</p>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <div class="bg-darkBg/60 p-2 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">PIP SIZE</span>
+                                <strong id="pipSizeDisplay" class="text-white">0.0001</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-2 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">POINT SIZE</span>
+                                <strong id="pointSizeDisplay" class="text-white">0.00001</strong>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 font-mono text-xs">
+                            <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                <span class="text-gray-400">Entry Price:</span>
+                                <strong id="pipDashEntry" class="text-[#00ffcc]">1.10500</strong>
+                            </div>
+                            <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                <span class="text-gray-400">Current Price:</span>
+                                <strong id="pipDashCurrent" class="text-white">1.10625</strong>
+                            </div>
+                            <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                <span class="text-gray-400">Stop Loss:</span>
+                                <strong id="pipDashSL" class="text-red-400">1.10300</strong>
+                            </div>
+                            <div class="flex justify-between items-center bg-darkBg/50 p-2 rounded border border-white/5">
+                                <span class="text-gray-400">Take Profit:</span>
+                                <strong id="pipDashTP" class="text-emerald-400">1.10900</strong>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
-                            <div class="bg-darkBg/60 p-2 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">TARGET TP PIPS</span>
-                                <strong id="pipTargetTP" class="text-emerald-400 text-sm">-- Pips</strong>
+                            <div class="bg-red-500/10 p-2 rounded border border-red-500/30 text-center">
+                                <span class="text-[9px] text-red-300 block uppercase font-semibold">Risk (SL)</span>
+                                <strong id="pipDashRiskPips" class="text-red-400 text-sm">20.0 PIPS</strong>
+                                <span id="pipDashRiskPoints" class="text-[10px] text-red-300 block">200 Points</span>
                             </div>
-                            <div class="bg-darkBg/60 p-2 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">RISK SL PIPS</span>
-                                <strong id="pipRiskSL" class="text-red-400 text-sm">-- Pips</strong>
+                            <div class="bg-emerald-500/10 p-2 rounded border border-emerald-500/30 text-center">
+                                <span class="text-[9px] text-emerald-300 block uppercase font-semibold">Reward (TP)</span>
+                                <strong id="pipDashRewardPips" class="text-emerald-400 text-sm">40.0 PIPS</strong>
+                                <span id="pipDashRewardPoints" class="text-[10px] text-emerald-300 block">400 Points</span>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center text-[11px] font-mono bg-darkBg/40 p-2 rounded border border-white/5">
-                            <span class="text-gray-400">Risk-to-Reward (R:R):</span>
-                            <strong id="pipRatioDisplay" class="text-[#00ffcc]">1 : 2.0</strong>
+                        <div class="bg-darkBg/70 p-2.5 rounded border border-white/10 space-y-2 font-mono text-xs">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Current Move:</span>
+                                <strong id="pipDashCurrentMove" class="text-[#00ffcc]">+12.5 PIPS</strong>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Risk / Reward Ratio:</span>
+                                <strong id="pipDashRR" class="text-white font-bold">1 : 2.00</strong>
+                            </div>
+                            <!-- PIP PROGRESS BAR (Requirement 13) -->
+                            <div class="space-y-1 pt-1">
+                                <div class="flex justify-between text-[10px] text-gray-400">
+                                    <span>Progress to Target</span>
+                                    <span id="pipProgressPct">31.2%</span>
+                                </div>
+                                <div class="w-full bg-darkBg border border-white/10 h-2 rounded-full overflow-hidden">
+                                    <div id="pipProgressBarFill" class="bg-[#00ffcc] h-full transition-all duration-300" style="width: 31.2%;"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -609,6 +673,34 @@
 
             </div>
 
+            <!-- NEW: OPTIONAL EXPANDABLE PIP TABLE (Requirement 21) -->
+            <div class="glass-card rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                    <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-table text-[#00ffcc] mr-2"></i>Universal Forex Pip Matrix Table</h2>
+                    <span class="text-xs text-gray-400">Live Convention Feed</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead>
+                            <tr class="text-gray-400 border-b border-white/10">
+                                <th class="py-2 px-3">Pair</th>
+                                <th class="py-2 px-3">Pip Size</th>
+                                <th class="py-2 px-3">Point Size</th>
+                                <th class="py-2 px-3">Entry</th>
+                                <th class="py-2 px-3">SL</th>
+                                <th class="py-2 px-3">TP</th>
+                                <th class="py-2 px-3">Risk (Pips)</th>
+                                <th class="py-2 px-3">Reward (Pips)</th>
+                                <th class="py-2 px-3">R:R</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pipTableBody" class="divide-y divide-white/5">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="glass-card rounded-2xl p-4 shadow-xl">
                 <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
                     <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-history text-[#00ffcc] mr-2"></i>Institutional Telemetry Log</h2>
@@ -627,99 +719,150 @@
     </div>
 
     <script>
-        // NEW PIP SYSTEM ENGINE FOR 1M/5M SCALPING & SMC CONFLUENCE
-        class PipSystemEngine {
-            constructor() {}
-
-            calculatePips(symbol, entryPrice, stopLossPrice, takeProfitPrice) {
-                let multiplier = 10000; // Standard forex pairs (EUR/USD, GBP/USD)
-                if (symbol.includes('JPY')) {
-                    multiplier = 100; // JPY pairs
-                } else if (symbol.includes('XAU') || symbol.includes('BTC') || symbol.includes('ETH')) {
-                    multiplier = 10; // Commodities/Crypto point-to-pip conversion scale
-                }
-
-                const slPips = Math.abs(entryPrice - stopLossPrice) * multiplier;
-                const tpPips = Math.abs(takeProfitPrice - entryPrice) * multiplier;
-                const ratio = slPips > 0 ? (tpPips / slPips).toFixed(1) : '0.0';
-
-                return {
-                    slPips: slPips.toFixed(1),
-                    tpPips: tpPips.toFixed(1),
-                    ratio: ratio
+        /* ==========================================================
+           UNIVERSAL FOREX PIP & PIP-POINT CALCULATION ENGINE (v4.5)
+           ========================================================== */
+        class UniversalPipEngine {
+            constructor() {
+                this.alertState = {
+                    approachingTP: false,
+                    approachingSL: false,
+                    tpReached: false,
+                    slReached: false,
+                    entryReached: false
                 };
             }
 
-            getOptimizedScalpTargets(symbol, timeframe, currentPrice, isUptrend) {
-                let pipValueSize = 0.0001;
-                let targetPipCount = 12; // default 12 pips for 1M/5M
-                let riskPipCount = 8;    // default 8 pips SL
+            // Determines pip size, point size, and decimal precision dynamically (Requirements 1, 2, 3, 6)
+            getPairConventions(symbol) {
+                const cleanSym = symbol.toUpperCase().replace('/', '');
+                const isJPY = cleanSym.includes('JPY');
+                const isXAU = cleanSym.includes('XAU');
+                const isCrypto = cleanSym.includes('BTC') || cleanSym.includes('ETH');
 
-                if (symbol.includes('JPY')) {
-                    pipValueSize = 0.01;
-                    targetPipCount = 15;
-                    riskPipCount = 10;
-                } else if (symbol.includes('XAU')) {
-                    pipValueSize = 1.0;
-                    targetPipCount = 20;
-                    riskPipCount = 12;
-                } else if (symbol.includes('BTC')) {
-                    pipValueSize = 1.0;
-                    targetPipCount = 150;
-                    riskPipCount = 90;
+                let pipSize = 0.0001;
+                let pointSize = 0.00001;
+                let decimals = 5;
+
+                if (isJPY) {
+                    pipSize = 0.01;
+                    pointSize = 0.001;
+                    decimals = 3;
+                } else if (isXAU) {
+                    pipSize = 0.1;
+                    pointSize = 0.01;
+                    decimals = 2;
+                } else if (isCrypto) {
+                    pipSize = 1.0;
+                    pointSize = 0.1;
+                    decimals = 2;
                 }
 
-                // If higher timeframe, extend targets slightly
-                if (timeframe === '15min' || timeframe === '1h') {
-                    targetPipCount *= 2;
-                    riskPipCount *= 1.5;
-                }
+                return { pipSize, pointSize, decimals };
+            }
 
-                let decimals = symbol.includes('JPY') || symbol.includes('XAU') || symbol.includes('BTC') ? 2 : 5;
-                let entry = currentPrice;
-                let sl, tp;
+            // Centralized calculation model (Requirements 6, 22)
+            calculate({ symbol, direction, entry, currentPrice, stopLoss, takeProfit }) {
+                const conv = this.getPairConventions(symbol);
+                const pipSize = conv.pipSize;
+                const pointSize = conv.pointSize;
+                const decimals = conv.decimals;
 
-                if (isUptrend) {
-                    sl = entry - (riskPipCount * pipValueSize);
-                    tp = entry + (targetPipCount * pipValueSize);
-                } else {
-                    sl = entry + (riskPipCount * pipValueSize);
-                    tp = entry - (targetPipCount * pipValueSize);
+                const e = parseFloat(entry) || 0;
+                const c = parseFloat(currentPrice) || e;
+                const sl = parseFloat(stopLoss) || 0;
+                const tp = parseFloat(takeProfit) || 0;
+
+                let riskPips = 0;
+                let riskPoints = 0;
+                let rewardPips = 0;
+                let rewardPoints = 0;
+                let currentMovePips = 0;
+                let currentMovePoints = 0;
+                let distanceToTP = 0;
+                let distanceToSL = 0;
+                let riskReward = '1 : 0.00';
+
+                if (e > 0 && sl > 0 && tp > 0) {
+                    if (direction.includes('BUY')) {
+                        riskPips = Math.abs(e - sl) / pipSize;
+                        riskPoints = Math.abs(e - sl) / pointSize;
+                        rewardPips = Math.abs(tp - e) / pipSize;
+                        rewardPoints = Math.abs(tp - e) / pointSize;
+                        currentMovePips = (c - e) / pipSize;
+                        currentMovePoints = (c - e) / pointSize;
+                        distanceToTP = Math.abs(tp - c) / pipSize;
+                        distanceToSL = Math.abs(c - sl) / pipSize;
+                    } else {
+                        // SELL direction logic reversal (Requirement 5)
+                        riskPips = Math.abs(sl - e) / pipSize;
+                        riskPoints = Math.abs(sl - e) / pointSize;
+                        rewardPips = Math.abs(e - tp) / pipSize;
+                        rewardPoints = Math.abs(e - tp) / pointSize;
+                        currentMovePips = (e - c) / pipSize;
+                        currentMovePoints = (e - c) / pointSize;
+                        distanceToTP = Math.abs(c - tp) / pipSize;
+                        distanceToSL = Math.abs(sl - c) / pipSize;
+                    }
+
+                    if (riskPips > 0) {
+                        let rrVal = rewardPips / riskPips;
+                        riskReward = `1 : ${rrVal.toFixed(2)}`;
+                    }
                 }
 
                 return {
-                    entry: entry.toFixed(decimals),
-                    sl: sl.toFixed(decimals),
-                    tp: tp.toFixed(decimals),
-                    slPips: riskPipCount.toFixed(1),
-                    tpPips: targetPipCount.toFixed(1),
-                    ratio: (targetPipCount / riskPipCount).toFixed(1)
+                    symbol,
+                    direction,
+                    pipSize,
+                    pointSize,
+                    decimals,
+                    entry: e.toFixed(decimals),
+                    currentPrice: c.toFixed(decimals),
+                    stopLoss: sl.toFixed(decimals),
+                    takeProfit: tp.toFixed(decimals),
+                    riskPips: riskPips.toFixed(1),
+                    riskPoints: Math.round(riskPoints),
+                    rewardPips: rewardPips.toFixed(1),
+                    rewardPoints: Math.round(rewardPoints),
+                    currentMovePips: currentMovePips.toFixed(1),
+                    currentMovePoints: Math.round(currentMovePoints),
+                    riskReward,
+                    distanceToTP: distanceToTP.toFixed(1),
+                    distanceToSL: distanceToSL.toFixed(1)
                 };
             }
 
-            renderWidget(pipData) {
-                const tpElem = document.getElementById('pipTargetTP');
-                const slElem = document.getElementById('pipRiskSL');
-                const ratioElem = document.getElementById('pipRatioDisplay');
-                const badgeElem = document.getElementById('pipModeBadge');
+            // Event-state tracked alert system (Requirement 15)
+            checkAlerts(pipData) {
+                const movePips = parseFloat(pipData.currentMovePips);
+                const distTP = parseFloat(pipData.distanceToTP);
+                const distSL = parseFloat(pipData.distanceToSL);
 
-                if (!tpElem || !slElem) return;
-
-                tpElem.innerText = `${pipData.tpPips} Pips`;
-                slElem.innerText = `${pipData.slPips} Pips`;
-                ratioElem.innerText = `1 : ${pipData.ratio}`;
-
-                if (parseFloat(pipData.ratio) >= 1.5) {
-                    badgeElem.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
-                    badgeElem.innerText = "HIGH PROBABILITY SCALP";
-                } else {
-                    badgeElem.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-amber-500/20 text-amber-300 border-amber-500/30";
-                    badgeElem.innerText = "TIGHT RISK RATIO";
+                if (distTP <= 5.0 && !this.alertState.approachingTP) {
+                    this.alertState.approachingTP = true;
+                    showToast(`⚡ 5.0 PIPS FROM TAKE PROFIT (${pipData.symbol})`, 'warning');
                 }
+                if (distSL <= 5.0 && !this.alertState.approachingSL) {
+                    this.alertState.approachingSL = true;
+                    showToast(`⚠ 5.0 PIPS FROM STOP LOSS (${pipData.symbol})`, 'warning');
+                }
+                if (movePips >= parseFloat(pipData.rewardPips) && !this.alertState.tpReached) {
+                    this.alertState.tpReached = true;
+                    showToast(`✓ TAKE PROFIT REACHED (${pipData.symbol})`, 'success');
+                }
+                if (Math.abs(movePips - parseFloat(pipData.riskPips)) <= 2 && movePips < 0 && !this.alertState.slReached) {
+                    this.alertState.slReached = true;
+                    showToast(`✕ STOP LOSS REACHED (${pipData.symbol})`, 'warning');
+                }
+            }
+
+            resetAlerts() {
+                this.alertState = { approachingTP: false, approachingSL: false, tpReached: false, slReached: false, entryReached: false };
             }
         }
 
-        const globalPipEngine = new PipSystemEngine();
+        const universalPipEngine = new UniversalPipEngine();
 
         class VolumePullbackAnalyzer {
             constructor() {}
@@ -1012,7 +1155,7 @@
                 telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized with 2026 Immersive Visuals");
+                showToast("Institutional Pro Terminal Initialized with Universal Pip Engine");
                 initApp();
 
             } catch (error) {
@@ -1317,19 +1460,24 @@
 
             const isUptrend = currentPrice >= previousPrice && currentRsi >= 50;
 
-            // Generate precise pip targets using our new Pip System Engine tuned for 1M/5M
-            const calculatedTargets = globalPipEngine.getOptimizedScalpTargets(currentPair, currentTimeframe, currentPrice, isUptrend);
-            globalPipEngine.renderWidget(calculatedTargets);
-
-            activeSl = calculatedTargets.sl;
-            activeTp = calculatedTargets.tp;
-
             if (isUptrend) {
                 finalSignal = "BUY (UPTREND)";
                 badgeClass = "px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 animate-pulse";
+                
+                let slMultiplier = currentPair.includes('BTC') ? 0.9920 : 0.9980;
+                let tpMultiplier = currentPair.includes('BTC') ? 1.0150 : 1.0050;
+
+                activeSl = (currentPrice * slMultiplier).toFixed(decimals);
+                activeTp = (currentPrice * tpMultiplier).toFixed(decimals);
             } else {
                 finalSignal = "SELL (DOWNTREND)";
                 badgeClass = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
+                
+                let slMultiplier = currentPair.includes('BTC') ? 1.0080 : 1.0020;
+                let tpMultiplier = currentPair.includes('BTC') ? 0.9850 : 0.9950;
+
+                activeSl = (currentPrice * slMultiplier).toFixed(decimals);
+                activeTp = (currentPrice * tpMultiplier).toFixed(decimals);
             }
 
             badge.innerText = finalSignal;
@@ -1344,7 +1492,57 @@
 
             calculatePositionSize();
 
-            return { activeSl, activeTp, isUptrend };
+            return { activeSl, activeTp, isUptrend, signalDirection: isUptrend ? '▲ BUY' : '▼ SELL' };
+        }
+
+        // Updates Pip Dashboard Widget & Table (Requirements 9, 21, 22)
+        function updatePipDashboard(pipData) {
+            document.getElementById('pipDashboardDirBadge').innerText = pipData.direction;
+            document.getElementById('pipDashboardDirBadge').className = pipData.direction.includes('BUY') ? 
+                "px-2 py-0.5 rounded text-[10px] font-bold border bg-[#00ffcc]/20 text-[#00ffcc] border-[#00ffcc]/40" : 
+                "px-2 py-0.5 rounded text-[10px] font-bold border bg-red-500/20 text-red-400 border-red-500/40";
+
+            document.getElementById('pipSizeDisplay').innerText = pipData.pipSize;
+            document.getElementById('pointSizeDisplay').innerText = pipData.pointSize;
+            document.getElementById('pipDashEntry').innerText = pipData.entry;
+            document.getElementById('pipDashCurrent').innerText = pipData.currentPrice;
+            document.getElementById('pipDashSL').innerText = pipData.stopLoss;
+            document.getElementById('pipDashTP').innerText = pipData.takeProfit;
+
+            document.getElementById('pipDashRiskPips').innerText = `${pipData.riskPips} PIPS`;
+            document.getElementById('pipDashRiskPoints').innerText = `${pipData.riskPoints} Points`;
+            document.getElementById('pipDashRewardPips').innerText = `${pipData.rewardPips} PIPS`;
+            document.getElementById('pipDashRewardPoints').innerText = `${pipData.rewardPoints} Points`;
+
+            const moveElem = document.getElementById('pipDashCurrentMove');
+            moveElem.innerText = `${parseFloat(pipData.currentMovePips) >= 0 ? '+' : ''}${pipData.currentMovePips} PIPS`;
+            moveElem.className = parseFloat(pipData.currentMovePips) >= 0 ? "text-[#00ffcc]" : "text-red-400";
+
+            document.getElementById('pipDashRR').innerText = pipData.riskReward;
+
+            // Progress bar calculation (Requirement 13)
+            let totalDist = parseFloat(pipData.rewardPips) + parseFloat(pipData.riskPips);
+            let progPct = totalDist > 0 ? Math.min(100, Math.max(0, (Math.abs(parseFloat(pipData.currentMovePips)) / parseFloat(pipData.rewardPips)) * 100)) : 0;
+            document.getElementById('pipProgressPct').innerText = `${progPct.toFixed(1)}%`;
+            document.getElementById('pipProgressBarFill').style.width = `${progPct}%`;
+
+            // Populate Pip Table (Requirement 21)
+            const tableBody = document.getElementById('pipTableBody');
+            if (tableBody) {
+                tableBody.innerHTML = `
+                    <tr class="hover:bg-white/5">
+                        <td class="py-2 px-3 font-bold text-[#00ffcc]">${pipData.symbol}</td>
+                        <td class="py-2 px-3">${pipData.pipSize}</td>
+                        <td class="py-2 px-3">${pipData.pointSize}</td>
+                        <td class="py-2 px-3">${pipData.entry}</td>
+                        <td class="py-2 px-3 text-red-400">${pipData.stopLoss}</td>
+                        <td class="py-2 px-3 text-emerald-400">${pipData.takeProfit}</td>
+                        <td class="py-2 px-3">${pipData.riskPips}</td>
+                        <td class="py-2 px-3">${pipData.rewardPips}</td>
+                        <td class="py-2 px-3 font-bold">${pipData.riskReward}</td>
+                    </tr>
+                `;
+            }
         }
 
         async function fetchAndRenderOnDemand() {
@@ -1376,6 +1574,19 @@
             let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
             const activeSlStr = signalData ? signalData.activeSl : (currentPriceStr * 0.9980).toFixed(decimals);
             const activeTpStr = signalData ? signalData.activeTp : (currentPriceStr * 1.0050).toFixed(decimals);
+            
+            // Execute Universal Pip Calculation & Feed Dashboard
+            const pipCalculatedData = universalPipEngine.calculate({
+                symbol: currentPair,
+                direction: signalData.signalDirection,
+                entry: currentPriceStr,
+                currentPrice: currentPriceStr,
+                stopLoss: activeSlStr,
+                takeProfit: activeTpStr
+            });
+            updatePipDashboard(pipCalculatedData);
+            universalPipEngine.checkAlerts(pipCalculatedData);
+
             globalVolumeAnalyzer.renderWidget(globalVolumeAnalyzer.analyzePullbackHealth(values), currentPriceStr, activeTpStr, activeSlStr);
 
             const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
@@ -1384,7 +1595,7 @@
 
             document.getElementById('chartCardTitle').innerText = `${formattedSymbol} - On-Demand Data Stream`;
 
-            // DRAMATIC 2026 CHART OVERLAY WITH FLOATING ENTRY, TP, SL & DIRECTIONAL PARTICLES
+            // CHART INTEGRATION WITH PIP DISTANCE LABELS (Requirements 10, 11)
             const chartOverlayPlugin = {
                 id: 'chartOverlayPlugin',
                 afterDraw: (chart) => {
@@ -1400,7 +1611,7 @@
                     const tpVal = parseFloat(signalData.activeTp);
                     const entryVal = parseFloat(prices[prices.length - 1]);
 
-                    const drawAdvancedLevel = (val, color, labelText, isPulsing = false) => {
+                    const drawAdvancedLevel = (val, color, labelText, pipsText, isPulsing = false) => {
                         const baseCoord = yAxis.getPixelForValue(val);
                         if (isNaN(baseCoord) || baseCoord === undefined) return;
                         const yCoord = isPulsing ? baseCoord + pulseIntensity : baseCoord;
@@ -1415,23 +1626,23 @@
                             ctx.lineTo(xAxis.right, yCoord);
                             ctx.stroke();
                             
-                            // Glowing Badge Header
+                            // Glowing Badge Header with Pip Distance (Requirements 10, 11)
                             ctx.fillStyle = color;
                             ctx.shadowColor = color;
                             ctx.shadowBlur = isPulsing ? 18 : 6;
-                            ctx.fillRect(xAxis.right - 105, yCoord - 12, 100, 24);
+                            ctx.fillRect(xAxis.right - 130, yCoord - 12, 125, 24);
                             
                             ctx.shadowBlur = 0;
                             ctx.fillStyle = '#0b0e14';
                             ctx.font = 'bold 11px monospace';
-                            ctx.fillText(`${labelText}: ${val}`, xAxis.right - 100, yCoord + 4);
+                            ctx.fillText(`${labelText} ${pipsText}`, xAxis.right - 125, yCoord + 4);
                             ctx.restore();
                         }
                     };
 
-                    drawAdvancedLevel(entryVal, '#00ffcc', 'ENTRY', true);
-                    drawAdvancedLevel(tpVal, '#089981', 'TP TARGET', false);
-                    drawAdvancedLevel(slVal, '#f23645', 'SL RISK', false);
+                    drawAdvancedLevel(entryVal, '#00ffcc', 'ENTRY', entryVal, true);
+                    drawAdvancedLevel(tpVal, '#089981', 'TP', `+${pipCalculatedData.rewardPips} PIPS`, false);
+                    drawAdvancedLevel(slVal, '#f23645', 'SL', `-${pipCalculatedData.riskPips} PIPS`, false);
                 }
             };
 
@@ -1439,7 +1650,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: { duration: 600 },
-                layout: { padding: { top: 15, bottom: 5, left: 10, right: 110 } },
+                layout: { padding: { top: 15, bottom: 5, left: 10, right: 135 } },
                 scales: {
                     x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 }, maxTicksLimit: 8 } },
                     y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
@@ -1496,12 +1707,13 @@
             if (tableBody) {
                 const timeString = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const signalText = document.getElementById('signalDirBadge').innerText;
-                tableBody.innerHTML = `<tr><td class="py-2 text-[#00ffcc]">${timeString}</td><td>${currentPair} (${currentTimeframe})</td><td class="text-[#00ffcc]">${signalText}</td><td>${currentPriceStr}</td><td class="text-emerald-400">PIPS SYSTEM & 2026 VISUAL ENGINE RENDERED</td></tr>`;
+                tableBody.innerHTML = `<tr><td class="py-2 text-[#00ffcc]">${timeString}</td><td>${currentPair} (${currentTimeframe})</td><td class="text-[#00ffcc]">${signalText}</td><td>${currentPriceStr}</td><td class="text-emerald-400">PIP ENGINE SYNCED: Risk ${pipCalculatedData.riskPips} Pips | Reward ${pipCalculatedData.rewardPips} Pips</td></tr>`;
             }
         }
 
         function onPairChange() {
             currentPair = document.getElementById('mainPairSelect').value;
+            universalPipEngine.resetAlerts();
             showToast(`Instrument changed to ${currentPair}. Fetching telemetry...`);
             fetchAndRenderOnDemand();
         }
@@ -1523,7 +1735,7 @@
         }
 
         function executeTradeAlert() {
-            showToast(`Institutional order executed successfully for ${currentPair} with Pip System & 2026 visual confirmation.`);
+            showToast(`Institutional order executed successfully for ${currentPair} with Universal Pip calculation verified.`);
         }
     </script>
 </body>
