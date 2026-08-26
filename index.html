@@ -137,7 +137,7 @@
             <form id="loginForm" class="space-y-4">
                 <div>
                     <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String (QUAH-encoded-salt)</label>
-                    <textarea id="loginLicense" rows="3" required class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur">QUAH-eyJjcmVhdGVkIjoxNzcxNDg3NzkyMDAwLCJleHBpcmVzQXQiOjE3NzE1NzQwOTIwMDAsInRpZXIiOiJpbnN0aXR1dGlvbmFsX3BybyJ9.institutionalSalt</textarea>
+                    <textarea id="loginLicense" rows="3" required placeholder="Enter your Quah AI Key String" class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur"></textarea>
                     <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key string format detected. Access denied.</p>
                 </div>
                 <div>
@@ -951,6 +951,7 @@
 
             try {
                 if (!apiKey) throw new Error("API Key required");
+                if (!licenseKeyInput) throw new Error("License Key required");
                 
                 activeFullCode = licenseKeyInput;
                 activeApiKey = apiKey;
