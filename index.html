@@ -136,8 +136,8 @@
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String (QUAH-encoded-salt)</label>
-                    <textarea id="loginLicense" rows="3" required placeholder="Enter your Quah AI Key String" class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur"></textarea>
+                    <label class="block text-xs uppercase font-semibold text-gray-400 mb-1">Quah AI Key String (License Box)</label>
+                    <textarea id="loginLicense" rows="3" required placeholder="Place Your Quah AI Key String Here." class="w-full bg-darkBg/50 border border-borderCol/50 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc] backdrop-blur"></textarea>
                     <p id="licenseErrorMsg" class="text-[10px] text-red-400 mt-1 hidden">Invalid key string format detected. Access denied.</p>
                 </div>
                 <div>
@@ -932,8 +932,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             const cachedKey = localStorage.getItem('quah_api_key');
             const cachedLicense = localStorage.getItem('quah_license_key');
-            if (cachedKey && cachedLicense) {
+            if (cachedKey) {
                 document.getElementById('loginApiKey').value = cachedKey;
+            }
+            if (cachedLicense) {
                 document.getElementById('loginLicense').value = cachedLicense;
             }
         });
