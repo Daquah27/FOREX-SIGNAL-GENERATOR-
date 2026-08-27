@@ -1329,7 +1329,7 @@
             const smcTp = document.getElementById('smcEngineTP');
             const smcSl = document.getElementById('smcEngineSL');
 
-            let activeSl, activeTp, finalSignal, badgeClass;
+            let finalSignal, badgeClass;
             let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
 
             const isUptrend = currentPrice >= previousPrice && currentRsi >= 45;
@@ -1337,14 +1337,17 @@
             if (isUptrend) {
                 finalSignal = "BUY / LONG";
                 badgeClass = "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/50";
-                activeSl = currentPrice - 0.0035;
-                activeTp = currentPrice + 0.0070;
             } else {
                 finalSignal = "SELL / SHORT";
                 badgeClass = "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50";
-                activeSl = currentPrice + 0.0035;
-                activeTp = currentPrice - 0.0070;
             }
+
+            const targetPips = parseFloat(document.getElementById('customPipInput')?.value) || 20;
+            const tpTarget = globalPipEngine.calculateExactPipTarget(currentPair, currentPrice, targetPips, finalSignal);
+            const slTarget = globalPipEngine.calculateExactPipTarget(currentPair, currentPrice, -targetPips * 0.5, finalSignal);
+
+            const activeTp = parseFloat(tpTarget.exactPrice);
+            const activeSl = parseFloat(slTarget.exactPrice);
 
             if(badge) { badge.innerText = finalSignal; badge.className = badgeClass; }
             if(confidenceElem) confidenceElem.innerText = "88.4%";
@@ -1437,10 +1440,14 @@
 
         function updateCustomPipTarget() {
             const pips = parseFloat(document.getElementById('customPipInput').value) || 20;
-            const dummyPrice = 1.1040;
+            const dummyPrice = mainTimeSeriesChart?.data?.datasets[0]?.data?.slice(-1)[0] || 1.1040;
             const res = globalPipEngine.calculateExactPipTarget(currentPair, dummyPrice, pips, 'BUY');
             const resElem = document.getElementById('customPipResult');
             if (resElem) resElem.innerText = res.exactPrice;
+            
+            if (telemetryEngine) {
+                fetchAndRenderOnDemand();
+            }
         }
 
         function renderCharts(labels, prices, rsiValues) {
