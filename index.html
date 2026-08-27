@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.4 // Institutional Pro Suite + 2026 Immersive Visual Upgrade</title>
+    <title>FX Signal Desk v4.5 // Institutional Pro Suite + 2026 Immersive Visual Upgrade</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -131,7 +131,7 @@
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl">
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
-                <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.4</h1>
+                <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.5</h1>
                 <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + 2026 Immersive Visual Suite</p>
             </div>
             <form id="loginForm" class="space-y-4">
@@ -220,7 +220,7 @@
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.4 + 2026 VISUALS</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.5 + 2026 VISUALS</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
@@ -357,7 +357,7 @@
             <!-- RE-ORDERED 3-COLUMN LAYOUT -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- LEFT COLUMN: SMC Structure State -->
+                <!-- LEFT COLUMN: SMC Structure State + Confluence Signal -->
                 <div class="space-y-6">
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
@@ -393,192 +393,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- MIDDLE COLUMN: On-Demand Data Stream, Pip & Exact Point Matrix, Multi-TF Matrix -->
-                <div class="lg:col-span-1 space-y-6">
-                    
-                    <!-- On-Demand Data Stream (Charts & Instrumentation) -->
-                    <div class="glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
-                        <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/10 via-transparent to-transparent pointer-events-none animate-scan"></div>
-                        
-                        <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
-                                <div class="flex items-center space-x-2">
-                                    <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - On-Demand Data Stream</h2>
-                                    <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Ready (On-Demand)</span>
-                                </div>
-                                <div class="text-xs font-mono text-[#00ffcc] flex items-center">
-                                    <span class="w-2 h-2 rounded-full bg-[#00ffcc] mr-1.5 animate-ping"></span> Live Scanner Active
-                                </div>
-                            </div>
-                            
-                            <div class="relative w-full h-[320px] bg-darkBg/60 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-3 z-10 shadow-inner overflow-hidden">
-                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffcc]/5 to-transparent pointer-events-none animate-pulse"></div>
-                                <canvas id="mainTimeSeriesChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
-                                <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
-                                <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
-                            </div>
-                            <div class="relative w-full h-[140px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-white/10 p-3 z-10 shadow-inner">
-                                <canvas id="rsiSubChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- JAMAICA CLOCK & FOREIGN DATA WIDGET -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/10 z-10">
-                            
-                            <!-- Jamaica Clock Widget with Flag -->
-                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-[#00ffcc]/30 shadow-xl bg-darkBg/50">
-                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-xl" title="Jamaica Flag">🇯🇲</span>
-                                        <h3 class="font-bold text-white text-xs uppercase tracking-wider">Jamaica Local Time</h3>
-                                    </div>
-                                    <span class="text-[10px] font-mono text-[#00ffcc] bg-[#00ffcc]/10 px-2 py-0.5 rounded border border-[#00ffcc]/30">EST (UTC-5)</span>
-                                </div>
-                                <div class="py-4 text-center">
-                                    <div id="jamaicaClockDisplay" class="text-3xl font-mono font-extrabold text-[#00ffcc] tracking-wider">--:--:-- AM</div>
-                                    <div id="jamaicaDateDisplay" class="text-xs font-mono text-gray-400 mt-1">Loading date...</div>
-                                </div>
-                                <div class="text-center pt-2 border-t border-white/5">
-                                    <span class="text-[13px] font-extrabold tracking-widest text-white uppercase drop-shadow">QUAH TRADING APP</span>
-                                </div>
-                            </div>
-
-                            <!-- Foreign Data Widget -->
-                            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-emerald-500/30 shadow-xl bg-darkBg/50">
-                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                                    <div class="flex items-center space-x-2">
-                                        <i class="fa-solid fa-globe text-emerald-400"></i>
-                                        <h3 class="font-bold text-white text-xs uppercase tracking-wider">Global FX Cross Spread</h3>
-                                    </div>
-                                    <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Free Public Feed</span>
-                                </div>
-                                <div class="py-2 space-y-2 font-mono text-xs">
-                                    <div class="flex justify-between items-center bg-darkBg/70 p-2 rounded border border-white/5">
-                                        <span class="text-gray-300">DXY (US Dollar Index):</span>
-                                        <strong id="widgetDxy" class="text-[#00ffcc]">104.25</strong>
-                                    </div>
-                                    <div class="flex justify-between items-center bg-darkBg/70 p-2 rounded border border-white/5">
-                                        <span class="text-gray-300">US10Y Treasury Yield:</span>
-                                        <strong id="widgetUs10y" class="text-emerald-400">4.28%</strong>
-                                    </div>
-                                    <div class="flex justify-between items-center bg-darkBg/70 p-2 rounded border border-white/5">
-                                        <span class="text-gray-300">Global Market Sentiment:</span>
-                                        <strong id="widgetSentiment" class="text-amber-400">RISK-ON</strong>
-                                    </div>
-                                </div>
-                                <div class="text-[10px] text-gray-400 text-center pt-1 font-mono">
-                                    Zero-Key Autonomous Macro Stream
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- Pip & Exact Point Matrix -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-calculator text-[#00ffcc] mr-2"></i>Pip & Exact Point Matrix</h2>
-                            <span id="pipSystemBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">SYNCHRONIZED</span>
-                        </div>
-
-                        <!-- Interactive Pip Customizer -->
-                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                            <div>
-                                <label class="block text-[9px] text-gray-400 mb-0.5">Custom Pip Target</label>
-                                <input type="number" id="customPipInput" value="20" oninput="updateCustomPipTarget()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
-                            </div>
-                            <div>
-                                <label class="block text-[9px] text-gray-400 mb-0.5">Calculated Exact Price</label>
-                                <div id="customPipResult" class="bg-darkBg/60 p-1.5 rounded border border-white/5 text-[#00ffcc] font-bold text-xs mt-0.5">--</div>
-                            </div>
-                        </div>
-
-                        <!-- Multi-Target Pip Matrix Table -->
-                        <div class="overflow-x-auto pt-2">
-                            <table class="w-full text-left text-[11px] font-mono">
-                                <thead>
-                                    <tr class="text-gray-400 border-b border-white/10">
-                                        <th class="pb-1">Pips</th>
-                                        <th class="pb-1">Exact TP Target</th>
-                                        <th class="pb-1">Exact SL Point</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pipMatrixTableBody" class="divide-y divide-white/5">
-                                    <tr><td colspan="3" class="py-2 text-center text-gray-400">Loading pip targets...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Multi-TF Matrix (Fixed with active data display and Entry/TP/SL for higher timeframes) -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix (Higher Timeframe Breakdown)</h2>
-                            <span class="text-[10px] text-[#00ffcc] font-mono font-bold">SYNCHRONIZED</span>
-                        </div>
-                        <div class="overflow-x-auto pt-2">
-                            <table class="w-full text-left text-[11px] font-mono">
-                                <thead>
-                                    <tr class="text-gray-400 border-b border-white/10">
-                                        <th class="pb-1">Timeframe</th>
-                                        <th class="pb-1">Bias / State</th>
-                                        <th class="pb-1">Entry</th>
-                                        <th class="pb-1">TP</th>
-                                        <th class="pb-1">SL</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="multiTfMatrixBody" class="divide-y divide-white/5">
-                                    <tr><td colspan="5" class="py-2 text-center text-gray-400">Analyzing higher timeframes...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- RIGHT COLUMN: Confluence Signal -->
-                <div class="space-y-6">
-                    <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
-                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
-                            <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
-                        </div>
-                        <p id="volDescText" class="text-xs text-slate-300">Select pair & timeframe then click "Load Signal" to fetch volume analytics.</p>
-                        <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
-                            <span>Pullback Impact:</span>
-                            <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
-                        </div>
-                        <div class="border-t border-white/10 pt-2 mt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">ENTRY</span>
-                                <strong id="volEngineEntry" class="text-[#00ffcc]">1.10420</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">TP</span>
-                                <strong id="volEngineTP" class="text-emerald-400">1.11200</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">SL</span>
-                                <strong id="volEngineSL" class="text-red-400">1.10100</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- LOAD SIGNAL / ANALYZE BUTTON -->
-                    <div class="px-1">
-                        <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
-                            <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
-                        </button>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-2xl">
+                    <!-- Confluence Signal & Execution Suite (Moved under SMC Structure State) -->
+                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-2xl border border-[#00ffcc]/30">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                                 <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
@@ -631,6 +448,211 @@
                             Dispatch Institutional Order
                         </button>
                     </div>
+                </div>
+
+                <!-- MIDDLE COLUMN: On-Demand Data Stream, Rectangular Displays, & Multi-TF Matrix -->
+                <div class="lg:col-span-1 space-y-6">
+                    
+                    <!-- On-Demand Data Stream (Charts & Instrumentation) -->
+                    <div class="glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
+                        <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/10 via-transparent to-transparent pointer-events-none animate-scan"></div>
+                        
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
+                                <div class="flex items-center space-x-2">
+                                    <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - On-Demand Data Stream</h2>
+                                    <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Ready (On-Demand)</span>
+                                </div>
+                                <div class="text-xs font-mono text-[#00ffcc] flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-[#00ffcc] mr-1.5 animate-ping"></span> Live Scanner Active
+                                </div>
+                            </div>
+                            
+                            <div class="relative w-full h-[320px] bg-darkBg/60 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-3 z-10 shadow-inner overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffcc]/5 to-transparent pointer-events-none animate-pulse"></div>
+                                <canvas id="mainTimeSeriesChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
+                                <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
+                                <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
+                            </div>
+                            <div class="relative w-full h-[140px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-white/10 p-3 z-10 shadow-inner">
+                                <canvas id="rsiSubChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- PROPERLY SIZED RECTANGULAR DISPLAYS -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/10 z-10">
+                            
+                            <!-- Jamaica Clock Widget (Properly Sized Rectangular Display) -->
+                            <div class="glass-card rounded-xl p-4 flex flex-col justify-between border border-[#00ffcc]/30 shadow-xl bg-darkBg/50">
+                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-lg">🇯🇲</span>
+                                        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">Jamaica Local Time</h3>
+                                    </div>
+                                    <span class="text-[9px] font-mono text-[#00ffcc] bg-[#00ffcc]/10 px-2 py-0.5 rounded border border-[#00ffcc]/30">EST (UTC-5)</span>
+                                </div>
+                                <div class="py-3 text-center">
+                                    <div id="jamaicaClockDisplay" class="text-2xl font-mono font-extrabold text-[#00ffcc] tracking-wider">--:--:-- AM</div>
+                                    <div id="jamaicaDateDisplay" class="text-[11px] font-mono text-gray-400 mt-1">Loading date...</div>
+                                </div>
+                                <div class="text-center pt-2 border-t border-white/5">
+                                    <span class="text-[11px] font-extrabold tracking-widest text-white uppercase drop-shadow">QUAH TRADING APP</span>
+                                </div>
+                            </div>
+
+                            <!-- Foreign Data Widget (Properly Sized Rectangular Display) -->
+                            <div class="glass-card rounded-xl p-4 flex flex-col justify-between border border-emerald-500/30 shadow-xl bg-darkBg/50">
+                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fa-solid fa-globe text-emerald-400"></i>
+                                        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">Global FX Cross Spread</h3>
+                                    </div>
+                                    <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Live Feed</span>
+                                </div>
+                                <div class="py-1.5 space-y-1.5 font-mono text-xs">
+                                    <div class="flex justify-between items-center bg-darkBg/70 p-1.5 rounded border border-white/5 text-[11px]">
+                                        <span class="text-gray-300">DXY Index:</span>
+                                        <strong id="widgetDxy" class="text-[#00ffcc]">104.25</strong>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-darkBg/70 p-1.5 rounded border border-white/5 text-[11px]">
+                                        <span class="text-gray-300">US10Y Yield:</span>
+                                        <strong id="widgetUs10y" class="text-emerald-400">4.28%</strong>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-darkBg/70 p-1.5 rounded border border-white/5 text-[11px]">
+                                        <span class="text-gray-300">Sentiment:</span>
+                                        <strong id="widgetSentiment" class="text-amber-400">RISK-ON</strong>
+                                    </div>
+                                </div>
+                                <div class="text-[9px] text-gray-400 text-center pt-1 font-mono">
+                                    Zero-Key Autonomous Macro Stream
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Multi-TF Matrix (Expanded space below) -->
+                    <div class="glass-card rounded-2xl p-5 shadow-xl space-y-4 border border-[#00ffcc]/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix (Higher Timeframe Breakdown)</h2>
+                            <span class="text-[10px] text-[#00ffcc] font-mono font-bold">SYNCHRONIZED</span>
+                        </div>
+                        <div class="overflow-x-auto pt-1">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead>
+                                    <tr class="text-gray-400 border-b border-white/10 text-[11px]">
+                                        <th class="pb-2">Timeframe</th>
+                                        <th class="pb-2">Bias / State</th>
+                                        <th class="pb-2">Entry</th>
+                                        <th class="pb-2">TP</th>
+                                        <th class="pb-2">SL</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="multiTfMatrixBody" class="divide-y divide-white/5">
+                                    <tr><td colspan="5" class="py-3 text-center text-gray-400">Analyzing higher timeframes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: Pip & Exact Point Matrix (Above) & Volume Participation Engine (Below) + Session Liquidity -->
+                <div class="space-y-6">
+                    
+                    <!-- Pip & Exact Point Matrix (Now Above) -->
+                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-calculator text-[#00ffcc] mr-2"></i>Pip & Exact Point Matrix</h2>
+                            <span id="pipSystemBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">SYNCHRONIZED</span>
+                        </div>
+
+                        <!-- Interactive Pip Customizer -->
+                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <div>
+                                <label class="block text-[9px] text-gray-400 mb-0.5">Custom Pip Target</label>
+                                <input type="number" id="customPipInput" value="20" oninput="updateCustomPipTarget()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] text-gray-400 mb-0.5">Calculated Exact Price</label>
+                                <div id="customPipResult" class="bg-darkBg/60 p-1.5 rounded border border-white/5 text-[#00ffcc] font-bold text-xs mt-0.5">--</div>
+                            </div>
+                        </div>
+
+                        <!-- Multi-Target Pip Matrix Table -->
+                        <div class="overflow-x-auto pt-2">
+                            <table class="w-full text-left text-[11px] font-mono">
+                                <thead>
+                                    <tr class="text-gray-400 border-b border-white/10">
+                                        <th class="pb-1">Pips</th>
+                                        <th class="pb-1">Exact TP Target</th>
+                                        <th class="pb-1">Exact SL Point</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pipMatrixTableBody" class="divide-y divide-white/5">
+                                    <tr><td colspan="3" class="py-2 text-center text-gray-400">Loading pip targets...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Volume Participation Engine (Now Below Pip Matrix) -->
+                    <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
+                            <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">HEALTHY PULLBACK</span>
+                        </div>
+                        <p id="volDescText" class="text-xs text-slate-300">Select pair & timeframe then click "Load Signal" to fetch volume analytics.</p>
+                        <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
+                            <span>Pullback Impact:</span>
+                            <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
+                        </div>
+                        <div class="border-t border-white/10 pt-2 mt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">ENTRY</span>
+                                <strong id="volEngineEntry" class="text-[#00ffcc]">1.10420</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">TP</span>
+                                <strong id="volEngineTP" class="text-emerald-400">1.11200</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
+                                <span class="text-[9px] text-gray-400 block">SL</span>
+                                <strong id="volEngineSL" class="text-red-400">1.10100</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Session Liquidity & Killzone Tracker (Added Suggestion Integration) -->
+                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-crosshairs text-[#00ffcc] mr-2"></i>Session Liquidity & Killzones</h2>
+                            <span id="killzoneStatusBadge" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-mono font-bold">LONDON / NY OVERLAP</span>
+                        </div>
+                        <div class="space-y-2 text-xs font-mono">
+                            <div class="flex justify-between items-center bg-darkBg/60 p-2 rounded border border-white/5">
+                                <span class="text-gray-300">Asian Range Sweep:</span>
+                                <strong id="asianSweepStatus" class="text-emerald-400">SWEPT (Bullish)</strong>
+                            </div>
+                            <div class="flex justify-between items-center bg-darkBg/60 p-2 rounded border border-white/5">
+                                <span class="text-gray-300">Institutional Killzone:</span>
+                                <strong id="killzoneActive" class="text-[#00ffcc]">Active (High Volatility)</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LOAD SIGNAL / ANALYZE BUTTON -->
+                    <div class="px-1">
+                        <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
+                            <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
@@ -951,7 +973,6 @@
             }
         });
 
-        // URL-Safe Base64 Decoder helper for structured key strings
         function base64UrlDecode(str) {
             let output = str.replace(/-/g, '+').replace(/_/g, '/');
             switch (output.length % 4) {
@@ -978,7 +999,6 @@
                 if (!apiKey) throw new Error("API Key required");
                 if (!licenseKeyInput.startsWith('QUAH-')) throw new Error("Invalid license format prefix");
                 
-                // Parse structured token format: QUAH-[encodedPayload]-[salt]
                 const parts = licenseKeyInput.split('-');
                 if (parts.length < 3) throw new Error("Invalid structured key partitions");
 
@@ -1030,7 +1050,6 @@
             document.getElementById('profileMenu').classList.toggle('hidden');
         }
 
-        // 2026 ADVANCED MULTI-LAYER BACKGROUND ENGINE
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let entities = [];
@@ -1086,20 +1105,17 @@
             if (isTabActive) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // 1. Draw Perspective Grid
                 gridOffset = (gridOffset + 0.5) % 40;
                 ctx.strokeStyle = 'rgba(0, 255, 204, 0.04)';
                 ctx.lineWidth = 1;
                 let horizonY = canvas.height * 0.35;
                 
-                // Vertical grid lines
                 for(let x = -canvas.width; x < canvas.width * 2; x += 80) {
                     ctx.beginPath();
                     ctx.moveTo(canvas.width / 2, horizonY);
                     ctx.lineTo(x + gridOffset * 2, canvas.height);
                     ctx.stroke();
                 }
-                // Horizontal perspective lines
                 for(let y = horizonY; y < canvas.height; y += (y - horizonY) * 0.15 + 2) {
                     ctx.beginPath();
                     ctx.moveTo(0, y);
@@ -1107,7 +1123,6 @@
                     ctx.stroke();
                 }
 
-                // 2. Neural Market Network
                 for (let i = 0; i < neuralNodes.length; i++) {
                     let node = neuralNodes[i];
                     node.x += node.vx;
@@ -1133,7 +1148,6 @@
                     }
                 }
 
-                // 3. Floating Particles & Atmosphere
                 entities.forEach(e => {
                     e.x += e.vx + (mouseX - canvas.width / 2) * 0.0002;
                     e.y += e.vy;
@@ -1389,7 +1403,6 @@
             const activeTpStr = signalData ? signalData.activeTp : (currentPriceStr * 1.0050).toFixed(decimals);
             globalVolumeAnalyzer.renderWidget(globalVolumeAnalyzer.analyzePullbackHealth(values), currentPriceStr, activeTpStr, activeSlStr);
 
-            // PIP SYSTEM INTEGRATION & UPDATES
             const currentDirectionText = document.getElementById('signalDirBadge').innerText;
             window.updateCustomPipTarget = function() {
                 const pips = parseFloat(document.getElementById('customPipInput').value) || 20;
@@ -1410,7 +1423,6 @@
                 `).join('');
             }
 
-            // MULTI-TF MATRIX RENDERER (Higher Timeframes Entry, TP, SL)
             const mtfBody = document.getElementById('multiTfMatrixBody');
             if (mtfBody) {
                 const timeframesList = ['15 Min', '1 Hour', '4 Hour', '1 Daily'];
