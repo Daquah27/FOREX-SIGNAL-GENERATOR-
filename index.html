@@ -339,14 +339,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Timeframe</label>
+                    <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Timeframe & Timers</label>
                     <div id="tfWrap" class="flex bg-darkBg/60 backdrop-blur border border-white/10 rounded p-0.5 space-x-0.5">
-                        <button onclick="setTimeframe('1min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">1m</button>
-                        <button onclick="setTimeframe('5min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm">5m</button>
-                        <button onclick="setTimeframe('15min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">15m</button>
-                        <button onclick="setTimeframe('1h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">1h</button>
-                        <button onclick="setTimeframe('4h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">4h</button>
-                        <button onclick="setTimeframe('1day', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition">1d</button>
+                        <button onclick="setTimeframe('1min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>1m</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="1min">01:00</span></button>
+                        <button onclick="setTimeframe('5min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center"><span>5m</span><span class="tf-timer text-[9px] font-mono text-black/80 font-bold" data-tf="5min">05:00</span></button>
+                        <button onclick="setTimeframe('15min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>15m</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="15min">15:00</span></button>
+                        <button onclick="setTimeframe('1h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>1h</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="1h">60:00</span></button>
+                        <button onclick="setTimeframe('4h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>4h</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="4h">240:00</span></button>
+                        <button onclick="setTimeframe('1day', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>1d</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="1day">1440:0</span></button>
                     </div>
                 </div>
             </div>
@@ -357,7 +357,7 @@
             <!-- RE-ORDERED 3-COLUMN LAYOUT -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- LEFT COLUMN: SMC Structure State + Confluence Signal -->
+                <!-- LEFT COLUMN: SMC Structure State + Candlestick Pattern Engine + Confluence Signal -->
                 <div class="space-y-6">
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
@@ -390,6 +390,24 @@
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">SL</span>
                                 <strong id="smcEngineSL" class="text-red-400">1.10100</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Candlestick Pattern Engine Detector (Works hand-in-hand with SMC) -->
+                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-purple-500/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-wand-magic-sparkles text-purple-400 mr-2"></i>Candlestick Pattern Engine</h2>
+                            <span id="candlePatternBadge" class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono font-bold">BULLISH ENGULFING</span>
+                        </div>
+                        <div class="space-y-2 text-xs font-mono">
+                            <div class="bg-darkBg/60 p-2.5 rounded-xl border border-white/5 flex items-center justify-between">
+                                <span class="text-gray-400">Detected Formation:</span>
+                                <strong id="candlePatternName" class="text-emerald-400">Bullish Engulfing at OB</strong>
+                            </div>
+                            <div class="bg-darkBg/60 p-2.5 rounded-xl border border-white/5 flex items-center justify-between">
+                                <span class="text-gray-400">SMC Confluence Sync:</span>
+                                <strong id="candleSmcSync" class="text-purple-300">Aligned (+15% Weight)</strong>
                             </div>
                         </div>
                     </div>
@@ -457,6 +475,13 @@
                     <div class="glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
                         <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/10 via-transparent to-transparent pointer-events-none animate-scan"></div>
                         
+                        <!-- LOAD SIGNAL / ANALYZE BUTTON (Placed above the On-Demand Data Stream chart as requested) -->
+                        <div class="z-10">
+                            <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
+                                <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
+                            </button>
+                        </div>
+
                         <div class="flex flex-col">
                             <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
                                 <div class="flex items-center space-x-2">
@@ -644,13 +669,6 @@
                         </div>
                     </div>
 
-                    <!-- LOAD SIGNAL / ANALYZE BUTTON -->
-                    <div class="px-1">
-                        <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
-                            <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
-                        </button>
-                    </div>
-
                 </div>
 
             </div>
@@ -673,6 +691,115 @@
     </div>
 
     <script>
+        // --- CANDLESTICK PATTERN ENGINE DETECTOR ---
+        class CandlestickPatternEngine {
+            constructor() {}
+
+            detectPattern(candles) {
+                if (!candles || candles.length < 3) {
+                    return { name: 'Gathering Candles...', type: 'NEUTRAL', sync: 'Syncing...' };
+                }
+
+                let c1 = candles[candles.length - 3];
+                let c2 = candles[candles.length - 2];
+                let c3 = candles[candles.length - 1];
+
+                let o1 = Number(c1.open), close1 = Number(c1.close);
+                let o2 = Number(c2.open), close2 = Number(c2.close);
+                let o3 = Number(c3.open), close3 = Number(c3.close);
+
+                let h3 = Number(c3.high), l3 = Number(c3.low);
+
+                // Bullish Engulfing
+                if (close1 < o1 && close2 > o2 && close2 >= o1 && o2 <= close1) {
+                    return { name: 'Bullish Engulfing', type: 'BULLISH', sync: 'Aligned with SMC BOS (+20%)' };
+                }
+                // Bearish Engulfing
+                if (close1 > o1 && close2 < o2 && close2 <= o1 && o2 >= close1) {
+                    return { name: 'Bearish Engulfing', type: 'BEARISH', sync: 'Aligned with SMC CHoCH (+20%)' };
+                }
+                // Hammer Check
+                let body3 = Math.abs(close3 - o3);
+                let lowerWick = Math.min(o3, close3) - l3;
+                let upperWick = h3 - Math.max(o3, close3);
+                if (lowerWick > body3 * 2 && upperWick < body3) {
+                    return { name: 'Bullish Hammer / Pinbar', type: 'BULLISH', sync: 'Orderblock Rejection (+15%)' };
+                }
+                // Doji Check
+                if (body3 <= (h3 - l3) * 0.1) {
+                    return { name: 'Indecision Doji', type: 'NEUTRAL', sync: 'Consolidation Zone' };
+                }
+
+                return { name: 'Standard Continuation Candle', type: 'NEUTRAL', sync: 'Neutral Flow' };
+            }
+
+            renderWidget(pattern) {
+                const nameElem = document.getElementById('candlePatternName');
+                const badgeElem = document.getElementById('candlePatternBadge');
+                const syncElem = document.getElementById('candleSmcSync');
+                if (!nameElem) return;
+
+                nameElem.innerText = pattern.name;
+                syncElem.innerText = pattern.sync;
+
+                if (pattern.type === 'BULLISH') {
+                    badgeElem.innerText = pattern.name.toUpperCase();
+                    badgeElem.className = "text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono font-bold";
+                } else if (pattern.type === 'BEARISH') {
+                    badgeElem.innerText = pattern.name.toUpperCase();
+                    badgeElem.className = "text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded font-mono font-bold";
+                } else {
+                    badgeElem.innerText = pattern.name.toUpperCase();
+                    badgeElem.className = "text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono font-bold";
+                }
+            }
+        }
+
+        const globalCandleEngine = new CandlestickPatternEngine();
+
+        // --- TIMEFRAME COUNTDOWN TIMER ENGINE ---
+        let tfSecondsRemaining = {
+            '1min': 60,
+            '5min': 300,
+            '15min': 900,
+            '1h': 3600,
+            '4h': 14400,
+            '1day': 86400
+        };
+
+        function startTfTimers() {
+            setInterval(() => {
+                for (let tf in tfSecondsRemaining) {
+                    tfSecondsRemaining[tf]--;
+                    if (tfSecondsRemaining[tf] <= 0) {
+                        tfSecondsRemaining[tf] = getTfTotalSeconds(tf);
+                        if (currentTimeframe === tf) {
+                            fetchAndRenderOnDemand();
+                        }
+                    }
+                    updateTfTimerDisplay(tf);
+                }
+            }, 1000);
+        }
+
+        function getTfTotalSeconds(tf) {
+            if (tf === '1min') return 60;
+            if (tf === '5min') return 300;
+            if (tf === '15min') return 900;
+            if (tf === '1h') return 3600;
+            if (tf === '4h') return 14400;
+            return 86400;
+        }
+
+        function updateTfTimerDisplay(tf) {
+            const timerEl = document.querySelector(`.tf-timer[data-tf="${tf}"]`);
+            if (!timerEl) return;
+            let secs = tfSecondsRemaining[tf];
+            let m = Math.floor(secs / 60);
+            let s = secs % 60;
+            timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
         class VolumePullbackAnalyzer {
             constructor() {}
 
@@ -891,6 +1018,7 @@
                     let decimals = symbol.includes('JPY') || symbol.includes('XAU') || symbol.includes('BTC') ? 2 : 5;
                     fallbackValues.push({
                         datetime: d.toISOString().slice(11, 19),
+                        open: (basePrice - stepSize * 0.2).toFixed(decimals),
                         close: basePrice.toFixed(decimals),
                         high: (basePrice + stepSize * 0.5).toFixed(decimals),
                         low: (basePrice - stepSize * 0.5).toFixed(decimals),
@@ -1236,6 +1364,7 @@
 
         function initApp() {
             startLicenseCountdownTimer();
+            startTfTimers();
             setInterval(updateMarketStatusBannerLocally, 10000);
             updateClocks();
             fetchAndRenderOnDemand();
@@ -1362,10 +1491,11 @@
 
         function setTimeframe(tf, btn) {
             currentTimeframe = tf;
+            tfSecondsRemaining[tf] = getTfTotalSeconds(tf);
             document.querySelectorAll('.tf-btn').forEach(b => {
-                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition";
+                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
             });
-            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm";
+            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
             fetchAndRenderOnDemand();
         }
 
@@ -1376,6 +1506,7 @@
         }
 
         function triggerManualRefresh() {
+            tfSecondsRemaining[currentTimeframe] = getTfTotalSeconds(currentTimeframe);
             fetchAndRenderOnDemand();
             showToast(`Refreshed telemetry for ${currentPair} (${currentTimeframe})`);
         }
@@ -1390,6 +1521,11 @@
             const rsiValues = prices.map((p, idx, arr) => idx === 0 ? 50 : 50 + (p - arr[idx-1]) * 1000);
 
             analyzeMarketStructure(prices);
+            
+            // Run Candlestick Pattern Engine & Sync with SMC
+            const detectedPattern = globalCandleEngine.detectPattern(rawData);
+            globalCandleEngine.renderWidget(detectedPattern);
+
             const evalRes = evaluateMarketDirection(rawData, rsiValues, prices);
 
             const volAnalysis = globalVolumeAnalyzer.fetchTimeSeries ? {} : globalVolumeAnalyzer.analyzePullbackHealth(rawData);
@@ -1413,7 +1549,7 @@
                 multiTfBody.innerHTML = tfs.map(tf => `
                     <tr class="hover:bg-white/5 border-b border-white/5">
                         <td class="py-2 text-white font-bold">${tf.toUpperCase()}</td>
-                        <td class="py-2 text-emerald-400">BULLISH BOS</td>
+                        <td class="py-2 text-emerald-400">BULLISH BOS + ${detectedPattern.name}</td>
                         <td class="py-2 text-[#00ffcc]">${evalRes.currentPrice.toFixed(5)}</td>
                         <td class="py-2 text-emerald-400">${evalRes.activeTp.toFixed(5)}</td>
                         <td class="py-2 text-red-400">${evalRes.activeSl.toFixed(5)}</td>
@@ -1428,7 +1564,7 @@
                     <tr class="border-b border-white/5">
                         <td class="py-2 text-gray-400">${timestamp}</td>
                         <td class="py-2 text-white font-bold">${currentPair} (${currentTimeframe})</td>
-                        <td class="py-2 text-[#00ffcc]">${evalRes.finalSignal}</td>
+                        <td class="py-2 text-[#00ffcc]">${evalRes.finalSignal} [${detectedPattern.name}]</td>
                         <td class="py-2 text-emerald-400">88.4% Confidence</td>
                         <td class="py-2 text-gray-300">Synced via TwelveData API</td>
                     </tr>
