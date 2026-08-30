@@ -475,7 +475,7 @@
                     <div class="glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
                         <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/10 via-transparent to-transparent pointer-events-none animate-scan"></div>
                         
-                        <!-- LOAD SIGNAL / ANALYZE BUTTON (Placed above the On-Demand Data Stream chart as requested) -->
+                        <!-- LOAD SIGNAL / ANALYZE BUTTON -->
                         <div class="z-10">
                             <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
                                 <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
@@ -587,7 +587,7 @@
 
                 </div>
 
-                <!-- RIGHT COLUMN: Pip & Exact Point Matrix + Volume Participation Engine + Session Liquidity -->
+                <!-- RIGHT COLUMN: Pip & Exact Point Matrix + TradingView Volume Profile Guide + Volume Participation Engine + Session Liquidity -->
                 <div class="space-y-6">
                     
                     <!-- Pip & Exact Point Matrix -->
@@ -621,6 +621,29 @@
                                     <tr><td colspan="3" class="py-2 text-center text-gray-400">Loading pip targets...</td></tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- INTEGRATED TRADINGVIEW VOLUME PROFILE & POC GUIDE (FROM TRANSCRIPT) -->
+                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-cyan-500/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chart-bar text-cyan-400 mr-2"></i>TradingView Volume Profile & POC Setup</h2>
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold">30M STRATEGY[cite: 3]</span>
+                        </div>
+                        <p class="text-[11px] text-gray-300">Stop guessing price direction[cite: 3]. Configure your charts using institutional volume mapping rules:</p>
+                        <div class="space-y-1.5 text-[11px] font-mono text-gray-300">
+                            <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
+                                <span class="text-cyan-400 font-bold">1.</span>
+                                <div><strong>30-Minute Timeframe:</strong> Go to the 30-minute timeframe, open your chart settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong> to see session opens/closes[cite: 3].</div>
+                            </div>
+                            <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
+                                <span class="text-cyan-400 font-bold">2.</span>
+                                <div><strong>Fixed Range Profile:</strong> Open the toolbox on the left side, grab the <strong>Fixed Range Volume Profile</strong>, and stretch it across the previous trading day's range[cite: 3].</div>
+                            </div>
+                            <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
+                                <span class="text-cyan-400 font-bold">3.</span>
+                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong> (exact price where most volume traded), <strong>Value Area Low (VAL)</strong>, and <strong>Value Area High (VAH)</strong> where serious money stepped in[cite: 3].</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1522,7 +1545,6 @@
 
             analyzeMarketStructure(prices);
             
-            // Run Candlestick Pattern Engine & Sync with SMC
             const detectedPattern = globalCandleEngine.detectPattern(rawData);
             globalCandleEngine.renderWidget(detectedPattern);
 
