@@ -482,6 +482,39 @@
                             </button>
                         </div>
 
+                        <!-- DIGITAL EXIT SIGNAL ENGINE UI MODULE (INTEGRATED BETWEEN BUTTON & CHART) -->
+                        <div id="digitalExitSignalEngine" class="glass-card rounded-xl p-4 z-10 border border-[#00ffcc]/40 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-right-from-bracket text-[#00ffcc]"></i>
+                                    <h2 class="font-bold text-white text-xs uppercase tracking-wider">Digital Exit Signal Engine</h2>
+                                </div>
+                                <span id="tradeExitStatusBadge" class="text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse">
+                                    HOLD TRADE
+                                </span>
+                            </div>
+
+                            <div class="space-y-2 text-xs font-mono">
+                                <div class="bg-darkBg/80 p-2.5 rounded-lg border border-white/5 space-y-1">
+                                    <div class="text-[9px] uppercase font-semibold text-gray-400">Exit Trigger Reasons</div>
+                                    <div id="tradeExitReasonsDisplay" class="text-gray-200 text-[11px]">
+                                        Structure intact &bull; Volume volume distribution stable
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-darkBg/80 p-2 rounded-lg border border-white/5 flex flex-col justify-between">
+                                        <span class="text-[9px] uppercase text-gray-400">Adaptive Trailing SL</span>
+                                        <strong id="adaptiveTrailingSlDisplay" class="text-[#00ffcc] text-xs mt-0.5">--</strong>
+                                    </div>
+                                    <div class="bg-darkBg/80 p-2 rounded-lg border border-white/5 flex flex-col justify-between">
+                                        <span class="text-[9px] uppercase text-gray-400">Volume Exit Threat</span>
+                                        <strong id="volumeExitThreatDisplay" class="text-emerald-400 text-xs mt-0.5">LOW</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex flex-col">
                             <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
                                 <div class="flex items-center space-x-2">
@@ -628,21 +661,21 @@
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-cyan-500/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chart-bar text-cyan-400 mr-2"></i>TradingView Volume Profile & POC Setup</h2>
-                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold">30M STRATEGY</span>
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold">30M STRATEGY[cite: 3]</span>
                         </div>
-                        <p class="text-[11px] text-gray-300">Stop guessing price direction. Configure your charts using institutional volume mapping rules:</p>
+                        <p class="text-[11px] text-gray-300">Stop guessing price direction[cite: 3]. Configure your charts using institutional volume mapping rules:</p>
                         <div class="space-y-1.5 text-[11px] font-mono text-gray-300">
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">1.</span>
-                                <div><strong>30-Minute Timeframe:</strong> Go to the 30-minute timeframe, open your chart settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong> to see session opens/closes.</div>
+                                <div><strong>30-Minute Timeframe:</strong> Go to the 30-minute timeframe, open your chart settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong> to see session opens/closes[cite: 3].</div>
                             </div>
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">2.</span>
-                                <div><strong>Fixed Range Profile:</strong> Open the toolbox on the left side, grab the <strong>Fixed Range Volume Profile</strong>, and stretch it across the previous trading day's range.</div>
+                                <div><strong>Fixed Range Profile:</strong> Open the toolbox on the left side, grab the <strong>Fixed Range Volume Profile</strong>, and stretch it across the previous trading day's range[cite: 3].</div>
                             </div>
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">3.</span>
-                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong> (exact price where most volume traded), <strong>Value Area Low (VAL)</strong>, and <strong>Value Area High (VAH)</strong> where serious money stepped in.</div>
+                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong> (exact price where most volume traded), <strong>Value Area Low (VAL)</strong>, and <strong>Value Area High (VAH)</strong> where serious money stepped in[cite: 3].</div>
                             </div>
                         </div>
                     </div>
@@ -714,6 +747,125 @@
     </div>
 
     <script>
+        // --- VOLUME PROFILE & MARKET STRUCTURE REAL-TIME MONITOR (TRADE EXIT MONITOR ENGINE) ---
+        class TradeExitMonitor {
+            constructor() {}
+
+            evaluateExit(candles, rsiValues, direction = 'BUY') {
+                if (!candles || candles.length < 5 || !rsiValues || rsiValues.length < 5) {
+                    return {
+                        status: 'HOLD TRADE',
+                        reasons: ['Gathering market structure telemetry...'],
+                        trailingSl: '--',
+                        threatLevel: 'LOW'
+                    };
+                }
+
+                let isLong = direction.includes('BUY') || direction === 'LONG';
+                let recent = candles.slice(-6);
+                let currentCandle = recent[recent.length - 1];
+                let currentPrice = Number(currentCandle.close);
+                let decimals = currentPrice > 100 ? 2 : 5;
+
+                let reasons = [];
+                let closePositions = [];
+                let warningPositions = [];
+
+                // 1. Structure Invalidation Check
+                let recentHighs = recent.map(c => Number(c.high));
+                let recentLows = recent.map(c => Number(c.low));
+                let prevSwingLow = Math.min(...recentLows.slice(0, -1));
+                let prevSwingHigh = Math.max(...recentHighs.slice(0, -1));
+
+                if (isLong && currentPrice < prevSwingLow) {
+                    reasons.push("Structure Broken Counter-Trend (Lower Low)");
+                    closePositions.push('STRUCTURE');
+                } else if (!isLong && currentPrice > prevSwingHigh) {
+                    reasons.push("Structure Broken Counter-Trend (Higher High)");
+                    closePositions.push('STRUCTURE');
+                }
+
+                // 2. Volume Exhaustion & Spikes Check
+                let avgVol = recent.reduce((sum, c) => sum + Number(c.volume || 100), 0) / recent.length;
+                let currentVol = Number(currentCandle.volume || 100);
+                let isCounterTrendBar = isLong ? (Number(currentCandle.close) < Number(currentCandle.open)) : (Number(currentCandle.close) > Number(currentCandle.open));
+
+                if (currentVol > avgVol * 1.8 && isCounterTrendBar) {
+                    reasons.push(isLong ? "High Selling Volume Surge Detected" : "High Buying Volume Surge Detected");
+                    warningPositions.push('VOLUME_SURGE');
+                }
+
+                // 3. RSI Momentum Divergence Check
+                let currentRsi = rsiValues[rsiValues.length - 1];
+                let prevRsi = rsiValues[rsiValues.length - 4];
+                let priceDiff = currentPrice - Number(recent[0].close);
+
+                if (isLong && priceDiff > 0 && currentRsi < prevRsi - 5) {
+                    reasons.push("Bearish RSI Momentum Divergence");
+                    warningPositions.push('RSI_DIVERGENCE');
+                } else if (!isLong && priceDiff < 0 && currentRsi > prevRsi + 5) {
+                    reasons.push("Bullish RSI Momentum Divergence");
+                    warningPositions.push('RSI_DIVERGENCE');
+                }
+
+                // Adaptive Trailing Stop Calculation
+                let pipStep = currentPrice > 100 ? 0.20 : 0.0008;
+                let trailingSl = isLong ? (currentPrice - pipStep) : (currentPrice + pipStep);
+
+                // Determine Trade Exit Status
+                let status = 'HOLD TRADE';
+                let threatLevel = 'LOW';
+
+                if (closePositions.length > 0) {
+                    status = 'CLOSE TRADE IMMEDIATELY';
+                    threatLevel = 'CRITICAL';
+                } else if (warningPositions.length > 0) {
+                    status = 'WARNING / TIGHTEN SL';
+                    threatLevel = 'HIGH';
+                } else {
+                    reasons.push("Structure intact", "Volume distribution stable");
+                }
+
+                return {
+                    status: status,
+                    reasons: reasons,
+                    trailingSl: trailingSl.toFixed(decimals),
+                    threatLevel: threatLevel
+                };
+            }
+
+            renderWidget(exitInfo) {
+                const statusBadge = document.getElementById('tradeExitStatusBadge');
+                const reasonsDisplay = document.getElementById('tradeExitReasonsDisplay');
+                const trailingSlDisplay = document.getElementById('adaptiveTrailingSlDisplay');
+                const threatDisplay = document.getElementById('volumeExitThreatDisplay');
+                const container = document.getElementById('digitalExitSignalEngine');
+
+                if (!statusBadge) return;
+
+                statusBadge.innerText = exitInfo.status;
+                reasonsDisplay.innerHTML = exitInfo.reasons.join(' &bull; ');
+                trailingSlDisplay.innerText = exitInfo.trailingSl;
+                threatDisplay.innerText = exitInfo.threatLevel;
+
+                if (exitInfo.status === 'CLOSE TRADE IMMEDIATELY') {
+                    statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
+                    threatDisplay.className = "text-red-400 text-xs mt-0.5 font-bold";
+                    if (container) container.className = "glass-card rounded-xl p-4 z-10 border border-red-500/50 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl";
+                } else if (exitInfo.status === 'WARNING / TIGHTEN SL') {
+                    statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50 animate-pulse";
+                    threatDisplay.className = "text-amber-300 text-xs mt-0.5 font-bold";
+                    if (container) container.className = "glass-card rounded-xl p-4 z-10 border border-amber-500/50 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl";
+                } else {
+                    statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                    threatDisplay.className = "text-emerald-400 text-xs mt-0.5 font-bold";
+                    if (container) container.className = "glass-card rounded-xl p-4 z-10 border border-[#00ffcc]/40 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl";
+                }
+            }
+        }
+
+        const globalTradeExitMonitor = new TradeExitMonitor();
+
         // --- CANDLESTICK PATTERN ENGINE DETECTOR ---
         class CandlestickPatternEngine {
             constructor() {}
@@ -1549,6 +1701,9 @@
             globalCandleEngine.renderWidget(detectedPattern);
 
             const evalRes = evaluateMarketDirection(rawData, rsiValues, prices);
+
+            const exitEval = globalTradeExitMonitor.evaluateExit(rawData, rsiValues, evalRes.finalSignal);
+            globalTradeExitMonitor.renderWidget(exitEval);
 
             const volAnalysis = globalVolumeAnalyzer.fetchTimeSeries ? {} : globalVolumeAnalyzer.analyzePullbackHealth(rawData);
             globalVolumeAnalyzer.renderWidget(volAnalysis, evalRes.currentPrice.toFixed(5), evalRes.activeTp.toFixed(5), evalRes.activeSl.toFixed(5));
