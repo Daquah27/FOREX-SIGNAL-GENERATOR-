@@ -1,4 +1,4 @@
-[cite: 4]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -230,6 +230,11 @@
                 <div id="apiQuotaWatcherBadge" class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm">
                     <i class="fa-solid fa-gauge text-[#00ffcc]"></i>
                     <span>API Calls: <strong id="apiCallCountDisplay" class="text-[#00ffcc]">0</strong> / 800</span>
+                </div>
+                <!-- 40S AUTO-RELOAD TIMER DISPLAY -->
+                <div class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
+                    <i class="fa-solid fa-[#00ffcc] fa-arrows-rotate text-[#00ffcc] animate-spin"></i>
+                    <span>Auto-Analyze: <strong id="autoReloadCountdownDisplay" class="text-[#00ffcc]">40s</strong></span>
                 </div>
                 <div class="hidden md:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
                     <i class="fa-solid fa-wave-square text-[#00ffcc]"></i>
@@ -661,21 +666,21 @@
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-cyan-500/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chart-bar text-cyan-400 mr-2"></i>TradingView Volume Profile & POC Setup</h2>
-                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold">30M STRATEGY[cite: 3]</span>
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold">30M STRATEGY</span>
                         </div>
-                        <p class="text-[11px] text-gray-300">Stop guessing price direction[cite: 3]. Configure your charts using institutional volume mapping rules:</p>
+                        <p class="text-[11px] text-gray-300">Stop guessing price direction. Configure your charts using institutional volume mapping rules:</p>
                         <div class="space-y-1.5 text-[11px] font-mono text-gray-300">
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">1.</span>
-                                <div><strong>30-Minute Timeframe:</strong> Go to the 30-minute timeframe, open your chart settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong> to see session opens/closes[cite: 3].</div>
+                                <div><strong>30-Minute Timeframe:</strong> Go to the 30-minute timeframe, open your chart settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong> to see session opens/closes.</div>
                             </div>
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">2.</span>
-                                <div><strong>Fixed Range Profile:</strong> Open the toolbox on the left side, grab the <strong>Fixed Range Volume Profile</strong>, and stretch it across the previous trading day's range[cite: 3].</div>
+                                <div><strong>Fixed Range Profile:</strong> Open the toolbox on the left side, grab the <strong>Fixed Range Volume Profile</strong>, and stretch it across the previous trading day's range.</div>
                             </div>
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">3.</span>
-                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong> (exact price where most volume traded), <strong>Value Area Low (VAL)</strong>, and <strong>Value Area High (VAH)</strong> where serious money stepped in[cite: 3].</div>
+                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong> (exact price where most volume traded), <strong>Value Area Low (VAL)</strong>, and <strong>Value Area High (VAH)</strong> where serious money stepped in.</div>
                             </div>
                         </div>
                     </div>
@@ -1246,6 +1251,10 @@
         let licenseTimerInterval = null;
         let currentThemeMode = 'ocean';
         let telemetryEngine = null;
+
+        // 40-SECOND AUTOMATIC RELOAD TIMER VARIABLES
+        let autoReloadSeconds = 40;
+        let autoReloadTimerInterval = null;
         
         let activeFullCode = '';
         let activeApiKey = '';
@@ -1337,6 +1346,7 @@
 
         function logout() {
             if (licenseTimerInterval) clearInterval(licenseTimerInterval);
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             localStorage.removeItem('quah_api_key');
             localStorage.removeItem('quah_license_key');
@@ -1537,9 +1547,28 @@
             if (tyoEl) { tyoEl.innerText = isWeekend ? "CLOSED" : "OPEN"; tyoEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
         }
 
+        // START AUTOMATIC 40-SECOND RELOAD ENGINE
+        function startAutoReloadTimer() {
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
+            autoReloadSeconds = 40;
+            
+            autoReloadTimerInterval = setInterval(() => {
+                autoReloadSeconds--;
+                const countdownElem = document.getElementById('autoReloadCountdownDisplay');
+                if (countdownElem) countdownElem.innerText = `${autoReloadSeconds}s`;
+                
+                if (autoReloadSeconds <= 0) {
+                    autoReloadSeconds = 40;
+                    fetchAndRenderOnDemand();
+                    showToast(`Auto-analyzed market telemetry for ${currentPair} (${currentTimeframe})`);
+                }
+            }, 1000);
+        }
+
         function initApp() {
             startLicenseCountdownTimer();
             startTfTimers();
+            startAutoReloadTimer();
             setInterval(updateMarketStatusBannerLocally, 10000);
             updateClocks();
             fetchAndRenderOnDemand();
@@ -1682,6 +1711,7 @@
 
         function triggerManualRefresh() {
             tfSecondsRemaining[currentTimeframe] = getTfTotalSeconds(currentTimeframe);
+            autoReloadSeconds = 40; // Reset auto-timer on manual action
             fetchAndRenderOnDemand();
             showToast(`Refreshed telemetry for ${currentPair} (${currentTimeframe})`);
         }
@@ -1704,49 +1734,126 @@
         function renderPipMatrixTable(currentPrice, direction) {
             const tableBody = document.getElementById('pipMatrixTableBody');
             if (!tableBody) return;
-
+            
             const matrix = globalPipEngine.generatePipMatrix(currentPair, currentPrice, direction);
             tableBody.innerHTML = matrix.map(row => `
                 <tr class="hover:bg-white/5 transition">
-                    <td class="py-1 font-bold text-gray-300">+${row.pips} Pips</td>
+                    <td class="py-1 text-gray-300 font-bold">${row.pips} Pips</td>
                     <td class="py-1 text-emerald-400 font-bold">${row.tp}</td>
                     <td class="py-1 text-red-400 font-bold">${row.sl}</td>
                 </tr>
             `).join('');
         }
 
-        function renderCharts(labels, prices, rsiValues) {
-            const mainCtx = document.getElementById('mainTimeSeriesChart')?.getContext('2d');
-            const rsiCtx = document.getElementById('rsiSubChart')?.getContext('2d');
+        function calculateRSI(prices, period = 14) {
+            let rsi = [];
+            let gains = 0, losses = 0;
+            for (let i = 1; i <= period; i++) {
+                let diff = prices[i] - prices[i - 1];
+                if (diff >= 0) gains += diff;
+                else losses -= diff;
+            }
+            let avgGain = gains / period;
+            let avgLoss = losses / period;
+            rsi.push(100 - (100 / (1 + (avgGain / (avgLoss || 1)))));
 
-            if (!mainCtx || !rsiCtx) return;
+            for (let i = period + 1; i < prices.length; i++) {
+                let diff = prices[i] - prices[i - 1];
+                let gain = diff >= 0 ? diff : 0;
+                let loss = diff < 0 ? -diff : 0;
+                avgGain = (avgGain * (period - 1) + gain) / period;
+                avgLoss = (avgLoss * (period - 1) + loss) / period;
+                rsi.push(100 - (100 / (1 + (avgGain / (avgLoss || 1)))));
+            }
+            return rsi;
+        }
 
+        function renderMultiTfMatrix(basePrice) {
+            const tbody = document.getElementById('multiTfMatrixBody');
+            if(!tbody) return;
+            const timeframes = ['1m', '5m', '15m', '1h', '4h', '1d'];
+            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
+            
+            tbody.innerHTML = timeframes.map(tf => {
+                let isBullish = Math.random() > 0.35;
+                let stateText = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
+                let stateClass = isBullish ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold';
+                let offset = (Math.random() - 0.5) * (currentPair.includes('BTC') ? 100 : 0.0020);
+                let entry = (basePrice + offset).toFixed(decimals);
+                let tp = (basePrice + offset + (isBullish ? 0.0050 : -0.0050)).toFixed(decimals);
+                let sl = (basePrice + offset + (isBullish ? -0.0025 : 0.0025)).toFixed(decimals);
+                
+                return `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="py-2 text-gray-300 font-bold">${tf}</td>
+                        <td class="py-2 ${stateClass}">${stateText}</td>
+                        <td class="py-2 text-[#00ffcc]">${entry}</td>
+                        <td class="py-2 text-emerald-400">${tp}</td>
+                        <td class="py-2 text-red-400">${sl}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function fetchAndRenderOnDemand() {
+            if (!telemetryEngine) return;
+            const candles = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+            
+            const labels = candles.map(c => c.datetime.slice(11, 16));
+            const closePrices = candles.map(c => parseFloat(c.close));
+
+            const pattern = globalCandleEngine.detectPattern(candles);
+            globalCandleEngine.renderWidget(pattern);
+
+            analyzeMarketStructure(closePrices);
+            const { finalSignal, activeSl, activeTp, currentPrice } = evaluateMarketDirection(candles, calculateRSI(closePrices), closePrices);
+            
+            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
+            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
+            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(decimals), activeTp.toFixed(decimals), activeSl.toFixed(decimals));
+
+            const rsiValues = calculateRSI(closePrices);
+            const exitInfo = globalTradeExitMonitor.evaluateExit(candles, rsiValues, finalSignal);
+            globalTradeExitMonitor.renderWidget(exitInfo);
+
+            renderPipMatrixTable(currentPrice, finalSignal);
+            renderMultiTfMatrix(currentPrice);
+            calculatePositionSize();
+
+            const rsiElem = document.getElementById('rsiValDisplay');
+            if (rsiElem) {
+                let lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
+                let state = lastRsi > 70 ? '(Overbought)' : (lastRsi < 30 ? '(Oversold)' : '(Neutral)');
+                rsiElem.innerText = `${lastRsi} ${state}`;
+            }
+
+            renderMainChart(labels, closePrices);
+            renderRsiChart(labels.slice(14), rsiValues);
+            logTelemetryEvent(currentPair, currentTimeframe, finalSignal, currentPrice, activeTp, activeSl);
+        }
+
+        function renderMainChart(labels, data) {
+            const ctx = document.getElementById('mainTimeSeriesChart').getContext('2d');
             if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
-            if (rsiChart) rsiChart.destroy();
 
-            const isUp = prices[prices.length - 1] >= prices[0];
-            const strokeColor = isUp ? '#00ffcc' : '#f23645';
+            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
+            gradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
 
-            mainTimeSeriesChart = new Chart(mainCtx, {
+            mainTimeSeriesChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `${currentPair} Price`,
-                        data: prices,
-                        borderColor: strokeColor,
+                        label: `${currentPair} (${currentTimeframe})`,
+                        data: data,
+                        borderColor: '#00ffcc',
                         borderWidth: 2,
+                        backgroundColor: gradient,
                         fill: true,
-                        backgroundColor: (context) => {
-                            const ctx = context.chart.ctx;
-                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                            gradient.addColorStop(0, isUp ? 'rgba(0, 255, 204, 0.25)' : 'rgba(242, 54, 69, 0.25)');
-                            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                            return gradient;
-                        },
                         tension: 0.2,
-                        pointRadius: 0,
-                        pointHoverRadius: 4
+                        pointRadius: 2,
+                        pointHoverRadius: 5
                     }]
                 },
                 options: {
@@ -1754,26 +1861,27 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { display: false },
-                        y: { 
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
-                        }
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
                     }
                 }
             });
+        }
 
-            rsiChart = new Chart(rsiCtx, {
+        function renderRsiChart(labels, data) {
+            const ctx = document.getElementById('rsiSubChart').getContext('2d');
+            if (rsiChart) rsiChart.destroy();
+
+            rsiChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'RSI (14)',
-                        data: rsiValues,
+                        data: data,
                         borderColor: '#c084fc',
                         borderWidth: 1.5,
                         fill: false,
-                        tension: 0.1,
                         pointRadius: 0
                     }]
                 },
@@ -1783,108 +1891,38 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { display: false },
-                        y: { 
-                            min: 0, 
-                            max: 100,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 }, stepSize: 30 }
-                        }
+                        y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 }, stepSize: 30 } }
                     }
                 }
             });
-
-            const currentRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-            let rsiState = "Neutral";
-            if (currentRsi > 70) rsiState = "Overbought";
-            if (currentRsi < 30) rsiState = "Oversold";
-            const rsiElem = document.getElementById('rsiValDisplay');
-            if (rsiElem) rsiElem.innerText = `${currentRsi} (${rsiState})`;
         }
 
-        function renderMultiTfMatrix(currentPrice) {
-            const tfs = ['1min', '5min', '15min', '1h', '4h'];
-            const matrixBody = document.getElementById('multiTfMatrixBody');
-            if (!matrixBody) return;
+        function logTelemetryEvent(pair, tf, signal, entry, tp, sl) {
+            const tbody = document.getElementById('signalLogTableBody');
+            if(!tbody) return;
+            const now = new Date().toISOString().slice(11, 19);
+            let decimals = pair.includes('JPY') || pair.includes('XAU') || pair.includes('BTC') ? 2 : 5;
+            
+            const newRowHtml = `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="py-2 text-gray-400">${now}</td>
+                    <td class="py-2 text-white font-bold">${pair} [${tf}]</td>
+                    <td class="py-2 ${signal.includes('BUY') ? 'text-emerald-400' : 'text-red-400'} font-bold">${signal}</td>
+                    <td class="py-2 text-[#00ffcc]">${entry.toFixed(decimals)}</td>
+                    <td class="py-2 text-gray-300">TP: ${tp.toFixed(decimals)} | SL: ${sl.toFixed(decimals)}</td>
+                </tr>
+            `;
 
-            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
-
-            matrixBody.innerHTML = tfs.map(tf => {
-                const isBullish = Math.random() > 0.4;
-                const stateText = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
-                const stateColor = isBullish ? 'text-emerald-400' : 'text-red-400';
-                
-                const dir = isBullish ? 'BUY / LONG' : 'SELL / SHORT';
-                const tpTarget = globalPipEngine.calculateExactPipTarget(currentPair, currentPrice, 25, dir);
-                const slTarget = globalPipEngine.calculateExactPipTarget(currentPair, currentPrice, -12, dir);
-
-                return `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="py-2 text-white font-bold">${tf}</td>
-                        <td class="py-2 ${stateColor} font-bold">${stateText}</td>
-                        <td class="py-2 text-gray-300">${currentPrice.toFixed(decimals)}</td>
-                        <td class="py-2 text-emerald-400 font-bold">${tpTarget.exactPrice}</td>
-                        <td class="py-2 text-red-400 font-bold">${slTarget.exactPrice}</td>
-                    </tr>
-                `;
-            }).join('');
+            if (tbody.children[0] && tbody.children[0].children[0].getAttribute('colspan')) {
+                tbody.innerHTML = newRowHtml;
+            } else {
+                tbody.insertAdjacentHTML('afterbegin', newRowHtml);
+                if (tbody.children.length > 10) tbody.removeChild(tbody.lastChild);
+            }
         }
 
         function executeTradeAlert() {
-            const pair = currentPair;
-            const signal = document.getElementById('signalDirBadge')?.innerText || 'BUY / LONG';
-            const tp = document.getElementById('tpVal')?.innerText || '--';
-            const sl = document.getElementById('slVal')?.innerText || '--';
-            const lot = document.getElementById('calcLotSizeResult')?.innerText || '1.00 Lots';
-
-            showToast(`Institutional Order Dispatched: ${signal} ${pair} | Size: ${lot} | TP: ${tp} | SL: ${sl}`);
-
-            const tableBody = document.getElementById('signalLogTableBody');
-            if (!tableBody) return;
-
-            const now = new Date().toLocaleTimeString();
-            const newRow = document.createElement('tr');
-            newRow.className = "hover:bg-white/5 transition";
-            newRow.innerHTML = `
-                <td class="py-2 text-gray-400">${now}</td>
-                <td class="py-2 font-bold text-white">${pair} (${currentTimeframe})</td>
-                <td class="py-2 ${signal.includes('BUY') ? 'text-emerald-400' : 'text-red-400'} font-bold">${signal}</td>
-                <td class="py-2 text-gray-300">TP: ${tp} / SL: ${sl}</td>
-                <td class="py-2 text-[#00ffcc] font-bold">EXECUTED (${lot})</td>
-            `;
-
-            if (tableBody.children.length === 1 && tableBody.children[0].children.length === 1) {
-                tableBody.innerHTML = '';
-            }
-            tableBody.insertBefore(newRow, tableBody.firstChild);
-        }
-
-        async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
-            const rawData = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
-            if (!rawData || rawData.length === 0) return;
-
-            const labels = rawData.map(d => d.datetime);
-            const prices = rawData.map(d => parseFloat(d.close));
-            const rsiValues = prices.map((p, idx, arr) => idx === 0 ? 50 : Math.min(Math.max(50 + (p - arr[idx-1]) * 1000, 10), 90));
-
-            analyzeMarketStructure(prices);
-            
-            const detectedPattern = globalCandleEngine.detectPattern(rawData);
-            globalCandleEngine.renderWidget(detectedPattern);
-
-            const evalRes = evaluateMarketDirection(rawData, rsiValues, prices);
-
-            const exitEval = globalTradeExitMonitor.evaluateExit(rawData, rsiValues, evalRes.finalSignal);
-            globalTradeExitMonitor.renderWidget(exitEval);
-
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(rawData);
-            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
-            globalVolumeAnalyzer.renderWidget(volAnalysis, evalRes.currentPrice.toFixed(decimals), evalRes.activeTp.toFixed(decimals), evalRes.activeSl.toFixed(decimals));
-
-            renderCharts(labels, prices, rsiValues);
-            updateCustomPipTarget();
-            renderMultiTfMatrix(evalRes.currentPrice);
-            calculatePositionSize();
+            showToast(`Order Dispatched to Execution Server: ${currentPair} @ ${document.getElementById('smcEngineEntry')?.innerText}`);
         }
     </script>
 </body>
