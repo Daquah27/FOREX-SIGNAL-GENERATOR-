@@ -36,7 +36,7 @@
                     animation: {
                         'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
                         'scan': 'scanline 8s linear infinite',
-                        'ticker': 'tickerScroll 30s linear infinite'
+                        'ticker': 'tickerScroll 35s linear infinite'
                     }
                 }
             }
@@ -75,7 +75,7 @@
             display: inline-flex;
             white-space: nowrap;
             will-change: transform;
-            animation: tickerScroll 25s linear infinite;
+            animation: tickerScroll 35s linear infinite;
         }
         .ticker-wrap:hover .ticker-track {
             animation-play-state: paused;
@@ -132,7 +132,7 @@
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.5</h1>
-                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + 2026 Immersive Visual Suite</p>
+                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Multi-Asset Expansion Suite</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
@@ -193,24 +193,28 @@
             <div class="ticker-wrap flex-1 relative overflow-hidden">
                 <div class="ticker-track flex items-center space-x-8 font-mono">
                     <div class="flex items-center space-x-6">
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong id="ticker_EURUSD" class="text-emerald-400">1.1043</strong> (<span id="status_EURUSD">OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong id="ticker_GBPUSD" class="text-emerald-400">1.2755</strong> (<span id="status_GBPUSD">OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong id="ticker_USDJPY" class="text-red-400">147.85</strong> (<span id="status_USDJPY">OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong id="ticker_XAUUSD" class="text-emerald-400">2342.50</strong> (<span id="status_XAUUSD">OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong id="ticker_BTCUSD" class="text-emerald-400">64210.00</strong> (<strong class="text-emerald-400">24/7 OPEN</strong>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NYSE: <strong id="status_NYSE" class="text-red-400">CLOSED</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">LSE: <strong id="status_LSE" class="text-red-400">CLOSED</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">TYO: <strong id="status_TYO" class="text-red-400">CLOSED</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong id="ticker_EURUSD" class="text-emerald-400">1.1043</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/JPY: <strong id="ticker_GBPJPY" class="text-emerald-400">188.45</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USOIL: <strong id="ticker_USOIL" class="text-emerald-400">78.40</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong id="ticker_BTCUSD" class="text-emerald-400">64210.00</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">SOL/USD: <strong id="ticker_SOLUSD" class="text-emerald-400">145.20</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">US30: <strong id="ticker_US30" class="text-emerald-400">38890.00</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NAS100: <strong id="ticker_NAS100" class="text-emerald-400">18120.50</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Vol 75: <strong id="ticker_V75" class="text-emerald-400">421500.20</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Boom 1000: <strong id="ticker_BOOM1000" class="text-emerald-400">10245.80</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Crash 1000: <strong id="ticker_CRASH1000" class="text-red-400">5840.10</strong></span>
                     </div>
                     <div class="flex items-center space-x-6" aria-hidden="true">
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400 ticker-dup-EURUSD">1.1043</strong> (<span>OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/USD: <strong class="text-emerald-400 ticker-dup-GBPUSD">1.2755</strong> (<span>OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USD/JPY: <strong class="text-red-400 ticker-dup-USDJPY">147.85</strong> (<span>OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">XAU/USD: <strong class="text-emerald-400 ticker-dup-XAUUSD">2342.50</strong> (<span>OPEN</span>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong class="text-emerald-400">64210.00</strong> (<strong class="text-emerald-400">24/7 OPEN</strong>)</span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NYSE: <strong class="text-red-400">CLOSED</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">LSE: <strong class="text-red-400">CLOSED</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">TYO: <strong class="text-red-400">CLOSED</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400 ticker-dup-EURUSD">1.1043</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/JPY: <strong class="text-emerald-400 ticker-dup-GBPJPY">188.45</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USOIL: <strong class="text-emerald-400 ticker-dup-USOIL">78.40</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong class="text-emerald-400">64210.00</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">SOL/USD: <strong class="text-emerald-400 ticker-dup-SOLUSD">145.20</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">US30: <strong class="text-emerald-400 ticker-dup-US30">38890.00</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NAS100: <strong class="text-emerald-400 ticker-dup-NAS100">18120.50</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Vol 75: <strong class="text-emerald-400 ticker-dup-V75">421500.20</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Boom 1000: <strong class="text-emerald-400 ticker-dup-BOOM1000">10245.80</strong></span>
+                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Crash 1000: <strong class="text-red-400 ticker-dup-CRASH1000">5840.10</strong></span>
                     </div>
                 </div>
             </div>
@@ -220,7 +224,7 @@
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.5 + 2026 VISUALS</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.5 + EXPANDED SUITE</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
@@ -256,46 +260,29 @@
                     </button>
                     <div id="profileMenu" class="hidden absolute right-0 mt-2 w-72 glass-card rounded-xl shadow-2xl p-4 space-y-3 z-50">
                         <div class="text-xs font-bold text-gray-300 uppercase border-b border-white/10 pb-1 flex items-center justify-between">
-                            <span>30+ Living Theme Environments</span>
+                            <span>Living Theme Environments</span>
                             <i class="fa-solid fa-palette text-[#00ffcc]"></i>
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-400 mb-1">Select Immersive Environment</label>
                             <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/80 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
                                 <optgroup label="Ocean & Water">
-                                    <option value="ocean" selected>🌊 Deep Ocean Abyss (Fish & Jellyfish)</option>
-                                    <option value="coral">🪸 Coral Reef Sanctuary (Tropical Fish)</option>
-                                    <option value="arctic">❄️ Frozen Glacier (Ice Crystals)</option>
-                                    <option value="abyss">⚓ Mariana Trench (Deep Sea Angler)</option>
+                                    <option value="ocean" selected>🌊 Deep Ocean Abyss</option>
+                                    <option value="coral">🪸 Coral Reef Sanctuary</option>
+                                    <option value="arctic">❄️ Frozen Glacier</option>
+                                    <option value="abyss">⚓ Mariana Trench</option>
                                 </optgroup>
                                 <optgroup label="Cyber & Sci-Fi">
-                                    <option value="cyberpunk">⚡ Cyberpunk Neon Rain (Glitch Drones)</option>
-                                    <option value="matrix">💻 Matrix Data Stream (Binary Glyphs)</option>
-                                    <option value="synthwave">🌆 Retro Synthwave Sunset (Grid Orbs)</option>
-                                    <option value="quantum">⚛️ Quantum Core (Subatomic Sparks)</option>
-                                    <option value="circuit">🔌 Cybernetic Circuit (Nodes & Pulses)</option>
+                                    <option value="cyberpunk">⚡ Cyberpunk Neon Rain</option>
+                                    <option value="matrix">💻 Matrix Data Stream</option>
+                                    <option value="synthwave">🌆 Retro Synthwave Sunset</option>
+                                    <option value="quantum">⚛️ Quantum Core</option>
+                                    <option value="circuit">🔌 Cybernetic Circuit</option>
                                 </optgroup>
                                 <optgroup label="Nature & Earth">
-                                    <option value="forest">🌲 Enchanted Emerald Forest (Fireflies)</option>
-                                    <option value="aurora">🌌 Aurora Borealis (Light Whorls)</option>
-                                    <option value="volcanic">🌋 Volcanic Ash & Ember (Fire Embers)</option>
-                                    <option value="bamboo">🎋 Zen Bamboo Garden (Falling Leaves)</option>
-                                    <option value="canyon">🏜️ Desert Red Canyon (Dust Motes)</option>
-                                    <option value="savanna">🦁 Golden Savanna Dusk (Pollen Seeds)</option>
-                                </optgroup>
-                                <optgroup label="Cosmic & Space">
-                                    <option value="nebula">🌠 Sunset Nebula (Comets & Stars)</option>
-                                    <option value="supernova">✨ Supernova Explosion (Stellar Shards)</option>
-                                    <option value="eclipse">🌑 Solar Eclipse (Corona Rings)</option>
-                                    <option value="deepspace">🌌 Deep Space Void (Asteroids)</option>
-                                    <option value="galaxy">🌀 Andromeda Spiral (Mini Galaxies)</option>
-                                </optgroup>
-                                <optgroup label="Abstract & Moody">
-                                    <option value="vaporwave">🏛️ Vaporwave Statuary (Floating Busts)</option>
-                                    <option value="midnight">🌙 Midnight Velvet (Night Moths)</option>
-                                    <option value="amethyst">🔮 Amethyst Crystal Cave (Gem Shards)</option>
-                                    <option value="obsidian">🪙 Obsidian Gold (Gold Leaf Flakes)</option>
-                                    <option value="toxic">☢️ Toxic Wasteland (Mutant Spores)</option>
+                                    <option value="forest">🌲 Enchanted Emerald Forest</option>
+                                    <option value="aurora">🌌 Aurora Borealis</option>
+                                    <option value="volcanic">🌋 Volcanic Ash & Ember</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -309,10 +296,11 @@
             <div class="flex items-center space-x-6 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5 flex-1">
                 <span class="text-[#00ffcc] font-bold flex items-center"><i class="fa-solid fa-bullhorn mr-1.5 animate-pulse"></i> LIVE FEED:</span>
                 <span class="text-gray-300">EUR/USD <strong class="text-[#00ffcc] animate-pulse">1.1043</strong></span>
-                <span class="text-gray-300">GBP/USD <strong class="text-[#00ffcc]">1.2755</strong></span>
-                <span class="text-gray-300">USD/JPY <strong class="text-red-400">147.85</strong></span>
+                <span class="text-gray-300">GBP/JPY <strong class="text-[#00ffcc]">188.45</strong></span>
+                <span class="text-gray-300">USOIL <strong class="text-emerald-400">78.40</strong></span>
                 <span class="text-gray-300">XAU/USD <strong class="text-[#00ffcc]">2342.50</strong></span>
                 <span class="text-gray-300">BTC/USD <strong class="text-[#00ffcc]">64210.00</strong></span>
+                <span class="text-gray-300">NAS100 <strong class="text-[#00ffcc]">18120.50</strong></span>
             </div>
             <div class="hidden xl:flex items-center space-x-3 text-gray-400 font-mono text-[11px]">
                 <span>NYC: <strong id="clockNY" class="text-gray-200">--:--</strong></span>
@@ -324,7 +312,7 @@
         <div class="bg-cardBg/30 backdrop-blur border-b border-white/5 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center space-x-3 gap-y-2">
                 <div>
-                    <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Instrument</label>
+                    <label class="block text-[10px] uppercase font-semibold text-gray-400 mb-0.5">Instrument Selection</label>
                     <select id="mainPairSelect" onchange="onPairChange()" class="bg-darkBg/60 border border-white/10 rounded px-3 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-[#00ffcc] backdrop-blur">
                         <optgroup label="Major Forex Pairs">
                             <option value="EUR/USD" selected>EUR/USD</option>
@@ -335,11 +323,56 @@
                             <option value="USD/CAD">USD/CAD</option>
                             <option value="NZD/USD">NZD/USD</option>
                         </optgroup>
-                        <optgroup label="Commodities & Crypto Assets">
+                        <optgroup label="Minor & Cross Forex Pairs">
+                            <option value="EUR/GBP">EUR/GBP</option>
+                            <option value="EUR/JPY">EUR/JPY</option>
+                            <option value="GBP/JPY">GBP/JPY</option>
+                            <option value="EUR/AUD">EUR/AUD</option>
+                            <option value="GBP/AUD">GBP/AUD</option>
+                            <option value="AUD/JPY">AUD/JPY</option>
+                            <option value="NZD/JPY">NZD/JPY</option>
+                            <option value="CAD/JPY">CAD/JPY</option>
+                            <option value="EUR/CAD">EUR/CAD</option>
+                            <option value="GBP/CAD">GBP/CAD</option>
+                            <option value="USD/SGD">USD/SGD</option>
+                            <option value="USD/HKD">USD/HKD</option>
+                        </optgroup>
+                        <optgroup label="Commodities & Energy">
                             <option value="XAU/USD">XAU/USD (Gold)</option>
                             <option value="XAG/USD">XAG/USD (Silver)</option>
-                            <option value="BTC/USD">BTC/USD</option>
-                            <option value="ETH/USD">ETH/USD</option>
+                            <option value="WTI/USD">WTI/USD (USOIL Crude)</option>
+                            <option value="BRENT/USD">BRENT/USD (UKOIL Brent)</option>
+                            <option value="NATGAS">NATGAS (Natural Gas)</option>
+                            <option value="XPT/USD">XPT/USD (Platinum)</option>
+                            <option value="XPD/USD">XPD/USD (Palladium)</option>
+                            <option value="COPPER">COPPER</option>
+                        </optgroup>
+                        <optgroup label="Popular Crypto Assets">
+                            <option value="BTC/USD">BTC/USD (Bitcoin)</option>
+                            <option value="ETH/USD">ETH/USD (Ethereum)</option>
+                            <option value="SOL/USD">SOL/USD (Solana)</option>
+                            <option value="XRP/USD">XRP/USD (Ripple)</option>
+                            <option value="ADA/USD">ADA/USD (Cardano)</option>
+                            <option value="DOGE/USD">DOGE/USD (Dogecoin)</option>
+                            <option value="BNB/USD">BNB/USD (Binance Coin)</option>
+                        </optgroup>
+                        <optgroup label="Indices & Equity Assets">
+                            <option value="US30">US30 / DJI (Dow Jones)</option>
+                            <option value="NAS100">NAS100 / NDX (Nasdaq 100)</option>
+                            <option value="SPX500">SPX500 / SP500 (S&P 500)</option>
+                            <option value="GER40">GER40 / DAX40 (German Index)</option>
+                            <option value="UK100">UK100 (FTSE 100)</option>
+                        </optgroup>
+                        <optgroup label="Synthetic Indices (Deriv)">
+                            <option value="V75">Volatility 75 (1s) Index</option>
+                            <option value="V100">Volatility 100 Index</option>
+                            <option value="V10">Volatility 10 Index</option>
+                            <option value="BOOM500">Boom 500 Index</option>
+                            <option value="BOOM1000">Boom 1000 Index</option>
+                            <option value="CRASH500">Crash 500 Index</option>
+                            <option value="CRASH1000">Crash 1000 Index</option>
+                            <option value="STEP_INDEX">Step Index</option>
+                            <option value="JUMP50">Jump 50 Index</option>
                         </optgroup>
                     </select>
                 </div>
@@ -359,10 +392,10 @@
 
         <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto">
 
-            <!-- RE-ORDERED 3-COLUMN LAYOUT -->
+            <!-- 3-COLUMN LAYOUT -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- LEFT COLUMN: SMC Structure State + Candlestick Pattern Engine + Confluence Signal -->
+                <!-- LEFT COLUMN -->
                 <div class="space-y-6">
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
@@ -372,11 +405,11 @@
                         <div class="grid grid-cols-2 gap-2 text-xs font-mono">
                             <div class="bg-darkBg/60 backdrop-blur p-2.5 rounded-xl border border-white/5">
                                 <span class="text-[9px] text-gray-400 block mb-0.5">RANGE HIGH</span>
-                                <strong id="smcRangeHigh" class="text-emerald-400 text-xs">1.10850</strong>
+                                <strong id="smcRangeHigh" class="text-emerald-400 text-xs">--</strong>
                             </div>
                             <div class="bg-darkBg/60 backdrop-blur p-2.5 rounded-xl border border-white/5">
                                 <span class="text-[9px] text-gray-400 block mb-0.5">RANGE LOW</span>
-                                <strong id="smcRangeLow" class="text-red-400 text-xs">1.10120</strong>
+                                <strong id="smcRangeLow" class="text-red-400 text-xs">--</strong>
                             </div>
                         </div>
                         <div class="bg-darkBg/50 backdrop-blur p-2.5 rounded-xl border border-white/5 text-[11px] font-mono flex items-center justify-between">
@@ -386,33 +419,33 @@
                         <div class="border-t border-white/10 pt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">ENTRY</span>
-                                <strong id="smcEngineEntry" class="text-[#00ffcc]">1.10420</strong>
+                                <strong id="smcEngineEntry" class="text-[#00ffcc]">--</strong>
                             </div>
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">TP</span>
-                                <strong id="smcEngineTP" class="text-emerald-400">1.11200</strong>
+                                <strong id="smcEngineTP" class="text-emerald-400">--</strong>
                             </div>
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">SL</span>
-                                <strong id="smcEngineSL" class="text-red-400">1.10100</strong>
+                                <strong id="smcEngineSL" class="text-red-400">--</strong>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Candlestick Pattern Engine Detector (Works hand-in-hand with SMC) -->
+                    <!-- Candlestick Pattern Engine Detector -->
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-purple-500/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-wand-magic-sparkles text-purple-400 mr-2"></i>Candlestick Pattern Engine</h2>
-                            <span id="candlePatternBadge" class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono font-bold">BULLISH ENGULFING</span>
+                            <span id="candlePatternBadge" class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono font-bold">PATTERN SCANNER</span>
                         </div>
                         <div class="space-y-2 text-xs font-mono">
                             <div class="bg-darkBg/60 p-2.5 rounded-xl border border-white/5 flex items-center justify-between">
                                 <span class="text-gray-400">Detected Formation:</span>
-                                <strong id="candlePatternName" class="text-emerald-400">Bullish Engulfing at OB</strong>
+                                <strong id="candlePatternName" class="text-emerald-400">Scanning...</strong>
                             </div>
                             <div class="bg-darkBg/60 p-2.5 rounded-xl border border-white/5 flex items-center justify-between">
                                 <span class="text-gray-400">SMC Confluence Sync:</span>
-                                <strong id="candleSmcSync" class="text-purple-300">Aligned (+15% Weight)</strong>
+                                <strong id="candleSmcSync" class="text-purple-300">Calculating...</strong>
                             </div>
                         </div>
                     </div>
@@ -473,21 +506,19 @@
                     </div>
                 </div>
 
-                <!-- MIDDLE COLUMN: On-Demand Data Stream, Rectangular Displays, & Multi-TF Matrix -->
+                <!-- MIDDLE COLUMN -->
                 <div class="lg:col-span-1 space-y-6">
                     
-                    <!-- On-Demand Data Stream (Charts & Instrumentation) -->
                     <div class="glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
                         <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/10 via-transparent to-transparent pointer-events-none animate-scan"></div>
                         
-                        <!-- LOAD SIGNAL / ANALYZE BUTTON -->
                         <div class="z-10">
                             <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
                                 <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
                             </button>
                         </div>
 
-                        <!-- DIGITAL EXIT SIGNAL ENGINE UI MODULE (INTEGRATED BETWEEN BUTTON & CHART) -->
+                        <!-- DIGITAL EXIT SIGNAL ENGINE MODULE -->
                         <div id="digitalExitSignalEngine" class="glass-card rounded-xl p-4 z-10 border border-[#00ffcc]/40 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl">
                             <div class="flex items-center justify-between border-b border-white/10 pb-2">
                                 <div class="flex items-center space-x-2">
@@ -503,7 +534,7 @@
                                 <div class="bg-darkBg/80 p-2.5 rounded-lg border border-white/5 space-y-1">
                                     <div class="text-[9px] uppercase font-semibold text-gray-400">Exit Trigger Reasons</div>
                                     <div id="tradeExitReasonsDisplay" class="text-gray-200 text-[11px]">
-                                        Structure intact &bull; Volume volume distribution stable
+                                        Structure intact &bull; Volume distribution stable
                                     </div>
                                 </div>
 
@@ -573,7 +604,7 @@
                                 <div class="flex items-center justify-between border-b border-white/10 pb-2">
                                     <div class="flex items-center space-x-2">
                                         <i class="fa-solid fa-globe text-emerald-400"></i>
-                                        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">Global FX Cross Spread</h3>
+                                        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">Global Macro Stream</h3>
                                     </div>
                                     <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Live Feed</span>
                                 </div>
@@ -592,7 +623,7 @@
                                     </div>
                                 </div>
                                 <div class="text-[9px] text-gray-400 text-center pt-1 font-mono">
-                                    Zero-Key Autonomous Macro Stream
+                                    Autonomous Macro Stream
                                 </div>
                             </div>
 
@@ -625,7 +656,7 @@
 
                 </div>
 
-                <!-- RIGHT COLUMN: Pip & Exact Point Matrix + TradingView Volume Profile Guide + Volume Participation Engine + Session Liquidity -->
+                <!-- RIGHT COLUMN -->
                 <div class="space-y-6">
                     
                     <!-- Pip & Exact Point Matrix -->
@@ -650,7 +681,7 @@
                             <table class="w-full text-left text-[11px] font-mono">
                                 <thead>
                                     <tr class="text-gray-400 border-b border-white/10">
-                                        <th class="pb-1">Pips</th>
+                                        <th class="pb-1">Pips/Points</th>
                                         <th class="pb-1">Exact TP Target</th>
                                         <th class="pb-1">Exact SL Point</th>
                                     </tr>
@@ -662,7 +693,7 @@
                         </div>
                     </div>
 
-                    <!-- INTEGRATED TRADINGVIEW VOLUME PROFILE & POC GUIDE (FROM TRANSCRIPT) -->
+                    <!-- TRADINGVIEW VOLUME PROFILE GUIDE -->
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-cyan-500/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chart-bar text-cyan-400 mr-2"></i>TradingView Volume Profile & POC Setup</h2>
@@ -672,15 +703,15 @@
                         <div class="space-y-1.5 text-[11px] font-mono text-gray-300">
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">1.</span>
-                                <div><strong>30-Minute Timeframe:</strong> Go to the 30-minute timeframe, open your chart settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong> to see session opens/closes.</div>
+                                <div><strong>30-Minute Timeframe:</strong> Open settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong>.</div>
                             </div>
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">2.</span>
-                                <div><strong>Fixed Range Profile:</strong> Open the toolbox on the left side, grab the <strong>Fixed Range Volume Profile</strong>, and stretch it across the previous trading day's range.</div>
+                                <div><strong>Fixed Range Profile:</strong> Grab <strong>Fixed Range Volume Profile</strong> and stretch across the prior day range.</div>
                             </div>
                             <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
                                 <span class="text-cyan-400 font-bold">3.</span>
-                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong> (exact price where most volume traded), <strong>Value Area Low (VAL)</strong>, and <strong>Value Area High (VAH)</strong> where serious money stepped in.</div>
+                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong>, <strong>VAL</strong>, and <strong>VAH</strong> for entry confirmation.</div>
                             </div>
                         </div>
                     </div>
@@ -699,15 +730,15 @@
                         <div class="border-t border-white/10 pt-2 mt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">ENTRY</span>
-                                <strong id="volEngineEntry" class="text-[#00ffcc]">1.10420</strong>
+                                <strong id="volEngineEntry" class="text-[#00ffcc]">--</strong>
                             </div>
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">TP</span>
-                                <strong id="volEngineTP" class="text-emerald-400">1.11200</strong>
+                                <strong id="volEngineTP" class="text-emerald-400">--</strong>
                             </div>
                             <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
                                 <span class="text-[9px] text-gray-400 block">SL</span>
-                                <strong id="volEngineSL" class="text-red-400">1.10100</strong>
+                                <strong id="volEngineSL" class="text-red-400">--</strong>
                             </div>
                         </div>
                     </div>
@@ -752,7 +783,74 @@
     </div>
 
     <script>
-        // --- VOLUME PROFILE & MARKET STRUCTURE REAL-TIME MONITOR (TRADE EXIT MONITOR ENGINE) ---
+        // GLOBAL MULTI-ASSET TICK/PIP CONFIGURATION MAP
+        const SYMBOL_CONFIG = {
+            // Majors
+            'EUR/USD': { decimals: 5, pipMult: 0.0001, base: 1.1040 },
+            'GBP/USD': { decimals: 5, pipMult: 0.0001, base: 1.2750 },
+            'USD/JPY': { decimals: 2, pipMult: 0.01, base: 147.80 },
+            'USD/CHF': { decimals: 5, pipMult: 0.0001, base: 0.8850 },
+            'AUD/USD': { decimals: 5, pipMult: 0.0001, base: 0.6540 },
+            'USD/CAD': { decimals: 5, pipMult: 0.0001, base: 1.3520 },
+            'NZD/USD': { decimals: 5, pipMult: 0.0001, base: 0.5980 },
+
+            // Minor & Cross Forex Pairs
+            'EUR/GBP': { decimals: 5, pipMult: 0.0001, base: 0.8560 },
+            'EUR/JPY': { decimals: 2, pipMult: 0.01, base: 163.20 },
+            'GBP/JPY': { decimals: 2, pipMult: 0.01, base: 188.45 },
+            'EUR/AUD': { decimals: 5, pipMult: 0.0001, base: 1.6880 },
+            'GBP/AUD': { decimals: 5, pipMult: 0.0001, base: 1.9500 },
+            'AUD/JPY': { decimals: 2, pipMult: 0.01, base: 96.80 },
+            'NZD/JPY': { decimals: 2, pipMult: 0.01, base: 88.40 },
+            'CAD/JPY': { decimals: 2, pipMult: 0.01, base: 109.30 },
+            'EUR/CAD': { decimals: 5, pipMult: 0.0001, base: 1.4920 },
+            'GBP/CAD': { decimals: 5, pipMult: 0.0001, base: 1.7240 },
+            'USD/SGD': { decimals: 5, pipMult: 0.0001, base: 1.3450 },
+            'USD/HKD': { decimals: 4, pipMult: 0.001, base: 7.8210 },
+
+            // Commodities & Energy
+            'XAU/USD': { decimals: 2, pipMult: 0.1, base: 2342.50 },
+            'XAG/USD': { decimals: 3, pipMult: 0.01, base: 27.80 },
+            'WTI/USD': { decimals: 2, pipMult: 0.01, base: 78.40 },
+            'BRENT/USD': { decimals: 2, pipMult: 0.01, base: 82.10 },
+            'NATGAS': { decimals: 3, pipMult: 0.005, base: 2.150 },
+            'XPT/USD': { decimals: 2, pipMult: 0.1, base: 945.00 },
+            'XPD/USD': { decimals: 2, pipMult: 0.1, base: 980.00 },
+            'COPPER': { decimals: 4, pipMult: 0.001, base: 4.1250 },
+
+            // Popular Crypto Assets
+            'BTC/USD': { decimals: 2, pipMult: 1.0, base: 64210.00 },
+            'ETH/USD': { decimals: 2, pipMult: 0.5, base: 3450.00 },
+            'SOL/USD': { decimals: 2, pipMult: 0.1, base: 145.20 },
+            'XRP/USD': { decimals: 4, pipMult: 0.001, base: 0.5680 },
+            'ADA/USD': { decimals: 4, pipMult: 0.001, base: 0.3850 },
+            'DOGE/USD': { decimals: 5, pipMult: 0.0001, base: 0.1240 },
+            'BNB/USD': { decimals: 2, pipMult: 0.1, base: 560.00 },
+
+            // Indices & Equity Assets
+            'US30': { decimals: 1, pipMult: 1.0, base: 38890.0 },
+            'NAS100': { decimals: 1, pipMult: 0.5, base: 18120.5 },
+            'SPX500': { decimals: 1, pipMult: 0.25, base: 5420.2 },
+            'GER40': { decimals: 1, pipMult: 0.5, base: 18240.0 },
+            'UK100': { decimals: 1, pipMult: 0.5, base: 8210.0 },
+
+            // Synthetic Indices (Deriv)
+            'V75': { decimals: 2, pipMult: 10.0, base: 421500.20 },
+            'V100': { decimals: 2, pipMult: 5.0, base: 125000.50 },
+            'V10': { decimals: 3, pipMult: 0.1, base: 6850.25 },
+            'BOOM500': { decimals: 2, pipMult: 1.0, base: 5120.40 },
+            'BOOM1000': { decimals: 2, pipMult: 1.0, base: 10245.80 },
+            'CRASH500': { decimals: 2, pipMult: 1.0, base: 4890.30 },
+            'CRASH1000': { decimals: 2, pipMult: 1.0, base: 5840.10 },
+            'STEP_INDEX': { decimals: 1, pipMult: 1.0, base: 8450.0 },
+            'JUMP50': { decimals: 2, pipMult: 1.0, base: 11240.50 }
+        };
+
+        function getSymbolMeta(symbol) {
+            return SYMBOL_CONFIG[symbol] || { decimals: 5, pipMult: 0.0001, base: 100.00 };
+        }
+
+        // --- VOLUME PROFILE & MARKET STRUCTURE REAL-TIME MONITOR ---
         class TradeExitMonitor {
             constructor() {}
 
@@ -770,13 +868,12 @@
                 let recent = candles.slice(-6);
                 let currentCandle = recent[recent.length - 1];
                 let currentPrice = Number(currentCandle.close);
-                let decimals = currentPrice > 100 ? 2 : 5;
+                let meta = getSymbolMeta(currentPair);
 
                 let reasons = [];
                 let closePositions = [];
                 let warningPositions = [];
 
-                // 1. Structure Invalidation Check
                 let recentHighs = recent.map(c => Number(c.high));
                 let recentLows = recent.map(c => Number(c.low));
                 let prevSwingLow = Math.min(...recentLows.slice(0, -1));
@@ -790,7 +887,6 @@
                     closePositions.push('STRUCTURE');
                 }
 
-                // 2. Volume Exhaustion & Spikes Check
                 let avgVol = recent.reduce((sum, c) => sum + Number(c.volume || 100), 0) / recent.length;
                 let currentVol = Number(currentCandle.volume || 100);
                 let isCounterTrendBar = isLong ? (Number(currentCandle.close) < Number(currentCandle.open)) : (Number(currentCandle.close) > Number(currentCandle.open));
@@ -800,7 +896,6 @@
                     warningPositions.push('VOLUME_SURGE');
                 }
 
-                // 3. RSI Momentum Divergence Check
                 let currentRsi = rsiValues[rsiValues.length - 1];
                 let prevRsi = rsiValues[rsiValues.length - 4];
                 let priceDiff = currentPrice - Number(recent[0].close);
@@ -813,11 +908,9 @@
                     warningPositions.push('RSI_DIVERGENCE');
                 }
 
-                // Adaptive Trailing Stop Calculation
-                let pipStep = currentPrice > 100 ? 0.20 : 0.0008;
-                let trailingSl = isLong ? (currentPrice - pipStep) : (currentPrice + pipStep);
+                let step = meta.pipMult * 20;
+                let trailingSl = isLong ? (currentPrice - step) : (currentPrice + step);
 
-                // Determine Trade Exit Status
                 let status = 'HOLD TRADE';
                 let threatLevel = 'LOW';
 
@@ -834,7 +927,7 @@
                 return {
                     status: status,
                     reasons: reasons,
-                    trailingSl: trailingSl.toFixed(decimals),
+                    trailingSl: trailingSl.toFixed(meta.decimals),
                     threatLevel: threatLevel
                 };
             }
@@ -890,22 +983,18 @@
 
                 let h3 = Number(c3.high), l3 = Number(c3.low);
 
-                // Bullish Engulfing
                 if (close1 < o1 && close2 > o2 && close2 >= o1 && o2 <= close1) {
                     return { name: 'Bullish Engulfing', type: 'BULLISH', sync: 'Aligned with SMC BOS (+20%)' };
                 }
-                // Bearish Engulfing
                 if (close1 > o1 && close2 < o2 && close2 <= o1 && o2 >= close1) {
                     return { name: 'Bearish Engulfing', type: 'BEARISH', sync: 'Aligned with SMC CHoCH (+20%)' };
                 }
-                // Hammer Check
                 let body3 = Math.abs(close3 - o3);
                 let lowerWick = Math.min(o3, close3) - l3;
                 let upperWick = h3 - Math.max(o3, close3);
                 if (lowerWick > body3 * 2 && upperWick < body3) {
                     return { name: 'Bullish Hammer / Pinbar', type: 'BULLISH', sync: 'Orderblock Rejection (+15%)' };
                 }
-                // Doji Check
                 if (body3 <= (h3 - l3) * 0.1) {
                     return { name: 'Indecision Doji', type: 'NEUTRAL', sync: 'Consolidation Zone' };
                 }
@@ -1068,30 +1157,18 @@
             constructor() {}
 
             calculateExactPipTarget(symbol, entryPrice, pips, direction = 'BUY') {
-                let pipMultiplier = 0.0001; 
-                let decimals = 5;
-
-                if (symbol.includes('JPY')) {
-                    pipMultiplier = 0.01; 
-                    decimals = 2;
-                } else if (symbol.includes('XAU')) {
-                    pipMultiplier = 0.1; 
-                    decimals = 2;
-                } else if (symbol.includes('BTC') || symbol.includes('ETH')) {
-                    pipMultiplier = 1.0; 
-                    decimals = 2;
-                }
-
+                let meta = getSymbolMeta(symbol);
                 let targetPrice = 0;
+                
                 if (direction.includes('BUY') || direction === 'LONG') {
-                    targetPrice = entryPrice + (pips * pipMultiplier);
+                    targetPrice = entryPrice + (pips * meta.pipMult);
                 } else {
-                    targetPrice = entryPrice - (pips * pipMultiplier);
+                    targetPrice = entryPrice - (pips * meta.pipMult);
                 }
 
                 return {
                     pips: pips,
-                    exactPrice: targetPrice.toFixed(decimals),
+                    exactPrice: targetPrice.toFixed(meta.decimals),
                     symbol: symbol
                 };
             }
@@ -1166,7 +1243,7 @@
                     if (latencyElem) latencyElem.innerText = `${jitter}ms`;
 
                     if (data.code === 429 || data.status === 'error') {
-                        showToast(`TwelveData Rate Limit/Error (${data.message || 'Limit reached'}). Using Robust Fallback Telemetry.`, "warning");
+                        showToast(`TwelveData API Limit/Error. Using Fallback Engine for ${symbol}.`, "warning");
                         setDataSourceBadge(false);
                         return this.getFallbackTelemetry(symbol);
                     }
@@ -1181,27 +1258,27 @@
                     setDataSourceBadge(false);
                     return this.getFallbackTelemetry(symbol);
                 } catch (error) {
-                    showToast("Network Error connecting to TwelveData. Fallback Active.", "warning");
+                    showToast(`Network Error connecting to TwelveData for ${symbol}. Fallback Active.`, "warning");
                     setDataSourceBadge(false);
                     return this.getFallbackTelemetry(symbol);
                 }
             }
 
             getFallbackTelemetry(symbol) {
-                let basePrice = symbol.includes('JPY') ? 147.50 : (symbol.includes('XAU') ? 2340.00 : (symbol.includes('BTC') ? 64000.00 : 1.1040));
-                let stepSize = symbol.includes('JPY') ? 0.05 : (symbol.includes('XAU') ? 1.50 : (symbol.includes('BTC') ? 120.00 : 0.0010));
+                let meta = getSymbolMeta(symbol);
+                let basePrice = meta.base;
+                let stepSize = meta.pipMult * 10;
                 let fallbackValues = [];
                 let now = new Date();
                 for(let i=30; i>=0; i--) {
                     let d = new Date(now.getTime() - i * 60000);
                     basePrice += (Math.random() - 0.48) * stepSize;
-                    let decimals = symbol.includes('JPY') || symbol.includes('XAU') || symbol.includes('BTC') ? 2 : 5;
                     fallbackValues.push({
                         datetime: d.toISOString().slice(11, 19),
-                        open: (basePrice - stepSize * 0.2).toFixed(decimals),
-                        close: basePrice.toFixed(decimals),
-                        high: (basePrice + stepSize * 0.5).toFixed(decimals),
-                        low: (basePrice - stepSize * 0.5).toFixed(decimals),
+                        open: (basePrice - stepSize * 0.2).toFixed(meta.decimals),
+                        close: basePrice.toFixed(meta.decimals),
+                        high: (basePrice + stepSize * 0.5).toFixed(meta.decimals),
+                        low: (basePrice - stepSize * 0.5).toFixed(meta.decimals),
                         volume: Math.floor(Math.random() * 500 + 100)
                     });
                 }
@@ -1252,7 +1329,6 @@
         let currentThemeMode = 'ocean';
         let telemetryEngine = null;
 
-        // 40-SECOND AUTOMATIC RELOAD TIMER VARIABLES
         let autoReloadSeconds = 40;
         let autoReloadTimerInterval = null;
         
@@ -1334,7 +1410,7 @@
                 telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized with 2026 Immersive Visuals");
+                showToast("Institutional Pro Terminal Initialized with Expanded Instrument Suite");
                 initApp();
 
             } catch (error) {
@@ -1503,51 +1579,39 @@
         setInterval(updateClocks, 1000);
 
         function updateMarketStatusBannerLocally() {
-            const updateTickerItem = (symKey, price, isOpen) => {
+            const updateTickerItem = (symKey, price) => {
                 const el = document.getElementById(`ticker_${symKey}`);
-                const statusEl = document.getElementById(`status_${symKey}`);
                 const dupEl = document.querySelector(`.ticker-dup-${symKey}`);
-                
                 if (el) el.innerText = price;
                 if (dupEl) dupEl.innerText = price;
-                
-                if (statusEl && symKey !== 'BTCUSD') {
-                    statusEl.innerText = isOpen ? "OPEN" : "CLOSED";
-                    statusEl.className = isOpen ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
-                }
             };
 
             let eurRate = (1.1040 + (Math.random() - 0.5) * 0.0010).toFixed(4);
-            let gbpRate = (1.2750 + (Math.random() - 0.5) * 0.0010).toFixed(4);
-            let jpyRate = (147.80 + (Math.random() - 0.5) * 0.10).toFixed(2);
-            let xauRate = (2342.00 + (Math.random() - 0.5) * 1.50).toFixed(2);
-            let btcRate = (64210.00 + (Math.random() - 0.5) * 25.00).toFixed(2);
+            let gbpJpyRate = (188.40 + (Math.random() - 0.5) * 0.10).toFixed(2);
+            let oilRate = (78.40 + (Math.random() - 0.5) * 0.20).toFixed(2);
+            let solRate = (145.20 + (Math.random() - 0.5) * 0.50).toFixed(2);
+            let us30Rate = (38890.00 + (Math.random() - 0.5) * 10.0).toFixed(1);
+            let nas100Rate = (18120.50 + (Math.random() - 0.5) * 5.0).toFixed(1);
+            let v75Rate = (421500.20 + (Math.random() - 0.5) * 15.0).toFixed(2);
+            let boomRate = (10245.80 + (Math.random() - 0.5) * 2.0).toFixed(2);
+            let crashRate = (5840.10 + (Math.random() - 0.5) * 2.0).toFixed(2);
 
             const dxyEl = document.getElementById('widgetDxy');
             const us10yEl = document.getElementById('widgetUs10y');
             if (dxyEl) dxyEl.innerText = (104.20 + (Math.random() - 0.5) * 0.10).toFixed(2);
             if (us10yEl) us10yEl.innerText = (4.27 + (Math.random() - 0.5) * 0.02).toFixed(2) + '%';
 
-            const nowUtc = new Date();
-            const dayOfWeek = nowUtc.getUTCDay();
-            const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-            
-            updateTickerItem("EURUSD", eurRate, !isWeekend);
-            updateTickerItem("GBPUSD", gbpRate, !isWeekend);
-            updateTickerItem("USDJPY", jpyRate, !isWeekend);
-            updateTickerItem("XAUUSD", xauRate, !isWeekend);
-            updateTickerItem("BTCUSD", btcRate, true);
-
-            const nyseEl = document.getElementById('status_NYSE');
-            const lseEl = document.getElementById('status_LSE');
-            const tyoEl = document.getElementById('status_TYO');
-
-            if (nyseEl) { nyseEl.innerText = isWeekend ? "CLOSED" : "OPEN"; nyseEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
-            if (lseEl) { lseEl.innerText = isWeekend ? "CLOSED" : "OPEN"; lseEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
-            if (tyoEl) { tyoEl.innerText = isWeekend ? "CLOSED" : "OPEN"; tyoEl.className = isWeekend ? "text-red-400 font-bold" : "text-emerald-400 font-bold"; }
+            updateTickerItem("EURUSD", eurRate);
+            updateTickerItem("GBPJPY", gbpJpyRate);
+            updateTickerItem("USOIL", oilRate);
+            updateTickerItem("SOLUSD", solRate);
+            updateTickerItem("US30", us30Rate);
+            updateTickerItem("NAS100", nas100Rate);
+            updateTickerItem("V75", v75Rate);
+            updateTickerItem("BOOM1000", boomRate);
+            updateTickerItem("CRASH1000", crashRate);
         }
 
-        // START AUTOMATIC 40-SECOND RELOAD ENGINE
         function startAutoReloadTimer() {
             if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
             autoReloadSeconds = 40;
@@ -1633,18 +1697,20 @@
             const accSize = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
             const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
             const riskAmount = accSize * (riskPct / 100);
-            const pipsAtRisk = currentPair.includes('BTC') ? 500 : (currentPair.includes('JPY') ? 50 : 500);
-            let lotSize = pipsAtRisk > 0 ? riskAmount / (pipsAtRisk * 10) : 1.0;
+            const meta = getSymbolMeta(currentPair);
+            const pipsAtRisk = 20;
+            let lotSize = riskAmount / (pipsAtRisk * meta.pipMult * 1000);
+            if (lotSize < 0.01) lotSize = 0.01;
             const resElem = document.getElementById('calcLotSizeResult');
-            if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Lots`;
+            if (resElem) resElem.innerText = `${lotSize.toFixed(2)} Units/Lots`;
         }
 
         function analyzeMarketStructure(prices) {
+            let meta = getSymbolMeta(currentPair);
             let recentHigh = Math.max(...prices.slice(-10));
             let recentLow = Math.min(...prices.slice(-10));
-            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
-            document.getElementById('smcRangeHigh').innerText = recentHigh.toFixed(decimals);
-            document.getElementById('smcRangeLow').innerText = recentLow.toFixed(decimals);
+            document.getElementById('smcRangeHigh').innerText = recentHigh.toFixed(meta.decimals);
+            document.getElementById('smcRangeLow').innerText = recentLow.toFixed(meta.decimals);
             return { type: 'BOS', bonus: 2.0 };
         }
 
@@ -1652,7 +1718,8 @@
             const currentPrice = prices[prices.length - 1];
             const previousPrice = prices[prices.length - 5]; 
             const currentRsi = rsiValues[rsiValues.length - 1];
-            
+            const meta = getSymbolMeta(currentPair);
+
             const badge = document.getElementById('signalDirBadge');
             const confidenceElem = document.getElementById('confidenceVal');
             const slElem = document.getElementById('slVal');
@@ -1663,8 +1730,6 @@
             const smcSl = document.getElementById('smcEngineSL');
 
             let finalSignal, badgeClass;
-            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
-
             const isUptrend = currentPrice >= previousPrice && currentRsi >= 45;
             
             if (isUptrend) {
@@ -1684,11 +1749,11 @@
 
             if(badge) { badge.innerText = finalSignal; badge.className = badgeClass; }
             if(confidenceElem) confidenceElem.innerText = "88.4%";
-            if(slElem) slElem.innerText = activeSl.toFixed(decimals);
-            if(tpElem) tpElem.innerText = activeTp.toFixed(decimals);
-            if(smcEn) smcEn.innerText = currentPrice.toFixed(decimals);
-            if(smcTp) smcTp.innerText = activeTp.toFixed(decimals);
-            if(smcSl) smcSl.innerText = activeSl.toFixed(decimals);
+            if(slElem) slElem.innerText = activeSl.toFixed(meta.decimals);
+            if(tpElem) tpElem.innerText = activeTp.toFixed(meta.decimals);
+            if(smcEn) smcEn.innerText = currentPrice.toFixed(meta.decimals);
+            if(smcTp) smcTp.innerText = activeTp.toFixed(meta.decimals);
+            if(smcSl) smcSl.innerText = activeSl.toFixed(meta.decimals);
 
             return { finalSignal, activeSl, activeTp, currentPrice };
         }
@@ -1706,12 +1771,13 @@
         function onPairChange() {
             currentPair = document.getElementById('mainPairSelect').value;
             document.getElementById('chartCardTitle').innerText = `${currentPair} - On-Demand Data Stream`;
+            calculatePositionSize();
             fetchAndRenderOnDemand();
         }
 
         function triggerManualRefresh() {
             tfSecondsRemaining[currentTimeframe] = getTfTotalSeconds(currentTimeframe);
-            autoReloadSeconds = 40; // Reset auto-timer on manual action
+            autoReloadSeconds = 40;
             fetchAndRenderOnDemand();
             showToast(`Refreshed telemetry for ${currentPair} (${currentTimeframe})`);
         }
@@ -1738,7 +1804,7 @@
             const matrix = globalPipEngine.generatePipMatrix(currentPair, currentPrice, direction);
             tableBody.innerHTML = matrix.map(row => `
                 <tr class="hover:bg-white/5 transition">
-                    <td class="py-1 text-gray-300 font-bold">${row.pips} Pips</td>
+                    <td class="py-1 text-gray-300 font-bold">${row.pips} Units</td>
                     <td class="py-1 text-emerald-400 font-bold">${row.tp}</td>
                     <td class="py-1 text-red-400 font-bold">${row.sl}</td>
                 </tr>
@@ -1772,84 +1838,76 @@
             const tbody = document.getElementById('multiTfMatrixBody');
             if(!tbody) return;
             const timeframes = ['1m', '5m', '15m', '1h', '4h', '1d'];
-            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
+            let meta = getSymbolMeta(currentPair);
             
             tbody.innerHTML = timeframes.map(tf => {
                 let isBullish = Math.random() > 0.35;
                 let stateText = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
-                let stateClass = isBullish ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold';
-                let offset = (Math.random() - 0.5) * (currentPair.includes('BTC') ? 100 : 0.0020);
-                let entry = (basePrice + offset).toFixed(decimals);
-                let tp = (basePrice + offset + (isBullish ? 0.0050 : -0.0050)).toFixed(decimals);
-                let sl = (basePrice + offset + (isBullish ? -0.0025 : 0.0025)).toFixed(decimals);
-                
+                let badgeCol = isBullish ? 'text-emerald-400' : 'text-red-400';
+                let offset = meta.pipMult * 20;
+                let entry = basePrice;
+                let tp = isBullish ? (basePrice + offset) : (basePrice - offset);
+                let sl = isBullish ? (basePrice - offset * 0.5) : (basePrice + offset * 0.5);
+
                 return `
                     <tr class="hover:bg-white/5 transition">
-                        <td class="py-2 text-gray-300 font-bold">${tf}</td>
-                        <td class="py-2 ${stateClass}">${stateText}</td>
-                        <td class="py-2 text-[#00ffcc]">${entry}</td>
-                        <td class="py-2 text-emerald-400">${tp}</td>
-                        <td class="py-2 text-red-400">${sl}</td>
+                        <td class="py-2 text-gray-300 font-bold">${tf.toUpperCase()}</td>
+                        <td class="py-2 ${badgeCol} font-bold">${stateText}</td>
+                        <td class="py-2 text-[#00ffcc]">${entry.toFixed(meta.decimals)}</td>
+                        <td class="py-2 text-emerald-400">${tp.toFixed(meta.decimals)}</td>
+                        <td class="py-2 text-red-400">${sl.toFixed(meta.decimals)}</td>
                     </tr>
                 `;
             }).join('');
         }
 
-        async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
-            const candles = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+        function executeTradeAlert() {
+            const dir = document.getElementById('signalDirBadge')?.innerText || 'IDLE';
+            const tp = document.getElementById('tpVal')?.innerText || '--';
+            const sl = document.getElementById('slVal')?.innerText || '--';
+            showToast(`Order Dispatched: ${dir} on ${currentPair} (TP: ${tp}, SL: ${sl})`);
             
-            const labels = candles.map(c => c.datetime.slice(11, 16));
-            const closePrices = candles.map(c => parseFloat(c.close));
-
-            const pattern = globalCandleEngine.detectPattern(candles);
-            globalCandleEngine.renderWidget(pattern);
-
-            analyzeMarketStructure(closePrices);
-            const { finalSignal, activeSl, activeTp, currentPrice } = evaluateMarketDirection(candles, calculateRSI(closePrices), closePrices);
-            
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
-            let decimals = currentPair.includes('JPY') || currentPair.includes('XAU') || currentPair.includes('BTC') ? 2 : 5;
-            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(decimals), activeTp.toFixed(decimals), activeSl.toFixed(decimals));
-
-            const rsiValues = calculateRSI(closePrices);
-            const exitInfo = globalTradeExitMonitor.evaluateExit(candles, rsiValues, finalSignal);
-            globalTradeExitMonitor.renderWidget(exitInfo);
-
-            renderPipMatrixTable(currentPrice, finalSignal);
-            renderMultiTfMatrix(currentPrice);
-            calculatePositionSize();
-
-            const rsiElem = document.getElementById('rsiValDisplay');
-            if (rsiElem) {
-                let lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-                let state = lastRsi > 70 ? '(Overbought)' : (lastRsi < 30 ? '(Oversold)' : '(Neutral)');
-                rsiElem.innerText = `${lastRsi} ${state}`;
+            const logBody = document.getElementById('signalLogTableBody');
+            if(logBody) {
+                const now = new Date().toLocaleTimeString();
+                const row = document.createElement('tr');
+                row.className = "hover:bg-white/5 transition border-b border-white/5";
+                row.innerHTML = `
+                    <td class="py-2 text-gray-400">${now}</td>
+                    <td class="py-2 text-white font-bold">${currentPair}</td>
+                    <td class="py-2 text-[#00ffcc] font-bold">${dir}</td>
+                    <td class="py-2 text-emerald-400">${tp}</td>
+                    <td class="py-2 text-red-400">${sl}</td>
+                `;
+                if(logBody.children[0]?.children.length === 1) logBody.innerHTML = '';
+                logBody.insertBefore(row, logBody.firstChild);
             }
-
-            renderMainChart(labels, closePrices);
-            renderRsiChart(labels.slice(14), rsiValues);
-            logTelemetryEvent(currentPair, currentTimeframe, finalSignal, currentPrice, activeTp, activeSl);
         }
 
-        function renderMainChart(labels, data) {
-            const ctx = document.getElementById('mainTimeSeriesChart').getContext('2d');
+        async function fetchAndRenderOnDemand() {
+            if (!telemetryEngine) return;
+            
+            const rawData = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+            if (!rawData || !rawData.length) return;
+
+            const labels = rawData.map(d => d.datetime.slice(11, 16) || d.datetime);
+            const closePrices = rawData.map(d => parseFloat(d.close));
+            const meta = getSymbolMeta(currentPair);
+
+            // Render Main Time Series Chart
+            const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
             if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
 
-            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
-            gradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
-
-            mainTimeSeriesChart = new Chart(ctx, {
+            mainTimeSeriesChart = new Chart(ctxMain, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `${currentPair} (${currentTimeframe})`,
-                        data: data,
+                        label: `${currentPair} Price`,
+                        data: closePrices,
                         borderColor: '#00ffcc',
                         borderWidth: 2,
-                        backgroundColor: gradient,
+                        backgroundColor: 'rgba(0, 255, 204, 0.05)',
                         fill: true,
                         tension: 0.2,
                         pointRadius: 2,
@@ -1861,27 +1919,30 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 10 } } },
-                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 10 } } }
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 } } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 } } }
                     }
                 }
             });
-        }
 
-        function renderRsiChart(labels, data) {
-            const ctx = document.getElementById('rsiSubChart').getContext('2d');
+            // Calculate and Render RSI Sub Chart
+            const rsiValues = calculateRSI(closePrices, 14);
+            const rsiLabels = labels.slice(labels.length - rsiValues.length);
+            
+            const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
             if (rsiChart) rsiChart.destroy();
 
-            rsiChart = new Chart(ctx, {
+            rsiChart = new Chart(ctxRsi, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: rsiLabels,
                     datasets: [{
                         label: 'RSI (14)',
-                        data: data,
+                        data: rsiValues,
                         borderColor: '#c084fc',
                         borderWidth: 1.5,
                         fill: false,
+                        tension: 0.1,
                         pointRadius: 0
                     }]
                 },
@@ -1891,38 +1952,31 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { display: false },
-                        y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', font: { size: 9 }, stepSize: 30 } }
+                        y: { min: 0, max: 100, ticks: { stepSize: 30, color: '#9ca3af', font: { size: 8 } }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
                     }
                 }
             });
-        }
 
-        function logTelemetryEvent(pair, tf, signal, entry, tp, sl) {
-            const tbody = document.getElementById('signalLogTableBody');
-            if(!tbody) return;
-            const now = new Date().toISOString().slice(11, 19);
-            let decimals = pair.includes('JPY') || pair.includes('XAU') || pair.includes('BTC') ? 2 : 5;
+            const lastRsi = rsiValues[rsiValues.length - 1] || 50;
+            const rsiDisplay = document.getElementById('rsiValDisplay');
+            if (rsiDisplay) rsiDisplay.innerText = `${lastRsi.toFixed(1)} (${lastRsi > 70 ? 'Overbought' : lastRsi < 30 ? 'Oversold' : 'Neutral'})`;
+
+            // Execute Analytical Engines
+            analyzeMarketStructure(closePrices);
+            const pattern = globalCandleEngine.detectPattern(rawData);
+            globalCandleEngine.renderWidget(pattern);
+
+            const signalInfo = evaluateMarketDirection(rawData, rsiValues, closePrices);
             
-            const newRowHtml = `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="py-2 text-gray-400">${now}</td>
-                    <td class="py-2 text-white font-bold">${pair} [${tf}]</td>
-                    <td class="py-2 ${signal.includes('BUY') ? 'text-emerald-400' : 'text-red-400'} font-bold">${signal}</td>
-                    <td class="py-2 text-[#00ffcc]">${entry.toFixed(decimals)}</td>
-                    <td class="py-2 text-gray-300">TP: ${tp.toFixed(decimals)} | SL: ${sl.toFixed(decimals)}</td>
-                </tr>
-            `;
+            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(rawData);
+            globalVolumeAnalyzer.renderWidget(volAnalysis, signalInfo.currentPrice.toFixed(meta.decimals), signalInfo.activeTp.toFixed(meta.decimals), signalInfo.activeSl.toFixed(meta.decimals));
 
-            if (tbody.children[0] && tbody.children[0].children[0].getAttribute('colspan')) {
-                tbody.innerHTML = newRowHtml;
-            } else {
-                tbody.insertAdjacentHTML('afterbegin', newRowHtml);
-                if (tbody.children.length > 10) tbody.removeChild(tbody.lastChild);
-            }
-        }
+            const exitInfo = globalTradeExitMonitor.evaluateExit(rawData, rsiValues, signalInfo.finalSignal);
+            globalTradeExitMonitor.renderWidget(exitInfo);
 
-        function executeTradeAlert() {
-            showToast(`Order Dispatched to Execution Server: ${currentPair} @ ${document.getElementById('smcEngineEntry')?.innerText}`);
+            renderPipMatrixTable(signalInfo.currentPrice, signalInfo.finalSignal);
+            renderMultiTfMatrix(signalInfo.currentPrice);
+            updateCustomPipTarget();
         }
     </script>
 </body>
