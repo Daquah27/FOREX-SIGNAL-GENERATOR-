@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX Signal Desk v4.5 // Institutional Pro Suite + 2026 Immersive Visual Upgrade</title>
+    <title>QUAH AI DESK v5.0 // Integrated Institutional Suite</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -119,7 +119,7 @@
 </head>
 <body class="theme-ocean font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700">
 
-    <!-- 2026 ELITE IMMERSIVE VISUAL ENGINE CANVAS -->
+    <!-- IMMERSIVE VISUAL ENGINE CANVAS -->
     <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-100"></canvas>
     
     <!-- HUD SCANLINES & VIGNETTE OVERLAY -->
@@ -135,8 +135,8 @@
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl">
         <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 animate-pulse-glow border border-[#00ffcc]/30">
             <div class="text-center mb-6">
-                <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v4.5</h1>
-                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Multi-Asset Expansion Suite</p>
+                <h1 class="text-2xl font-bold tracking-wider text-white"><i class="fa-solid fa-shield-halved text-[#00ffcc] mr-2"></i>QUAH AI DESK v5.0</h1>
+                <p class="text-xs text-gray-400 mt-1">Institutional Pro License Gate + Real-Time Sentiment Integration</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
@@ -204,21 +204,6 @@
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">SOL/USD: <strong id="ticker_SOLUSD" class="text-emerald-400 transition-all duration-300">145.20</strong></span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">US30: <strong id="ticker_US30" class="text-emerald-400 transition-all duration-300">38890.00</strong></span>
                         <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NAS100: <strong id="ticker_NAS100" class="text-emerald-400 transition-all duration-300">18120.50</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Vol 75: <strong id="ticker_V75" class="text-emerald-400 transition-all duration-300">421500.20</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Boom 1000: <strong id="ticker_BOOM1000" class="text-emerald-400 transition-all duration-300">10245.80</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Crash 1000: <strong id="ticker_CRASH1000" class="text-red-400 transition-all duration-300">5840.10</strong></span>
-                    </div>
-                    <div class="flex items-center space-x-6" aria-hidden="true">
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">EUR/USD: <strong class="text-emerald-400 ticker-dup-EURUSD transition-all duration-300">1.1043</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">GBP/JPY: <strong class="text-emerald-400 ticker-dup-GBPJPY transition-all duration-300">188.45</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">USOIL: <strong class="text-emerald-400 ticker-dup-USOIL transition-all duration-300">78.40</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">BTC/USD: <strong class="text-emerald-400 transition-all duration-300">64210.00</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">SOL/USD: <strong class="text-emerald-400 ticker-dup-SOLUSD transition-all duration-300">145.20</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">US30: <strong class="text-emerald-400 ticker-dup-US30 transition-all duration-300">38890.00</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">NAS100: <strong class="text-emerald-400 ticker-dup-NAS100 transition-all duration-300">18120.50</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Vol 75: <strong class="text-emerald-400 ticker-dup-V75 transition-all duration-300">421500.20</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Boom 1000: <strong class="text-emerald-400 ticker-dup-BOOM1000 transition-all duration-300">10245.80</strong></span>
-                        <span class="bg-darkBg/60 px-3 py-1 rounded border border-white/10 text-gray-300">Crash 1000: <strong class="text-red-400 ticker-dup-CRASH1000 transition-all duration-300">5840.10</strong></span>
                     </div>
                 </div>
             </div>
@@ -228,25 +213,19 @@
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-chart-line text-[#00ffcc] text-xl animate-bounce"></i>
-                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">PRO v4.5 + EXPANDED SUITE</span></span>
+                    <span class="font-bold tracking-wide text-white text-base">QUAH AI <span class="text-[#00ffcc] font-light">DESK v5.0</span></span>
                 </div>
                 <div class="hidden sm:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-white/5 text-xs">
                     <span id="connDot" class="inline-block w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></span>
                     <span id="connText" class="text-gray-300">On-Demand API Ready</span>
                 </div>
-                <!-- API QUOTA WATCHER WIDGET -->
                 <div id="apiQuotaWatcherBadge" class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm">
                     <i class="fa-solid fa-gauge text-[#00ffcc]"></i>
                     <span>API Calls: <strong id="apiCallCountDisplay" class="text-[#00ffcc]">0</strong> / 800</span>
                 </div>
-                <!-- 40S AUTO-RELOAD TIMER DISPLAY -->
                 <div id="autoAnalyzeWidget" class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 transition-all duration-500">
-                    <i class="fa-solid fa-[#00ffcc] fa-arrows-rotate text-[#00ffcc] animate-spin"></i>
+                    <i class="fa-solid fa-arrows-rotate text-[#00ffcc] animate-spin"></i>
                     <span>Auto-Analyze: <strong id="autoReloadCountdownDisplay" class="text-[#00ffcc]">40s</strong></span>
-                </div>
-                <div class="hidden md:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
-                    <i class="fa-solid fa-wave-square text-[#00ffcc]"></i>
-                    <span>Latency: <strong id="latencyDisplay" class="text-[#00ffcc]">18ms</strong></span>
                 </div>
                 <div class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-3 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-[#00ffcc]">
                     <i class="fa-solid fa-clock text-[#00ffcc]"></i>
@@ -268,26 +247,11 @@
                             <i class="fa-solid fa-palette text-[#00ffcc]"></i>
                         </div>
                         <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">Select Immersive Environment</label>
-                            <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/80 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc] backdrop-blur">
-                                <optgroup label="Ocean & Water">
-                                    <option value="ocean" selected>🌊 Deep Ocean Abyss</option>
-                                    <option value="coral">🪸 Coral Reef Sanctuary</option>
-                                    <option value="arctic">❄️ Frozen Glacier</option>
-                                    <option value="abyss">⚓ Mariana Trench</option>
-                                </optgroup>
-                                <optgroup label="Cyber & Sci-Fi">
-                                    <option value="cyberpunk">⚡ Cyberpunk Neon Rain</option>
-                                    <option value="matrix">💻 Matrix Data Stream</option>
-                                    <option value="synthwave">🌆 Retro Synthwave Sunset</option>
-                                    <option value="quantum">⚛️ Quantum Core</option>
-                                    <option value="circuit">🔌 Cybernetic Circuit</option>
-                                </optgroup>
-                                <optgroup label="Nature & Earth">
-                                    <option value="forest">🌲 Enchanted Emerald Forest</option>
-                                    <option value="aurora">🌌 Aurora Borealis</option>
-                                    <option value="volcanic">🌋 Volcanic Ash & Ember</option>
-                                </optgroup>
+                            <select id="themeSelector" onchange="changeTheme(this.value)" class="w-full bg-darkBg/80 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#00ffcc]">
+                                <option value="ocean" selected>🌊 Deep Ocean Abyss</option>
+                                <option value="cyberpunk">⚡ Cyberpunk Neon Rain</option>
+                                <option value="matrix">💻 Matrix Data Stream</option>
+                                <option value="aurora">🌌 Aurora Borealis</option>
                             </select>
                         </div>
                         <button onclick="logout()" class="w-full text-left text-xs text-red-400 hover:text-red-300 pt-2 border-t border-white/10 font-medium"><i class="fa-solid fa-power-off mr-1"></i> Disconnect Session</button>
@@ -296,23 +260,31 @@
             </div>
         </header>
 
-        <div class="bg-darkBg/30 backdrop-blur border-b border-white/5 px-6 py-1.5 flex flex-wrap items-center justify-between text-xs overflow-hidden gap-4">
-            <div class="flex items-center space-x-6 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5 flex-1">
-                <span class="text-[#00ffcc] font-bold flex items-center"><i class="fa-solid fa-bullhorn mr-1.5 animate-pulse"></i> LIVE FEED:</span>
-                <span class="text-gray-300">EUR/USD <strong class="text-[#00ffcc] animate-pulse">1.1043</strong></span>
-                <span class="text-gray-300">GBP/JPY <strong class="text-[#00ffcc]">188.45</strong></span>
-                <span class="text-gray-300">USOIL <strong class="text-emerald-400">78.40</strong></span>
-                <span class="text-gray-300">XAU/USD <strong class="text-[#00ffcc]">2342.50</strong></span>
-                <span class="text-gray-300">BTC/USD <strong class="text-[#00ffcc]">64210.00</strong></span>
-                <span class="text-gray-300">NAS100 <strong class="text-[#00ffcc]">18120.50</strong></span>
+        <!-- TOP NEWS/SENTIMENT API ENGINE BAR -->
+        <section class="bg-cardBg/80 border-b border-white/10 px-6 py-2 flex flex-wrap items-center justify-between gap-4 text-xs font-mono z-20">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-rss text-[#00ffcc]"></i>
+                <span class="text-white font-bold">REAL-TIME SENTIMENT ENGINE</span>
             </div>
-            <div class="hidden xl:flex items-center space-x-3 text-gray-400 font-mono text-[11px]">
-                <span>NYC: <strong id="clockNY" class="text-gray-200">--:--</strong></span>
-                <span>LON: <strong id="clockLON" class="text-gray-200">--:--</strong></span>
-                <span>TYO: <strong id="clockTYO" class="text-gray-200">--:--</strong></span>
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center space-x-1 bg-black/40 px-3 py-1 rounded border border-white/10">
+                    <span class="text-gray-400">Provider:</span>
+                    <select id="apiProvider" class="bg-transparent text-white focus:outline-none cursor-pointer">
+                        <option value="fmp" class="bg-cardBg">Financial Modeling Prep</option>
+                        <option value="newsapi" class="bg-cardBg">NewsAPI.org</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-1 bg-black/40 px-3 py-1 rounded border border-white/10">
+                    <span class="text-gray-400">Key:</span>
+                    <input type="password" id="newsApiKeyInput" placeholder="Paste News API Key..." class="bg-transparent text-[#00ffcc] focus:outline-none w-36">
+                </div>
+                <button onclick="fetchLiveNews()" class="bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black font-bold px-3 py-1 rounded transition">
+                    <i class="fa-solid fa-rotate mr-1"></i> Fetch Live News
+                </button>
             </div>
-        </div>
+        </section>
 
+        <!-- INSTRUMENT SELECTION BAR -->
         <div class="bg-cardBg/30 backdrop-blur border-b border-white/5 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center space-x-3 gap-y-2">
                 <div>
@@ -322,61 +294,14 @@
                             <option value="EUR/USD" selected>EUR/USD</option>
                             <option value="GBP/USD">GBP/USD</option>
                             <option value="USD/JPY">USD/JPY</option>
-                            <option value="USD/CHF">USD/CHF</option>
-                            <option value="AUD/USD">AUD/USD</option>
-                            <option value="USD/CAD">USD/CAD</option>
-                            <option value="NZD/USD">NZD/USD</option>
-                        </optgroup>
-                        <optgroup label="Minor & Cross Forex Pairs">
-                            <option value="EUR/GBP">EUR/GBP</option>
-                            <option value="EUR/JPY">EUR/JPY</option>
-                            <option value="GBP/JPY">GBP/JPY</option>
-                            <option value="EUR/AUD">EUR/AUD</option>
-                            <option value="GBP/AUD">GBP/AUD</option>
-                            <option value="AUD/JPY">AUD/JPY</option>
-                            <option value="NZD/JPY">NZD/JPY</option>
-                            <option value="CAD/JPY">CAD/JPY</option>
-                            <option value="EUR/CAD">EUR/CAD</option>
-                            <option value="GBP/CAD">GBP/CAD</option>
-                            <option value="USD/SGD">USD/SGD</option>
-                            <option value="USD/HKD">USD/HKD</option>
                         </optgroup>
                         <optgroup label="Commodities & Energy">
                             <option value="XAU/USD">XAU/USD (Gold)</option>
-                            <option value="XAG/USD">XAG/USD (Silver)</option>
                             <option value="WTI/USD">WTI/USD (USOIL Crude)</option>
-                            <option value="BRENT/USD">BRENT/USD (UKOIL Brent)</option>
-                            <option value="NATGAS">NATGAS (Natural Gas)</option>
-                            <option value="XPT/USD">XPT/USD (Platinum)</option>
-                            <option value="XPD/USD">XPD/USD (Palladium)</option>
-                            <option value="COPPER">COPPER</option>
                         </optgroup>
                         <optgroup label="Popular Crypto Assets">
                             <option value="BTC/USD">BTC/USD (Bitcoin)</option>
-                            <option value="ETH/USD">ETH/USD (Ethereum)</option>
                             <option value="SOL/USD">SOL/USD (Solana)</option>
-                            <option value="XRP/USD">XRP/USD (Ripple)</option>
-                            <option value="ADA/USD">ADA/USD (Cardano)</option>
-                            <option value="DOGE/USD">DOGE/USD (Dogecoin)</option>
-                            <option value="BNB/USD">BNB/USD (Binance Coin)</option>
-                        </optgroup>
-                        <optgroup label="Indices & Equity Assets">
-                            <option value="US30">US30 / DJI (Dow Jones)</option>
-                            <option value="NAS100">NAS100 / NDX (Nasdaq 100)</option>
-                            <option value="SPX500">SPX500 / SP500 (S&P 500)</option>
-                            <option value="GER40">GER40 / DAX40 (German Index)</option>
-                            <option value="UK100">UK100 (FTSE 100)</option>
-                        </optgroup>
-                        <optgroup label="Synthetic Indices (Deriv)">
-                            <option value="V75">Volatility 75 (1s) Index</option>
-                            <option value="V100">Volatility 100 Index</option>
-                            <option value="V10">Volatility 10 Index</option>
-                            <option value="BOOM500">Boom 500 Index</option>
-                            <option value="BOOM1000">Boom 1000 Index</option>
-                            <option value="CRASH500">Crash 500 Index</option>
-                            <option value="CRASH1000">Crash 1000 Index</option>
-                            <option value="STEP_INDEX">Step Index</option>
-                            <option value="JUMP50">Jump 50 Index</option>
                         </optgroup>
                     </select>
                 </div>
@@ -387,8 +312,6 @@
                         <button onclick="setTimeframe('5min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center"><span>5m</span><span class="tf-timer text-[9px] font-mono text-black/80 font-bold" data-tf="5min">05:00</span></button>
                         <button onclick="setTimeframe('15min', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>15m</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="15min">15:00</span></button>
                         <button onclick="setTimeframe('1h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>1h</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="1h">60:00</span></button>
-                        <button onclick="setTimeframe('4h', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>4h</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="4h">240:00</span></button>
-                        <button onclick="setTimeframe('1day', this)" class="tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center"><span>1d</span><span class="tf-timer text-[9px] font-mono text-gray-400" data-tf="1day">1440:0</span></button>
                     </div>
                 </div>
             </div>
@@ -396,80 +319,50 @@
 
         <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto">
 
-            <!-- 3-COLUMN LAYOUT -->
+            <!-- SENTIMENT DASHBOARD BANNER -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+                <div class="glass-card p-4 rounded-xl flex items-center justify-between">
+                    <span class="text-gray-400">News Feed Status:</span>
+                    <span id="apiStatus" class="text-yellow-400 font-bold">READY (Awaiting Fetch)</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex items-center justify-between">
+                    <span class="text-gray-400">Algorithmic Sentiment Score:</span>
+                    <span id="sentimentScore" class="text-[#00ffcc] font-bold">0.0 (NEUTRAL)</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex items-center justify-between">
+                    <span class="text-gray-400">Execution Bias Recommendation:</span>
+                    <span id="biasText" class="text-[#00ffcc] font-bold">STANDBY</span>
+                </div>
+            </div>
+
+            <!-- MAIN WORKSPACE LAYOUT -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- LEFT COLUMN -->
+                <!-- LEFT COLUMN: SMC & CONFLUENCE -->
                 <div class="space-y-6">
                     <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
                         <div class="flex items-center justify-between border-b border-white/10 pb-2">
                             <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chess-board text-[#00ffcc] mr-2"></i>SMC Structure State</h2>
-                            <span id="smcStateBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold transition-all duration-300">BULLISH BOS</span>
+                            <span id="smcStateBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">BULLISH BOS</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2 text-xs font-mono">
                             <div class="bg-darkBg/60 backdrop-blur p-2.5 rounded-xl border border-white/5">
                                 <span class="text-[9px] text-gray-400 block mb-0.5">RANGE HIGH</span>
-                                <strong id="smcRangeHigh" class="text-emerald-400 text-xs transition-all duration-300">--</strong>
+                                <strong id="smcRangeHigh" class="text-emerald-400 text-xs">--</strong>
                             </div>
                             <div class="bg-darkBg/60 backdrop-blur p-2.5 rounded-xl border border-white/5">
                                 <span class="text-[9px] text-gray-400 block mb-0.5">RANGE LOW</span>
-                                <strong id="smcRangeLow" class="text-red-400 text-xs transition-all duration-300">--</strong>
-                            </div>
-                        </div>
-                        <div class="bg-darkBg/50 backdrop-blur p-2.5 rounded-xl border border-white/5 text-[11px] font-mono flex items-center justify-between">
-                            <span class="text-gray-400">Latest Event:</span>
-                            <strong id="smcLatestEvent" class="text-[#00ffcc]">Break of Structure (Body Close)</strong>
-                        </div>
-                        <div class="border-t border-white/10 pt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">ENTRY</span>
-                                <strong id="smcEngineEntry" class="text-[#00ffcc]">--</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">TP</span>
-                                <strong id="smcEngineTP" class="text-emerald-400">--</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">SL</span>
-                                <strong id="smcEngineSL" class="text-red-400">--</strong>
+                                <strong id="smcRangeLow" class="text-red-400 text-xs">--</strong>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Candlestick Pattern Engine Detector -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-purple-500/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-wand-magic-sparkles text-purple-400 mr-2"></i>Candlestick Pattern Engine</h2>
-                            <span id="candlePatternBadge" class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono font-bold transition-all duration-300">PATTERN SCANNER</span>
-                        </div>
-                        <div class="space-y-2 text-xs font-mono">
-                            <div class="bg-darkBg/60 p-2.5 rounded-xl border border-white/5 flex items-center justify-between">
-                                <span class="text-gray-400">Detected Formation:</span>
-                                <strong id="candlePatternName" class="text-emerald-400">Scanning...</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-2.5 rounded-xl border border-white/5 flex items-center justify-between">
-                                <span class="text-gray-400">SMC Confluence Sync:</span>
-                                <strong id="candleSmcSync" class="text-purple-300">Calculating...</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Confluence Signal & Execution Suite -->
+                    <!-- Confluence Signal Suite -->
                     <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-2xl border border-[#00ffcc]/30">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between pb-2 border-b border-white/10">
                                 <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-gauge-high text-[#00ffcc] mr-2"></i>Confluence Signal</h2>
-                                <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50 transition-all duration-300">IDLE</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-darkBg/50 backdrop-blur p-3 rounded-xl border border-white/5">
-                                <div>
-                                    <div class="text-[10px] uppercase font-semibold text-gray-400">Confidence Score</div>
-                                    <div id="confidenceVal" class="text-2xl font-extrabold text-[#00ffcc] font-mono mt-0.5">--%</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[10px] uppercase font-semibold text-gray-400">License Tier</div>
-                                    <div id="licenseTierDisplay" class="text-xs font-bold text-white font-mono mt-1">Institutional Pro</div>
-                                </div>
+                                <span id="signalDirBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-[#00ffcc]/20 text-[#00ffcc] border border-[#00ffcc]/50">IDLE</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs font-mono">
                                 <div class="bg-darkBg/50 backdrop-blur p-2.5 rounded-xl border border-red-500/30">
@@ -481,833 +374,241 @@
                                     <strong id="tpVal" class="text-[#00ffcc] text-sm">--</strong>
                                 </div>
                             </div>
-
-                            <div class="bg-darkBg/50 backdrop-blur p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
-                                <div class="text-[11px] font-bold text-white uppercase flex items-center justify-between border-b border-white/10 pb-1">
-                                    <span>Risk-Reward Sizing</span>
-                                    <i class="fa-solid fa-calculator text-[#00ffcc]"></i>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="block text-[9px] text-gray-400">Account Size ($)</label>
-                                        <input type="number" id="calcAccountSize" value="25000" oninput="calculatePositionSize()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[9px] text-gray-400">Risk Tolerance (%)</label>
-                                        <input type="number" step="0.1" id="calcRiskPct" value="1.0" oninput="calculatePositionSize()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between pt-1 text-[11px]">
-                                    <span class="text-gray-400">Recommended Size:</span>
-                                    <strong id="calcLotSizeResult" class="text-[#00ffcc]">2.50 Lots</strong>
-                                </div>
-                            </div>
                         </div>
 
-                        <button id="dispatchOrderBtn" onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20 active:scale-95 backdrop-blur">
+                        <button id="dispatchOrderBtn" onclick="executeTradeAlert()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-[#0b0e14] font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-[#00ffcc]/20">
                             Dispatch Institutional Order
                         </button>
                     </div>
                 </div>
 
-                <!-- MIDDLE COLUMN -->
-                <div class="lg:col-span-1 space-y-6">
-                    
+                <!-- MIDDLE COLUMN: CHARTS AND TECHNICAL FEED -->
+                <div class="space-y-6">
                     <div class="glass-card rounded-2xl p-5 flex flex-col relative overflow-hidden shadow-2xl space-y-5">
-                        <div class="absolute inset-0 bg-gradient-to-b from-[#00ffcc]/10 via-transparent to-transparent pointer-events-none animate-scan"></div>
-                        
-                        <div class="z-10">
-                            <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center active:scale-95 shadow-lg shadow-[#00ffcc]/20 backdrop-blur">
+                        <div>
+                            <button onclick="triggerManualRefresh()" class="w-full bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center">
                                 <i class="fa-solid fa-rotate mr-2"></i> Load Signal / Analyze
                             </button>
                         </div>
 
-                        <!-- DIGITAL EXIT SIGNAL ENGINE MODULE -->
-                        <div id="digitalExitSignalEngine" class="glass-card rounded-xl p-4 z-10 border border-[#00ffcc]/40 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl">
-                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-right-from-bracket text-[#00ffcc]"></i>
-                                    <h2 class="font-bold text-white text-xs uppercase tracking-wider">Digital Exit Signal Engine</h2>
-                                </div>
-                                <span id="tradeExitStatusBadge" class="text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse">
-                                    HOLD TRADE
-                                </span>
-                            </div>
-
-                            <div class="space-y-2 text-xs font-mono">
-                                <div class="bg-darkBg/80 p-2.5 rounded-lg border border-white/5 space-y-1">
-                                    <div class="text-[9px] uppercase font-semibold text-gray-400">Exit Trigger Reasons</div>
-                                    <div id="tradeExitReasonsDisplay" class="text-gray-200 text-[11px]">
-                                        Structure intact &bull; Volume distribution stable
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="bg-darkBg/80 p-2 rounded-lg border border-white/5 flex flex-col justify-between">
-                                        <span class="text-[9px] uppercase text-gray-400">Adaptive Trailing SL</span>
-                                        <strong id="adaptiveTrailingSlDisplay" class="text-[#00ffcc] text-xs mt-0.5">--</strong>
-                                    </div>
-                                    <div class="bg-darkBg/80 p-2 rounded-lg border border-white/5 flex flex-col justify-between">
-                                        <span class="text-[9px] uppercase text-gray-400">Volume Exit Threat</span>
-                                        <strong id="volumeExitThreatDisplay" class="text-emerald-400 text-xs mt-0.5">LOW</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 z-10">
-                                <div class="flex items-center space-x-2">
-                                    <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - On-Demand Data Stream</h2>
-                                    <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40 animate-pulse">Ready (On-Demand)</span>
-                                </div>
-                                <div class="text-xs font-mono text-[#00ffcc] flex items-center">
-                                    <span class="w-2 h-2 rounded-full bg-[#00ffcc] mr-1.5 animate-ping"></span> Live Scanner Active
-                                </div>
+                            <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                                <h2 class="font-bold text-white text-sm" id="chartCardTitle">EUR/USD - On-Demand Data Stream</h2>
+                                <span id="dataSourceBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40">Ready (On-Demand)</span>
                             </div>
-                            
-                            <div class="relative w-full h-[320px] bg-darkBg/60 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-3 z-10 shadow-inner overflow-hidden">
-                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffcc]/5 to-transparent pointer-events-none animate-pulse"></div>
+                            <div class="relative w-full h-[320px] bg-darkBg/60 backdrop-blur-xl rounded-xl border border-[#00ffcc]/30 p-3 shadow-inner overflow-hidden">
                                 <canvas id="mainTimeSeriesChart"></canvas>
                             </div>
                         </div>
 
                         <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-1.5 text-xs text-gray-400 font-mono">
-                                <span class="flex items-center"><i class="fa-solid fa-bolt text-[#00ffcc] mr-1.5"></i>Momentum Indicator: RSI (14) + Volume Analyzer</span>
-                                <span id="rsiValDisplay" class="text-[#00ffcc] font-bold">58.4 (Neutral)</span>
-                            </div>
-                            <div class="relative w-full h-[140px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-white/10 p-3 z-10 shadow-inner">
+                            <div class="relative w-full h-[140px] bg-darkBg/50 backdrop-blur-xl rounded-xl border border-white/10 p-3 shadow-inner">
                                 <canvas id="rsiSubChart"></canvas>
                             </div>
                         </div>
-
-                        <!-- RECTANGULAR DISPLAYS -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/10 z-10">
-                            
-                            <!-- Jamaica Clock Widget -->
-                            <div class="glass-card rounded-xl p-4 flex flex-col justify-between border border-[#00ffcc]/30 shadow-xl bg-darkBg/50">
-                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-lg">🇯🇲</span>
-                                        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">Jamaica Local Time</h3>
-                                    </div>
-                                    <span class="text-[9px] font-mono text-[#00ffcc] bg-[#00ffcc]/10 px-2 py-0.5 rounded border border-[#00ffcc]/30">EST (UTC-5)</span>
-                                </div>
-                                <div class="py-3 text-center">
-                                    <div id="jamaicaClockDisplay" class="text-2xl font-mono font-extrabold text-[#00ffcc] tracking-wider">--:--:-- AM</div>
-                                    <div id="jamaicaDateDisplay" class="text-[11px] font-mono text-gray-400 mt-1">Loading date...</div>
-                                </div>
-                                <div class="text-center pt-2 border-t border-white/5">
-                                    <span class="text-[11px] font-extrabold tracking-widest text-white uppercase drop-shadow">QUAH TRADING APP</span>
-                                </div>
-                            </div>
-
-                            <!-- Foreign Data Widget -->
-                            <div class="glass-card rounded-xl p-4 flex flex-col justify-between border border-emerald-500/30 shadow-xl bg-darkBg/50">
-                                <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                                    <div class="flex items-center space-x-2">
-                                        <i class="fa-solid fa-globe text-emerald-400"></i>
-                                        <h3 class="font-bold text-white text-[11px] uppercase tracking-wider">Global Macro Stream</h3>
-                                    </div>
-                                    <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Live Feed</span>
-                                </div>
-                                <div class="py-1.5 space-y-1.5 font-mono text-xs">
-                                    <div class="flex justify-between items-center bg-darkBg/70 p-1.5 rounded border border-white/5 text-[11px]">
-                                        <span class="text-gray-300">DXY Index:</span>
-                                        <strong id="widgetDxy" class="text-[#00ffcc]">104.25</strong>
-                                    </div>
-                                    <div class="flex justify-between items-center bg-darkBg/70 p-1.5 rounded border border-white/5 text-[11px]">
-                                        <span class="text-gray-300">US10Y Yield:</span>
-                                        <strong id="widgetUs10y" class="text-emerald-400">4.28%</strong>
-                                    </div>
-                                    <div class="flex justify-between items-center bg-darkBg/70 p-1.5 rounded border border-white/5 text-[11px]">
-                                        <span class="text-gray-300">Sentiment:</span>
-                                        <strong id="widgetSentiment" class="text-amber-400">RISK-ON</strong>
-                                    </div>
-                                </div>
-                                <div class="text-[9px] text-gray-400 text-center pt-1 font-mono">
-                                    Autonomous Macro Stream
-                                </div>
-                            </div>
-
-                        </div>
                     </div>
-
-                    <!-- Multi-TF Matrix -->
-                    <div class="glass-card rounded-2xl p-5 shadow-xl space-y-4 border border-[#00ffcc]/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-th text-[#00ffcc] mr-2"></i>Multi-TF Matrix (Higher Timeframe Breakdown)</h2>
-                            <span class="text-[10px] text-[#00ffcc] font-mono font-bold">SYNCHRONIZED</span>
-                        </div>
-                        <div class="overflow-x-auto pt-1">
-                            <table class="w-full text-left text-xs font-mono">
-                                <thead>
-                                    <tr class="text-gray-400 border-b border-white/10 text-[11px]">
-                                        <th class="pb-2">Timeframe</th>
-                                        <th class="pb-2">Bias / State</th>
-                                        <th class="pb-2">Entry</th>
-                                        <th class="pb-2">TP</th>
-                                        <th class="pb-2">SL</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="multiTfMatrixBody" class="divide-y divide-white/5">
-                                    <tr><td colspan="5" class="py-3 text-center text-gray-400">Analyzing higher timeframes...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- RIGHT COLUMN -->
+                <!-- RIGHT COLUMN: REAL-TIME NEWS FEED & SENTIMENT STREAM -->
                 <div class="space-y-6">
-                    
-                    <!-- Pip & Exact Point Matrix -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-calculator text-[#00ffcc] mr-2"></i>Pip & Exact Point Matrix</h2>
-                            <span id="pipSystemBadge" class="text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold">SYNCHRONIZED</span>
+                    <div class="glass-card rounded-2xl p-5 space-y-4 border border-[#00ffcc]/30">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                            <h2 class="font-bold text-white text-sm flex items-center">
+                                <i class="fa-solid fa-rss text-[#00ffcc] mr-2"></i> Live News Sentiment Feed
+                            </h2>
+                            <span id="headlineCount" class="text-xs font-mono text-gray-400">0 Articles Loaded</span>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                            <div>
-                                <label class="block text-[9px] text-gray-400 mb-0.5">Custom Pip Target</label>
-                                <input type="number" id="customPipInput" value="20" oninput="updateCustomPipTarget()" class="w-full bg-darkBg/80 border border-white/10 rounded px-2 py-1 text-white text-xs focus:outline-none focus:border-[#00ffcc]">
-                            </div>
-                            <div>
-                                <label class="block text-[9px] text-gray-400 mb-0.5">Calculated Exact Price</label>
-                                <div id="customPipResult" class="bg-darkBg/60 p-1.5 rounded border border-white/5 text-[#00ffcc] font-bold text-xs mt-0.5">--</div>
+                        <div id="liveFeed" class="space-y-3 max-h-[450px] overflow-y-auto pr-2">
+                            <div class="text-center py-12 text-gray-500 font-mono text-xs">
+                                Enter your API key above and click "Fetch Live News" to load real-time headlines.
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto pt-2">
-                            <table class="w-full text-left text-[11px] font-mono">
-                                <thead>
-                                    <tr class="text-gray-400 border-b border-white/10">
-                                        <th class="pb-1">Pips/Points</th>
-                                        <th class="pb-1">Exact TP Target</th>
-                                        <th class="pb-1">Exact SL Point</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pipMatrixTableBody" class="divide-y divide-white/5">
-                                    <tr><td colspan="3" class="py-2 text-center text-gray-400">Loading pip targets...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TRADINGVIEW VOLUME PROFILE GUIDE -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-cyan-500/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-chart-bar text-cyan-400 mr-2"></i>TradingView Volume Profile & POC Setup</h2>
-                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold">30M STRATEGY</span>
-                        </div>
-                        <p class="text-[11px] text-gray-300">Stop guessing price direction. Configure your charts using institutional volume mapping rules:</p>
-                        <div class="space-y-1.5 text-[11px] font-mono text-gray-300">
-                            <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
-                                <span class="text-cyan-400 font-bold">1.</span>
-                                <div><strong>30-Minute Timeframe:</strong> Open settings, click on <strong>Events</strong>, and enable <strong>Session Breaks</strong>.</div>
+                        <div class="pt-3 border-t border-white/10 grid grid-cols-3 gap-2 font-mono text-[10px] text-center">
+                            <div class="bg-black/40 p-2 rounded border border-white/5">
+                                <span class="text-emerald-400 block">BULLISH</span>
+                                <strong id="bullishCount" class="text-white text-xs">0</strong>
                             </div>
-                            <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
-                                <span class="text-cyan-400 font-bold">2.</span>
-                                <div><strong>Fixed Range Profile:</strong> Grab <strong>Fixed Range Volume Profile</strong> and stretch across the prior day range.</div>
+                            <div class="bg-black/40 p-2 rounded border border-white/5">
+                                <span class="text-red-400 block">BEARISH</span>
+                                <strong id="bearishCount" class="text-white text-xs">0</strong>
                             </div>
-                            <div class="bg-darkBg/60 p-2 rounded border border-white/5 flex items-start space-x-2">
-                                <span class="text-cyan-400 font-bold">3.</span>
-                                <div><strong>Key Institutional Levels:</strong> Identify <strong>Point of Control (POC)</strong>, <strong>VAL</strong>, and <strong>VAH</strong> for entry confirmation.</div>
+                            <div class="bg-black/40 p-2 rounded border border-white/5">
+                                <span class="text-gray-400 block">TOTAL</span>
+                                <strong id="totalAnalyzed" class="text-white text-xs">0</strong>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Volume Participation Engine -->
-                    <div id="volumeWidgetContainer" class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30">
-                        <div class="flex justify-between items-center border-b border-white/10 pb-2">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-white flex items-center"><i class="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>Volume Participation Engine</span>
-                            <span id="volStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30 transition-all duration-300">HEALTHY PULLBACK</span>
-                        </div>
-                        <p id="volDescText" class="text-xs text-slate-300">Select pair & timeframe then click "Load Signal" to fetch volume analytics.</p>
-                        <div class="text-[11px] font-mono text-gray-400 flex justify-between pt-1">
-                            <span>Pullback Impact:</span>
-                            <strong id="volBonusDisplay" class="text-[#00ffcc]">+25% Confluence</strong>
-                        </div>
-                        <div class="border-t border-white/10 pt-2 mt-2 font-mono text-[11px] grid grid-cols-3 gap-1 text-center">
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">ENTRY</span>
-                                <strong id="volEngineEntry" class="text-[#00ffcc]">--</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">TP</span>
-                                <strong id="volEngineTP" class="text-emerald-400">--</strong>
-                            </div>
-                            <div class="bg-darkBg/60 p-1.5 rounded border border-white/5">
-                                <span class="text-[9px] text-gray-400 block">SL</span>
-                                <strong id="volEngineSL" class="text-red-400">--</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Session Liquidity & Killzone Tracker -->
-                    <div class="glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-[#00ffcc]/30">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                            <h2 class="font-bold text-white text-xs uppercase flex items-center"><i class="fa-solid fa-crosshairs text-[#00ffcc] mr-2"></i>Session Liquidity & Killzones</h2>
-                            <span id="killzoneStatusBadge" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-mono font-bold transition-all duration-300">LONDON / NY OVERLAP</span>
-                        </div>
-                        <div class="space-y-2 text-xs font-mono">
-                            <div class="flex justify-between items-center bg-darkBg/60 p-2 rounded border border-white/5">
-                                <span class="text-gray-300">Asian Range Sweep:</span>
-                                <strong id="asianSweepStatus" class="text-emerald-400">SWEPT (Bullish)</strong>
-                            </div>
-                            <div class="flex justify-between items-center bg-darkBg/60 p-2 rounded border border-white/5">
-                                <span class="text-gray-300">Institutional Killzone:</span>
-                                <strong id="killzoneActive" class="text-[#00ffcc]">Active (High Volatility)</strong>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-            </div>
-
-            <div class="glass-card rounded-2xl p-4 shadow-xl">
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
-                    <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-history text-[#00ffcc] mr-2"></i>Institutional Telemetry Log</h2>
-                    <span class="text-xs text-gray-400">Audit Trail Active</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <tbody id="signalLogTableBody" class="divide-y divide-white/5 font-mono">
-                            <tr><td colspan="5" class="py-3 text-center text-gray-400">No requests sent yet. Select an instrument and click "Load Signal" to begin.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
 
         </main>
     </div>
 
     <script>
-        // GLOBAL MULTI-ASSET TICK/PIP CONFIGURATION MAP
+        // LEXICONS FOR NEWS SENTIMENT
+        const BULLISH_LEXICON = ['growth', 'bullish', 'surge', 'gain', 'rally', 'positive', 'ease', 'dovish', 'cut', 'upward', 'profit', 'rise', 'record', 'high'];
+        const BEARISH_LEXICON = ['drop', 'bearish', 'plunge', 'fall', 'negative', 'hike', 'hawkish', 'inflation', 'recession', 'loss', 'downward', 'crisis', 'war', 'risk'];
+
         const SYMBOL_CONFIG = {
-            // Majors
             'EUR/USD': { decimals: 5, pipMult: 0.0001, base: 1.1040 },
             'GBP/USD': { decimals: 5, pipMult: 0.0001, base: 1.2750 },
             'USD/JPY': { decimals: 2, pipMult: 0.01, base: 147.80 },
-            'USD/CHF': { decimals: 5, pipMult: 0.0001, base: 0.8850 },
-            'AUD/USD': { decimals: 5, pipMult: 0.0001, base: 0.6540 },
-            'USD/CAD': { decimals: 5, pipMult: 0.0001, base: 1.3520 },
-            'NZD/USD': { decimals: 5, pipMult: 0.0001, base: 0.5980 },
-
-            // Minor & Cross Forex Pairs
-            'EUR/GBP': { decimals: 5, pipMult: 0.0001, base: 0.8560 },
-            'EUR/JPY': { decimals: 2, pipMult: 0.01, base: 163.20 },
-            'GBP/JPY': { decimals: 2, pipMult: 0.01, base: 188.45 },
-            'EUR/AUD': { decimals: 5, pipMult: 0.0001, base: 1.6880 },
-            'GBP/AUD': { decimals: 5, pipMult: 0.0001, base: 1.9500 },
-            'AUD/JPY': { decimals: 2, pipMult: 0.01, base: 96.80 },
-            'NZD/JPY': { decimals: 2, pipMult: 0.01, base: 88.40 },
-            'CAD/JPY': { decimals: 2, pipMult: 0.01, base: 109.30 },
-            'EUR/CAD': { decimals: 5, pipMult: 0.0001, base: 1.4920 },
-            'GBP/CAD': { decimals: 5, pipMult: 0.0001, base: 1.7240 },
-            'USD/SGD': { decimals: 5, pipMult: 0.0001, base: 1.3450 },
-            'USD/HKD': { decimals: 4, pipMult: 0.001, base: 7.8210 },
-
-            // Commodities & Energy
             'XAU/USD': { decimals: 2, pipMult: 0.1, base: 2342.50 },
-            'XAG/USD': { decimals: 3, pipMult: 0.01, base: 27.80 },
             'WTI/USD': { decimals: 2, pipMult: 0.01, base: 78.40 },
-            'BRENT/USD': { decimals: 2, pipMult: 0.01, base: 82.10 },
-            'NATGAS': { decimals: 3, pipMult: 0.005, base: 2.150 },
-            'XPT/USD': { decimals: 2, pipMult: 0.1, base: 945.00 },
-            'XPD/USD': { decimals: 2, pipMult: 0.1, base: 980.00 },
-            'COPPER': { decimals: 4, pipMult: 0.001, base: 4.1250 },
-
-            // Popular Crypto Assets
             'BTC/USD': { decimals: 2, pipMult: 1.0, base: 64210.00 },
-            'ETH/USD': { decimals: 2, pipMult: 0.5, base: 3450.00 },
-            'SOL/USD': { decimals: 2, pipMult: 0.1, base: 145.20 },
-            'XRP/USD': { decimals: 4, pipMult: 0.001, base: 0.5680 },
-            'ADA/USD': { decimals: 4, pipMult: 0.001, base: 0.3850 },
-            'DOGE/USD': { decimals: 5, pipMult: 0.0001, base: 0.1240 },
-            'BNB/USD': { decimals: 2, pipMult: 0.1, base: 560.00 },
-
-            // Indices & Equity Assets
-            'US30': { decimals: 1, pipMult: 1.0, base: 38890.0 },
-            'NAS100': { decimals: 1, pipMult: 0.5, base: 18120.5 },
-            'SPX500': { decimals: 1, pipMult: 0.25, base: 5420.2 },
-            'GER40': { decimals: 1, pipMult: 0.5, base: 18240.0 },
-            'UK100': { decimals: 1, pipMult: 0.5, base: 8210.0 },
-
-            // Synthetic Indices (Deriv)
-            'V75': { decimals: 2, pipMult: 10.0, base: 421500.20 },
-            'V100': { decimals: 2, pipMult: 5.0, base: 125000.50 },
-            'V10': { decimals: 3, pipMult: 0.1, base: 6850.25 },
-            'BOOM500': { decimals: 2, pipMult: 1.0, base: 5120.40 },
-            'BOOM1000': { decimals: 2, pipMult: 1.0, base: 10245.80 },
-            'CRASH500': { decimals: 2, pipMult: 1.0, base: 4890.30 },
-            'CRASH1000': { decimals: 2, pipMult: 1.0, base: 5840.10 },
-            'STEP_INDEX': { decimals: 1, pipMult: 1.0, base: 8450.0 },
-            'JUMP50': { decimals: 2, pipMult: 1.0, base: 11240.50 }
+            'SOL/USD': { decimals: 2, pipMult: 0.1, base: 145.20 }
         };
 
         function getSymbolMeta(symbol) {
             return SYMBOL_CONFIG[symbol] || { decimals: 5, pipMult: 0.0001, base: 100.00 };
         }
 
-        // --- VOLUME PROFILE & MARKET STRUCTURE REAL-TIME MONITOR ---
-        class TradeExitMonitor {
-            constructor() {}
+        // --- NEWS SENTIMENT FETCHING AND RENDERING ---
+        async function fetchLiveNews() {
+            const provider = document.getElementById('apiProvider').value;
+            const apiKey = document.getElementById('newsApiKeyInput').value.trim();
+            const feedContainer = document.getElementById('liveFeed');
+            const statusEl = document.getElementById('apiStatus');
 
-            evaluateExit(candles, rsiValues, direction = 'BUY') {
-                if (!candles || candles.length < 5 || !rsiValues || rsiValues.length < 5) {
-                    return {
-                        status: 'HOLD TRADE',
-                        reasons: ['Gathering market structure telemetry...'],
-                        trailingSl: '--',
-                        threatLevel: 'LOW'
-                    };
-                }
-
-                let isLong = direction.includes('BUY') || direction === 'LONG';
-                let recent = candles.slice(-6);
-                let currentCandle = recent[recent.length - 1];
-                let currentPrice = Number(currentCandle.close);
-                let meta = getSymbolMeta(currentPair);
-
-                let reasons = [];
-                let closePositions = [];
-                let warningPositions = [];
-
-                let recentHighs = recent.map(c => Number(c.high));
-                let recentLows = recent.map(c => Number(c.low));
-                let prevSwingLow = Math.min(...recentLows.slice(0, -1));
-                let prevSwingHigh = Math.max(...recentHighs.slice(0, -1));
-
-                if (isLong && currentPrice < prevSwingLow) {
-                    reasons.push("Structure Broken Counter-Trend (Lower Low)");
-                    closePositions.push('STRUCTURE');
-                } else if (!isLong && currentPrice > prevSwingHigh) {
-                    reasons.push("Structure Broken Counter-Trend (Higher High)");
-                    closePositions.push('STRUCTURE');
-                }
-
-                let avgVol = recent.reduce((sum, c) => sum + Number(c.volume || 100), 0) / recent.length;
-                let currentVol = Number(currentCandle.volume || 100);
-                let isCounterTrendBar = isLong ? (Number(currentCandle.close) < Number(currentCandle.open)) : (Number(currentCandle.close) > Number(currentCandle.open));
-
-                if (currentVol > avgVol * 1.8 && isCounterTrendBar) {
-                    reasons.push(isLong ? "High Selling Volume Surge Detected" : "High Buying Volume Surge Detected");
-                    warningPositions.push('VOLUME_SURGE');
-                }
-
-                let currentRsi = rsiValues[rsiValues.length - 1];
-                let prevRsi = rsiValues[rsiValues.length - 4];
-                let priceDiff = currentPrice - Number(recent[0].close);
-
-                if (isLong && priceDiff > 0 && currentRsi < prevRsi - 5) {
-                    reasons.push("Bearish RSI Momentum Divergence");
-                    warningPositions.push('RSI_DIVERGENCE');
-                } else if (!isLong && priceDiff < 0 && currentRsi > prevRsi + 5) {
-                    reasons.push("Bullish RSI Momentum Divergence");
-                    warningPositions.push('RSI_DIVERGENCE');
-                }
-
-                let step = meta.pipMult * 20;
-                let trailingSl = isLong ? (currentPrice - step) : (currentPrice + step);
-
-                let status = 'HOLD TRADE';
-                let threatLevel = 'LOW';
-
-                if (closePositions.length > 0) {
-                    status = 'CLOSE TRADE IMMEDIATELY';
-                    threatLevel = 'CRITICAL';
-                } else if (warningPositions.length > 0) {
-                    status = 'WARNING / TIGHTEN SL';
-                    threatLevel = 'HIGH';
-                } else {
-                    reasons.push("Structure intact", "Volume distribution stable");
-                }
-
-                return {
-                    status: status,
-                    reasons: reasons,
-                    trailingSl: trailingSl.toFixed(meta.decimals),
-                    threatLevel: threatLevel
-                };
+            if (!apiKey) {
+                showToast("Please enter a valid API key for " + provider.toUpperCase(), "warning");
+                return;
             }
 
-            renderWidget(exitInfo) {
-                const statusBadge = document.getElementById('tradeExitStatusBadge');
-                const reasonsDisplay = document.getElementById('tradeExitReasonsDisplay');
-                const trailingSlDisplay = document.getElementById('adaptiveTrailingSlDisplay');
-                const threatDisplay = document.getElementById('volumeExitThreatDisplay');
-                const container = document.getElementById('digitalExitSignalEngine');
+            statusEl.innerText = "FETCHING DATA...";
+            statusEl.className = "text-yellow-400 font-bold";
+            feedContainer.innerHTML = '<div class="text-center py-12 text-gray-400 font-mono text-xs"><i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i><br>Contacting provider endpoints...</div>';
 
-                if (!statusBadge) return;
+            try {
+                let rawArticles = [];
 
-                statusBadge.innerText = exitInfo.status;
-                reasonsDisplay.innerHTML = exitInfo.reasons.join(' &bull; ');
-                trailingSlDisplay.innerText = exitInfo.trailingSl;
-                threatDisplay.innerText = exitInfo.threatLevel;
-
-                triggerStateBadgePulse(statusBadge);
-
-                if (exitInfo.status === 'CLOSE TRADE IMMEDIATELY') {
-                    statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse animate-badge-pulse";
-                    threatDisplay.className = "text-red-400 text-xs mt-0.5 font-bold";
-                    if (container) container.className = "glass-card rounded-xl p-4 z-10 border border-red-500/50 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl";
-                } else if (exitInfo.status === 'WARNING / TIGHTEN SL') {
-                    statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50 animate-pulse animate-badge-pulse";
-                    threatDisplay.className = "text-amber-300 text-xs mt-0.5 font-bold";
-                    if (container) container.className = "glass-card rounded-xl p-4 z-10 border border-amber-500/50 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl";
-                } else {
-                    statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-badge-pulse";
-                    threatDisplay.className = "text-emerald-400 text-xs mt-0.5 font-bold";
-                    if (container) container.className = "glass-card rounded-xl p-4 z-10 border border-[#00ffcc]/40 space-y-3 bg-darkBg/60 backdrop-blur shadow-xl";
-                }
-            }
-        }
-
-        const globalTradeExitMonitor = new TradeExitMonitor();
-
-        // --- CANDLESTICK PATTERN ENGINE DETECTOR ---
-        class CandlestickPatternEngine {
-            constructor() {}
-
-            detectPattern(candles) {
-                if (!candles || candles.length < 3) {
-                    return { name: 'Gathering Candles...', type: 'NEUTRAL', sync: 'Syncing...' };
-                }
-
-                let c1 = candles[candles.length - 3];
-                let c2 = candles[candles.length - 2];
-                let c3 = candles[candles.length - 1];
-
-                let o1 = Number(c1.open), close1 = Number(c1.close);
-                let o2 = Number(c2.open), close2 = Number(c2.close);
-                let o3 = Number(c3.open), close3 = Number(c3.close);
-
-                let h3 = Number(c3.high), l3 = Number(c3.low);
-
-                if (close1 < o1 && close2 > o2 && close2 >= o1 && o2 <= close1) {
-                    return { name: 'Bullish Engulfing', type: 'BULLISH', sync: 'Aligned with SMC BOS (+20%)' };
-                }
-                if (close1 > o1 && close2 < o2 && close2 <= o1 && o2 >= close1) {
-                    return { name: 'Bearish Engulfing', type: 'BEARISH', sync: 'Aligned with SMC CHoCH (+20%)' };
-                }
-                let body3 = Math.abs(close3 - o3);
-                let lowerWick = Math.min(o3, close3) - l3;
-                let upperWick = h3 - Math.max(o3, close3);
-                if (lowerWick > body3 * 2 && upperWick < body3) {
-                    return { name: 'Bullish Hammer / Pinbar', type: 'BULLISH', sync: 'Orderblock Rejection (+15%)' };
-                }
-                if (body3 <= (h3 - l3) * 0.1) {
-                    return { name: 'Indecision Doji', type: 'NEUTRAL', sync: 'Consolidation Zone' };
-                }
-
-                return { name: 'Standard Continuation Candle', type: 'NEUTRAL', sync: 'Neutral Flow' };
-            }
-
-            renderWidget(pattern) {
-                const nameElem = document.getElementById('candlePatternName');
-                const badgeElem = document.getElementById('candlePatternBadge');
-                const syncElem = document.getElementById('candleSmcSync');
-                if (!nameElem) return;
-
-                nameElem.innerText = pattern.name;
-                syncElem.innerText = pattern.sync;
-
-                triggerStateBadgePulse(badgeElem);
-
-                if (pattern.type === 'BULLISH') {
-                    badgeElem.innerText = pattern.name.toUpperCase();
-                    badgeElem.className = "text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono font-bold animate-badge-pulse";
-                } else if (pattern.type === 'BEARISH') {
-                    badgeElem.innerText = pattern.name.toUpperCase();
-                    badgeElem.className = "text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded font-mono font-bold animate-badge-pulse";
-                } else {
-                    badgeElem.innerText = pattern.name.toUpperCase();
-                    badgeElem.className = "text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-mono font-bold animate-badge-pulse";
-                }
-            }
-        }
-
-        const globalCandleEngine = new CandlestickPatternEngine();
-
-        // --- TIMEFRAME COUNTDOWN TIMER ENGINE ---
-        let tfSecondsRemaining = {
-            '1min': 60,
-            '5min': 300,
-            '15min': 900,
-            '1h': 3600,
-            '4h': 14400,
-            '1day': 86400
-        };
-
-        function startTfTimers() {
-            setInterval(() => {
-                for (let tf in tfSecondsRemaining) {
-                    tfSecondsRemaining[tf]--;
-                    if (tfSecondsRemaining[tf] <= 0) {
-                        tfSecondsRemaining[tf] = getTfTotalSeconds(tf);
-                        if (currentTimeframe === tf) {
-                            fetchAndRenderOnDemand();
-                        }
+                if (provider === 'fmp') {
+                    let endpoint = `https://financialmodelingprep.com/stable/news/forex-latest?page=0&limit=15&apikey=${apiKey}`;
+                    const res = await fetch(endpoint);
+                    const data = await res.json();
+                    
+                    if (data.error || data['Error Message']) {
+                        throw new Error(data.error || data['Error Message']);
                     }
-                    updateTfTimerDisplay(tf);
-                }
-            }, 1000);
-        }
 
-        function getTfTotalSeconds(tf) {
-            if (tf === '1min') return 60;
-            if (tf === '5min') return 300;
-            if (tf === '15min') return 900;
-            if (tf === '1h') return 3600;
-            if (tf === '4h') return 14400;
-            return 86400;
-        }
+                    rawArticles = (Array.isArray(data) ? data : []).map(item => ({
+                        title: item.title,
+                        summary: item.text || item.snippet || "No snippet available.",
+                        url: item.url,
+                        source: item.site || "Financial Modeling Prep",
+                        publishedAt: item.publishedDate || "Recently"
+                    }));
 
-        function updateTfTimerDisplay(tf) {
-            const timerEl = document.querySelector(`.tf-timer[data-tf="${tf}"]`);
-            if (!timerEl) return;
-            let secs = tfSecondsRemaining[tf];
-            let m = Math.floor(secs / 60);
-            let s = secs % 60;
-            timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
+                } else if (provider === 'newsapi') {
+                    let query = "forex OR inflation OR FED OR gold OR crypto";
+                    const endpoint = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=15&apiKey=${apiKey}`;
+                    
+                    const res = await fetch(endpoint);
+                    const data = await res.json();
 
-        class VolumePullbackAnalyzer {
-            constructor() {}
-
-            analyzePullbackHealth(candles) {
-                if (!candles || candles.length < 5) return { status: 'INSUFFICIENT_DATA', probabilityBonus: 0, description: 'Gathering volume stream...' };
-
-                let recentMoves = candles.slice(-5);
-                let impulseVolumeIncreasing = true;
-                let pullbackVolumeDecreasing = true;
-                let highSellingPressure = false;
-
-                let impulseCandles = recentMoves.slice(0, 2);
-                let pullbackCandles = recentMoves.slice(2);
-
-                for (let i = 1; i < impulseCandles.length; i++) {
-                    if (Number(impulseCandles[i].volume) <= Number(impulseCandles[i - 1].volume) && Number(impulseCandles[i].close) > Number(impulseCandles[i].open)) {
-                        impulseVolumeIncreasing = false;
+                    if (data.status === 'error') {
+                        throw new Error(data.message);
                     }
+
+                    rawArticles = (data.articles || []).map(item => ({
+                        title: item.title,
+                        summary: item.description || "No description available.",
+                        url: item.url,
+                        source: item.source.name || "NewsAPI",
+                        publishedAt: new Date(item.publishedAt).toLocaleTimeString()
+                    }));
                 }
 
-                let redVolumes = pullbackCandles.filter(c => Number(c.close) < Number(c.open)).map(c => Number(c.volume));
-                if (redVolumes.length >= 2) {
-                    if (redVolumes[1] > redVolumes[0]) {
-                        pullbackVolumeDecreasing = false;
-                        highSellingPressure = true;
-                    }
-                }
+                processAndRenderArticles(rawArticles);
+                statusEl.innerText = "STREAM ONLINE";
+                statusEl.className = "text-emerald-400 font-bold";
 
-                let analysisResult = {
-                    status: 'NEUTRAL',
-                    probabilityBonus: 0,
-                    description: 'Standard volume distribution across candles'
-                };
+            } catch (err) {
+                statusEl.innerText = "FETCH ERROR";
+                statusEl.className = "text-red-400 font-bold";
+                feedContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400 text-xs font-mono"><strong>API Fetch Failed:</strong> ${err.message}</div>`;
+            }
+        }
 
-                if (impulseVolumeIncreasing && pullbackVolumeDecreasing) {
-                    analysisResult = {
-                        status: 'HEALTHY_PULLBACK',
-                        probabilityBonus: 4.0, 
-                        description: 'Increasing buy volume with decreasing sell volume on pullback (High continuation probability)'
-                    };
-                } else if (impulseVolumeIncreasing && highSellingPressure) {
-                    analysisResult = {
-                        status: 'HIGH_REVERSAL_RISK',
-                        probabilityBonus: -5.0, 
-                        description: 'Warning: Increasing red volume during pullback signals strong distribution pressure'
-                    };
-                }
+        function processAndRenderArticles(articles) {
+            const feedContainer = document.getElementById('liveFeed');
+            feedContainer.innerHTML = '';
 
-                return analysisResult;
+            let totalBullish = 0;
+            let totalBearish = 0;
+
+            if (articles.length === 0) {
+                feedContainer.innerHTML = '<div class="text-center py-12 text-gray-400 font-mono text-xs">No news articles found for this selection.</div>';
+                return;
             }
 
-            renderWidget(analysis, entry, tp, sl) {
-                const badge = document.getElementById('volStatusBadge');
-                const desc = document.getElementById('volDescText');
-                const bonus = document.getElementById('volBonusDisplay');
-                const container = document.getElementById('volumeWidgetContainer');
-                const enElem = document.getElementById('volEngineEntry');
-                const tpElem = document.getElementById('volEngineTP');
-                const slElem = document.getElementById('volEngineSL');
+            articles.forEach(art => {
+                const textToAnalyze = (art.title + ' ' + art.summary).toLowerCase();
                 
-                if (!badge) return;
+                let articleBullish = 0;
+                let articleBearish = 0;
 
-                badge.innerText = analysis.status;
-                desc.innerText = analysis.description;
-                bonus.innerText = `${analysis.probabilityBonus > 0 ? '+' : ''}${analysis.probabilityBonus}% Confluence`;
-                if(enElem) enElem.innerText = entry;
-                if(tpElem) tpElem.innerText = tp;
-                if(slElem) slElem.innerText = sl;
-
-                triggerStateBadgePulse(badge);
-
-                if (analysis.status === 'HEALTHY_PULLBACK') {
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30 animate-badge-pulse";
-                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30";
-                } else if (analysis.status === 'HIGH_REVERSAL_RISK') {
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-red-500/20 text-red-400 border-red-500/40 animate-pulse animate-badge-pulse";
-                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-red-500/40";
-                } else {
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-slate-500/20 text-slate-400 border-slate-500/30 animate-badge-pulse";
-                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-white/10";
-                }
-            }
-        }
-
-        const globalVolumeAnalyzer = new VolumePullbackAnalyzer();
-
-        class PipCalculatorEngine {
-            constructor() {}
-
-            calculateExactPipTarget(symbol, entryPrice, pips, direction = 'BUY') {
-                let meta = getSymbolMeta(symbol);
-                let targetPrice = 0;
-                
-                if (direction.includes('BUY') || direction === 'LONG') {
-                    targetPrice = entryPrice + (pips * meta.pipMult);
-                } else {
-                    targetPrice = entryPrice - (pips * meta.pipMult);
-                }
-
-                return {
-                    pips: pips,
-                    exactPrice: targetPrice.toFixed(meta.decimals),
-                    symbol: symbol
-                };
-            }
-
-            generatePipMatrix(symbol, currentPrice, direction) {
-                const pipSteps = [10, 15, 20, 30, 50, 100];
-                return pipSteps.map(pips => {
-                    let tp = this.calculateExactPipTarget(symbol, currentPrice, pips, direction);
-                    let sl = this.calculateExactPipTarget(symbol, currentPrice, -pips * 0.5, direction); 
-                    return { pips, tp: tp.exactPrice, sl: sl.exactPrice };
+                BULLISH_LEXICON.forEach(word => {
+                    if (textToAnalyze.includes(word)) articleBullish++;
                 });
-            }
-        }
 
-        const globalPipEngine = new PipCalculatorEngine();
+                BEARISH_LEXICON.forEach(word => {
+                    if (textToAnalyze.includes(word)) articleBearish++;
+                });
 
-        class InstitutionalTelemetryEngine {
-            constructor(apiKey, maxCalls = 800) {
-                this.apiKey = apiKey;
-                this.maxCalls = maxCalls;
-                this.callCount = 0;
-                this.cache = {}; 
-            }
+                totalBullish += articleBullish;
+                totalBearish += articleBearish;
 
-            updateQuotaDisplay() {
-                const counterElem = document.getElementById('apiCallCountDisplay');
-                const watcherBadge = document.getElementById('apiQuotaWatcherBadge');
-                if (counterElem) counterElem.innerText = this.callCount;
+                let tag = { label: 'NEUTRAL', color: 'gray' };
+                if (articleBullish > articleBearish) tag = { label: 'BULLISH', color: 'emerald' };
+                if (articleBearish > articleBullish) tag = { label: 'BEARISH', color: 'red' };
 
-                if (watcherBadge) {
-                    let ratio = this.callCount / this.maxCalls;
-                    if (ratio >= 0.95) {
-                        watcherBadge.className = "flex items-center space-x-2 bg-red-500/20 backdrop-blur px-2.5 py-1 rounded border border-red-500/60 text-xs font-mono text-red-300 shadow-lg animate-pulse";
-                    } else if (ratio >= 0.75) {
-                        watcherBadge.className = "flex items-center space-x-2 bg-amber-500/20 backdrop-blur px-2.5 py-1 rounded border border-amber-500/50 text-xs font-mono text-amber-300 shadow-sm";
-                    } else {
-                        watcherBadge.className = "flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm";
-                    }
-                }
-            }
+                const cardHtml = `
+                    <div class="bg-black/40 p-3 rounded-xl border border-white/5 hover:border-white/20 transition space-y-1.5 font-mono">
+                        <div class="flex items-center justify-between text-[10px]">
+                            <span class="bg-${tag.color}-500/20 text-${tag.color}-400 border border-${tag.color}-500/30 px-2 py-0.5 rounded font-bold">${tag.label}</span>
+                            <span class="text-gray-400">${art.source} &bull; ${art.publishedAt}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-200 hover:text-[#00ffcc]">
+                            <a href="${art.url}" target="_blank">${art.title}</a>
+                        </h4>
+                        <p class="text-[11px] text-gray-400 line-clamp-2">${art.summary}</p>
+                    </div>
+                `;
+                feedContainer.innerHTML += cardHtml;
+            });
 
-            async fetchTimeSeries(symbol, interval) {
-                const startTime = performance.now();
-                const cacheKey = `${symbol}_${interval}`;
-                const now = Date.now();
+            document.getElementById('headlineCount').innerText = `${articles.length} Articles Loaded`;
+            document.getElementById('bullishCount').innerText = totalBullish;
+            document.getElementById('bearishCount').innerText = totalBearish;
+            document.getElementById('totalAnalyzed').innerText = articles.length;
 
-                if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp < 120000)) {
-                    setDataSourceBadge(true);
-                    showToast(`Loaded ${symbol} (${interval}) from memory cache (0 API calls used).`);
-                    return this.cache[cacheKey].data;
-                }
+            const net = totalBullish - totalBearish;
+            const scoreEl = document.getElementById('sentimentScore');
+            const biasEl = document.getElementById('biasText');
 
-                if (this.callCount >= this.maxCalls) {
-                    showToast("API Daily Limit (800) Reached. Request blocked. Switching to Fallback Simulation.", "warning");
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry(symbol);
-                }
-
-                const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
-                const url = `https://api.twelvedata.com/time_series?symbol=${formattedSymbol}&interval=${interval}&outputsize=30&apikey=${this.apiKey}`;
-
-                try {
-                    this.callCount++;
-                    this.updateQuotaDisplay();
-
-                    const response = await fetch(url);
-                    const data = await response.json();
-
-                    const endTime = performance.now();
-                    const jitter = Math.round(endTime - startTime + Math.random() * 8);
-                    const latencyElem = document.getElementById('latencyDisplay');
-                    if (latencyElem) latencyElem.innerText = `${jitter}ms`;
-
-                    if (data.code === 429 || data.status === 'error') {
-                        showToast(`TwelveData API Limit/Error. Using Fallback Engine for ${symbol}.`, "warning");
-                        setDataSourceBadge(false);
-                        return this.getFallbackTelemetry(symbol);
-                    }
-
-                    if (data.values && Array.isArray(data.values)) {
-                        const reversedData = data.values.reverse();
-                        this.cache[cacheKey] = { timestamp: now, data: reversedData };
-                        setDataSourceBadge(true);
-                        showToast(`Successfully fetched on-demand data for ${symbol} [Call #${this.callCount}]`);
-                        return reversedData;
-                    }
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry(symbol);
-                } catch (error) {
-                    showToast(`Network Error connecting to TwelveData for ${symbol}. Fallback Active.`, "warning");
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry(symbol);
-                }
-            }
-
-            getFallbackTelemetry(symbol) {
-                let meta = getSymbolMeta(symbol);
-                let basePrice = meta.base;
-                let stepSize = meta.pipMult * 10;
-                let fallbackValues = [];
-                let now = new Date();
-                for(let i=30; i>=0; i--) {
-                    let d = new Date(now.getTime() - i * 60000);
-                    basePrice += (Math.random() - 0.48) * stepSize;
-                    fallbackValues.push({
-                        datetime: d.toISOString().slice(11, 19),
-                        open: (basePrice - stepSize * 0.2).toFixed(meta.decimals),
-                        close: basePrice.toFixed(meta.decimals),
-                        high: (basePrice + stepSize * 0.5).toFixed(meta.decimals),
-                        low: (basePrice - stepSize * 0.5).toFixed(meta.decimals),
-                        volume: Math.floor(Math.random() * 500 + 100)
-                    });
-                }
-                return fallbackValues;
-            }
-        }
-
-        function setDataSourceBadge(isLive) {
-            const badge = document.getElementById('dataSourceBadge');
-            if(!badge) return;
-            if(isLive) {
-                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40";
-                badge.innerText = "Live API Synced (On-Demand)";
+            if (net > 2) {
+                scoreEl.innerText = `+${net} (STRONG BULLISH)`;
+                scoreEl.className = "text-emerald-400 font-bold";
+                biasEl.innerText = "BUY / LONG CONFLUENCE";
+                biasEl.className = "text-emerald-400 font-bold";
+            } else if (net < -2) {
+                scoreEl.innerText = `${net} (STRONG BEARISH)`;
+                scoreEl.className = "text-red-400 font-bold";
+                biasEl.innerText = "SELL / SHORT CONFLUENCE";
+                biasEl.className = "text-red-400 font-bold";
             } else {
-                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40";
-                badge.innerText = "Simulated Fallback Mode";
+                scoreEl.innerText = `${net} (NEUTRAL)`;
+                scoreEl.className = "text-yellow-400 font-bold";
+                biasEl.innerText = "NO BIAS / WAIT FOR CONFIRMATION";
+                biasEl.className = "text-yellow-400 font-bold";
             }
         }
 
+        // UI NOTIFICATIONS
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -1324,52 +625,62 @@
                 toast.classList.add('translate-y-2', 'opacity-0');
                 setTimeout(() => { toast.remove(); }, 300);
             }, 4000);
-
-            if (type === 'warning') {
-                const audio = document.getElementById('alertBeep');
-                if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
-            }
         }
 
-        let mainTimeSeriesChart = null;
-        let rsiChart = null;
-        let currentPair = 'EUR/USD';
-        let currentTimeframe = '5min';
-        let licenseTimerInterval = null;
-        let currentThemeMode = 'ocean';
-        let telemetryEngine = null;
+        // AUTHENTICATION AND INITIALIZATION
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const licenseKey = document.getElementById('loginLicense').value;
+            const apiKey = document.getElementById('loginApiKey').value;
 
-        let autoReloadSeconds = 40;
-        let autoReloadTimerInterval = null;
-        
-        let activeFullCode = '';
-        let activeApiKey = '';
-        let activeLicenseExpiryTimestamp = null;
-        let isTabActive = true;
-        let animationFrameId = null;
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-
-        document.addEventListener('visibilitychange', () => {
-            isTabActive = !document.hidden;
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const cachedKey = localStorage.getItem('quah_api_key');
-            const cachedLicense = localStorage.getItem('quah_license_key');
-            if (cachedKey && cachedLicense) {
-                document.getElementById('loginApiKey').value = cachedKey;
-                document.getElementById('loginLicense').value = cachedLicense;
+            if (licenseKey && apiKey) {
+                if (document.getElementById('rememberDeviceCheck').checked) {
+                    localStorage.setItem('quah_api_key', apiKey);
+                    localStorage.setItem('quah_license_key', licenseKey);
+                }
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("Terminal session verified and initialized.");
+                init3DTiltCards();
             }
-            init3DTiltCards();
         });
 
-        // 3D TILT MICRO-INTERACTIONS
+        function logout() {
+            localStorage.removeItem('quah_api_key');
+            localStorage.removeItem('quah_license_key');
+            location.reload();
+        }
+
+        function toggleProfileMenu() {
+            document.getElementById('profileMenu').classList.toggle('hidden');
+        }
+
+        function changeTheme(themeName) {
+            document.body.className = `theme-${themeName} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
+        }
+
+        function onPairChange() {
+            const pair = document.getElementById('mainPairSelect').value;
+            document.getElementById('chartCardTitle').innerText = `${pair} - On-Demand Data Stream`;
+            showToast(`Switched active asset to ${pair}`);
+        }
+
+        function setTimeframe(tf, btn) {
+            document.querySelectorAll('.tf-btn').forEach(b => {
+                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
+            });
+            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
+            showToast(`Timeframe set to ${tf}`);
+        }
+
+        function triggerManualRefresh() {
+            showToast("Manual market scan initiated...");
+        }
+
+        function executeTradeAlert() {
+            showToast("Trade order dispatched to execution system.");
+        }
+
         function init3DTiltCards() {
             const cards = document.querySelectorAll('.glass-card');
             cards.forEach(card => {
@@ -1379,576 +690,24 @@
                     const y = e.clientY - rect.top;
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -6;
-                    const rotateY = ((x - centerX) / centerX) * 6;
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+                    const rotateX = ((y - centerY) / centerY) * -4;
+                    const rotateY = ((x - centerX) / centerX) * 4;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
                 });
                 card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
                 });
             });
         }
 
-        // VISUAL PULSE STATE BADGE HELPERS
-        function triggerStateBadgePulse(element) {
-            if (!element) return;
-            element.classList.remove('animate-badge-pulse');
-            void element.offsetWidth; // Trigger reflow
-            element.classList.add('animate-badge-pulse');
-            
-            const timerWidget = document.getElementById('autoAnalyzeWidget');
-            const dispatchBtn = document.getElementById('dispatchOrderBtn');
-            if (timerWidget) {
-                timerWidget.classList.add('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]');
-                setTimeout(() => timerWidget.classList.remove('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]'), 1200);
-            }
-            if (dispatchBtn) {
-                dispatchBtn.classList.add('shadow-[0_0_20px_rgba(0,255,204,0.6)]');
-                setTimeout(() => dispatchBtn.classList.remove('shadow-[0_0_20px_rgba(0,255,204,0.6)]'), 1200);
-            }
-        }
-
-        function base64UrlDecode(str) {
-            let output = str.replace(/-/g, '+').replace(/_/g, '/');
-            switch (output.length % 4) {
-                case 0: break;
-                case 2: output += '=='; break;
-                case 3: output += '='; break;
-                default: throw new Error('Illegal base64url string.');
-            }
-            return atob(output);
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const apiKey = document.getElementById('loginApiKey').value.trim();
-            const licenseKeyInput = document.getElementById('loginLicense').value.trim();
-            const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
-            const errElem = document.getElementById('licenseErrorMsg');
-            const statusIndicator = document.getElementById('authStatusIndicator');
-
-            errElem.classList.add('hidden');
-            if (statusIndicator) statusIndicator.textContent = "Checking key...";
-
-            try {
-                if (!apiKey) throw new Error("API Key required");
-                if (!licenseKeyInput.startsWith('QUAH-')) throw new Error("Invalid license format prefix");
-                
-                const parts = licenseKeyInput.split('-');
-                if (parts.length < 3) throw new Error("Invalid structured key partitions");
-
-                const decodedJson = base64UrlDecode(parts[1]);
-                const payload = JSON.parse(decodedJson);
-
-                if (!payload.expiresAt || Date.now() > payload.expiresAt) {
-                    throw new Error("License key has expired.");
-                }
-
-                activeLicenseExpiryTimestamp = payload.expiresAt;
-                activeFullCode = licenseKeyInput;
-                activeApiKey = apiKey;
-
-                if (payload.tier) {
-                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                }
-
-                if (rememberDevice) {
-                    localStorage.setItem('quah_api_key', apiKey);
-                    localStorage.setItem('quah_license_key', licenseKeyInput);
-                }
-
-                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized with Expanded Instrument Suite");
-                initApp();
-
-            } catch (error) {
-                errElem.textContent = error.message || "Please enter a valid TwelveData API Key and unexpired QUAH license string.";
-                errElem.classList.remove('hidden');
-                if (statusIndicator) statusIndicator.textContent = "Error";
+        window.addEventListener('DOMContentLoaded', () => {
+            const cachedKey = localStorage.getItem('quah_api_key');
+            const cachedLicense = localStorage.getItem('quah_license_key');
+            if (cachedKey && cachedLicense) {
+                document.getElementById('loginApiKey').value = cachedKey;
+                document.getElementById('loginLicense').value = cachedLicense;
             }
         });
-
-        function logout() {
-            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
-            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            localStorage.removeItem('quah_api_key');
-            localStorage.removeItem('quah_license_key');
-            document.getElementById('expiryUpgradeModal').classList.add('hidden');
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('authModal').classList.remove('hidden');
-            showToast("Session Disconnected & Storage Cleared", "warning");
-        }
-
-        function toggleProfileMenu() {
-            document.getElementById('profileMenu').classList.toggle('hidden');
-        }
-
-        // CANVAS PARTICLES, NODE ENGINE & SHADER GRADIENTS
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        let entities = [];
-        let neuralNodes = [];
-        let gridOffset = 0;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initNeuralNodes();
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function initNeuralNodes() {
-            neuralNodes = [];
-            let count = Math.min(Math.floor(window.innerWidth / 40), 45);
-            for(let i=0; i<count; i++) {
-                neuralNodes.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.6,
-                    vy: (Math.random() - 0.5) * 0.6,
-                    radius: Math.random() * 2 + 1.2
-                });
-            }
-        }
-
-        function initEntitiesForTheme(theme) {
-            entities = [];
-            let count = window.innerWidth < 768 ? 20 : 60;
-            for(let i=0; i<count; i++) {
-                entities.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.8,
-                    vy: (Math.random() - 0.5) * 0.8 - 0.2,
-                    size: Math.random() * 4 + 1,
-                    alpha: Math.random() * 0.6 + 0.2,
-                    pulse: Math.random() * Math.PI,
-                    type: theme
-                });
-            }
-        }
-
-        function changeTheme(theme) {
-            currentThemeMode = theme;
-            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
-            initEntitiesForTheme(theme);
-            showToast(`Theme changed to ${theme}`);
-        }
-
-        function renderCanvasGradientShaders() {
-            const computedStyle = getComputedStyle(document.body);
-            const color1 = computedStyle.getPropertyValue('--canvas-shader-1').trim() || 'oklch(0.2 0.1 240)';
-            const color2 = computedStyle.getPropertyValue('--canvas-shader-2').trim() || 'oklch(0.1 0.05 260)';
-
-            let gradient = ctx.createRadialGradient(
-                canvas.width / 2, canvas.height / 2, 50,
-                canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
-            );
-            gradient.addColorStop(0, color1);
-            gradient.addColorStop(1, color2);
-
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function animateBg() {
-            if (isTabActive) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                renderCanvasGradientShaders();
-
-                gridOffset = (gridOffset + 0.5) % 40;
-                ctx.strokeStyle = 'rgba(0, 255, 204, 0.04)';
-                ctx.lineWidth = 1;
-                let horizonY = canvas.height * 0.35;
-                
-                for(let x = -canvas.width; x < canvas.width * 2; x += 80) {
-                    ctx.beginPath();
-                    ctx.moveTo(canvas.width / 2, horizonY);
-                    ctx.lineTo(x + gridOffset * 2, canvas.height);
-                    ctx.stroke();
-                }
-                for(let y = horizonY; y < canvas.height; y += (y - horizonY) * 0.15 + 2) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, y);
-                    ctx.lineTo(canvas.width, y);
-                    ctx.stroke();
-                }
-
-                for (let i = 0; i < neuralNodes.length; i++) {
-                    let node = neuralNodes[i];
-                    
-                    let dx = mouseX - node.x;
-                    let dy = mouseY - node.y;
-                    let mouseDist = Math.hypot(dx, dy);
-                    if (mouseDist < 120) {
-                        let angle = Math.atan2(dy, dx);
-                        node.x -= Math.cos(angle) * 1.5;
-                        node.y -= Math.sin(angle) * 1.5;
-                    }
-
-                    node.x += node.vx;
-                    node.y += node.vy;
-                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-                    ctx.fillStyle = '#00ffcc';
-                    ctx.shadowBlur = 8;
-                    ctx.shadowColor = '#00ffcc';
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-
-                    for (let j = i + 1; j < neuralNodes.length; j++) {
-                        let n2 = neuralNodes[j];
-                        let dist = Math.hypot(node.x - n2.x, node.y - n2.y);
-                        if (dist < 150) {
-                            ctx.strokeStyle = `rgba(0, 255, 204, ${(1 - dist / 150) * 0.25})`;
-                            ctx.lineWidth = 1;
-                            ctx.beginPath();
-                            ctx.moveTo(node.x, node.y);
-                            ctx.lineTo(n2.x, n2.y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-                entities.forEach(e => {
-                    e.x += e.vx + (mouseX - canvas.width / 2) * 0.0002;
-                    e.y += e.vy;
-                    e.pulse += 0.03;
-
-                    if(e.x < 0) e.x = canvas.width;
-                    if(e.x > canvas.width) e.x = 0;
-                    if(e.y < 0) e.y = canvas.height;
-                    if(e.y > canvas.height) e.y = 0;
-
-                    let currentAlpha = e.alpha + Math.sin(e.pulse) * 0.2;
-                    ctx.fillStyle = currentThemeMode === 'cyberpunk' ? `rgba(255, 0, 127, ${currentAlpha})` : `rgba(0, 255, 204, ${currentAlpha})`;
-                    ctx.beginPath();
-                    ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-            }
-            animationFrameId = requestAnimationFrame(animateBg);
-        }
-        resizeCanvas();
-        initEntitiesForTheme('ocean');
-        animateBg();
-
-        function updateClocks() {
-            const now = new Date();
-            const utcElem = document.getElementById('utcClock');
-            const nyElem = document.getElementById('clockNY');
-            const lonElem = document.getElementById('clockLON');
-            const tyoElem = document.getElementById('clockTYO');
-            
-            const jamaicaTimeStr = now.toLocaleTimeString("en-US", { timeZone: "America/Jamaica", hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const jamaicaDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Jamaica", weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-            const jamClockElem = document.getElementById('jamaicaClockDisplay');
-            const jamDateElem = document.getElementById('jamaicaDateDisplay');
-            if (jamClockElem) jamClockElem.innerText = jamaicaTimeStr;
-            if (jamDateElem) jamDateElem.innerText = jamaicaDateStr;
-
-            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
-            if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(lonElem) lonElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(tyoElem) tyoElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }
-        setInterval(updateClocks, 1000);
-
-        function triggerFlashAnimation(element, newPrice, oldPrice) {
-            if (!element) return;
-            element.innerText = newPrice;
-            element.classList.remove('animate-flash-up', 'animate-flash-down');
-            void element.offsetWidth; // Force CSS Reflow
-            if (parseFloat(newPrice) >= parseFloat(oldPrice)) {
-                element.classList.add('animate-flash-up');
-            } else {
-                element.classList.add('animate-flash-down');
-            }
-        }
-
-        function updateMarketStatusBannerLocally() {
-            const updateTickerItem = (symKey, price) => {
-                const el = document.getElementById(`ticker_${symKey}`);
-                const dupEl = document.querySelector(`.ticker-dup-${symKey}`);
-                
-                let oldPrice = el ? el.innerText : price;
-                if (el) triggerFlashAnimation(el, price, oldPrice);
-                if (dupEl) triggerFlashAnimation(dupEl, price, oldPrice);
-            };
-
-            let eurRate = (1.1040 + (Math.random() - 0.5) * 0.0010).toFixed(4);
-            let gbpJpyRate = (188.40 + (Math.random() - 0.5) * 0.10).toFixed(2);
-            let oilRate = (78.40 + (Math.random() - 0.5) * 0.20).toFixed(2);
-            let solRate = (145.20 + (Math.random() - 0.5) * 0.50).toFixed(2);
-            let us30Rate = (38890.00 + (Math.random() - 0.5) * 10.0).toFixed(1);
-            let nas100Rate = (18120.50 + (Math.random() - 0.5) * 5.0).toFixed(1);
-            let v75Rate = (421500.20 + (Math.random() - 0.5) * 15.0).toFixed(2);
-            let boomRate = (10245.80 + (Math.random() - 0.5) * 2.0).toFixed(2);
-            let crashRate = (5840.10 + (Math.random() - 0.5) * 2.0).toFixed(2);
-
-            const dxyEl = document.getElementById('widgetDxy');
-            const us10yEl = document.getElementById('widgetUs10y');
-            if (dxyEl) triggerFlashAnimation(dxyEl, (104.20 + (Math.random() - 0.5) * 0.10).toFixed(2), dxyEl.innerText);
-            if (us10yEl) triggerFlashAnimation(us10yEl, (4.27 + (Math.random() - 0.5) * 0.02).toFixed(2) + '%', us10yEl.innerText);
-
-            updateTickerItem("EURUSD", eurRate);
-            updateTickerItem("GBPJPY", gbpJpyRate);
-            updateTickerItem("USOIL", oilRate);
-            updateTickerItem("SOLUSD", solRate);
-            updateTickerItem("US30", us30Rate);
-            updateTickerItem("NAS100", nas100Rate);
-            updateTickerItem("V75", v75Rate);
-            updateTickerItem("BOOM1000", boomRate);
-            updateTickerItem("CRASH1000", crashRate);
-        }
-
-        setInterval(updateMarketStatusBannerLocally, 3000);
-
-        function initApp() {
-            startTfTimers();
-            initCharts();
-            fetchAndRenderOnDemand();
-
-            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
-            autoReloadTimerInterval = setInterval(() => {
-                autoReloadSeconds--;
-                const countdownDisplay = document.getElementById('autoReloadCountdownDisplay');
-                if (countdownDisplay) countdownDisplay.innerText = `${autoReloadSeconds}s`;
-
-                if (autoReloadSeconds <= 0) {
-                    autoReloadSeconds = 40;
-                    fetchAndRenderOnDemand();
-                }
-            }, 1000);
-        }
-
-        function initCharts() {
-            const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
-            const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
-
-            mainTimeSeriesChart = new Chart(ctxMain, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Price',
-                        data: [],
-                        borderColor: '#00ffcc',
-                        borderWidth: 2,
-                        tension: 0.35,
-                        pointRadius: 2,
-                        pointHoverRadius: 6,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } }
-                    },
-                    plugins: { legend: { display: false } },
-                    animation: {
-                        duration: 800,
-                        easing: 'easeInOutQuad'
-                    }
-                },
-                plugins: [{
-                    id: 'neonLineGlowWatermark',
-                    beforeDraw: (chart) => {
-                        const ctx = chart.ctx;
-                        ctx.save();
-                        
-                        // Glowing Neon Line Chart Setup
-                        ctx.shadowColor = 'rgba(0, 255, 204, 0.8)';
-                        ctx.shadowBlur = 12;
-                        
-                        // Background Watermark Canvas Text
-                        ctx.font = 'bold 36px monospace';
-                        ctx.fillStyle = 'rgba(0, 255, 204, 0.04)';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText('QUAH INSTITUTIONAL', chart.width / 2, chart.height / 2);
-                        ctx.restore();
-                    }
-                }]
-            });
-
-            rsiChart = new Chart(ctxRsi, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'RSI',
-                        data: [],
-                        borderColor: '#a855f7',
-                        borderWidth: 1.5,
-                        tension: 0.3,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { display: false },
-                        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
-            const data = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
-            if (data && data.length > 0) {
-                renderChartData(data);
-                evaluateConfluence(data);
-            }
-        }
-
-        function renderChartData(candles) {
-            if (!mainTimeSeriesChart || !rsiChart) return;
-
-            const labels = candles.map(c => c.datetime);
-            const prices = candles.map(c => parseFloat(c.close));
-            
-            // Basic RSI computation
-            let rsiValues = prices.map((p, i) => {
-                if (i < 14) return 50;
-                let gains = 0, losses = 0;
-                for (let j = i - 13; j <= i; j++) {
-                    let diff = prices[j] - prices[j - 1];
-                    if (diff >= 0) gains += diff; else losses -= diff;
-                }
-                let rs = (gains / 14) / ((losses / 14) || 1);
-                return 100 - (100 / (1 + rs));
-            });
-
-            mainTimeSeriesChart.data.labels = labels;
-            mainTimeSeriesChart.data.datasets[0].data = prices;
-            mainTimeSeriesChart.update();
-
-            rsiChart.data.labels = labels;
-            rsiChart.data.datasets[0].data = rsiValues;
-            rsiChart.update();
-
-            const lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-            document.getElementById('rsiValDisplay').innerText = `${lastRsi} (${lastRsi > 70 ? 'Overbought' : lastRsi < 30 ? 'Oversold' : 'Neutral'})`;
-
-            const pattern = globalCandleEngine.detectPattern(candles);
-            globalCandleEngine.renderWidget(pattern);
-
-            const exitInfo = globalTradeExitMonitor.evaluateExit(candles, rsiValues, 'BUY');
-            globalTradeExitMonitor.renderWidget(exitInfo);
-        }
-
-        function evaluateConfluence(candles) {
-            const meta = getSymbolMeta(currentPair);
-            const lastCandle = candles[candles.length - 1];
-            const currentPrice = parseFloat(lastCandle.close);
-
-            let high = currentPrice + (meta.pipMult * 35);
-            let low = currentPrice - (meta.pipMult * 35);
-            
-            let rangeHighEl = document.getElementById('smcRangeHigh');
-            let rangeLowEl = document.getElementById('smcRangeLow');
-            if (rangeHighEl) triggerFlashAnimation(rangeHighEl, high.toFixed(meta.decimals), rangeHighEl.innerText);
-            if (rangeLowEl) triggerFlashAnimation(rangeLowEl, low.toFixed(meta.decimals), rangeLowEl.innerText);
-
-            let tp = (currentPrice + (meta.pipMult * 25)).toFixed(meta.decimals);
-            let sl = (currentPrice - (meta.pipMult * 15)).toFixed(meta.decimals);
-
-            document.getElementById('smcEngineEntry').innerText = currentPrice.toFixed(meta.decimals);
-            document.getElementById('smcEngineTP').innerText = tp;
-            document.getElementById('smcEngineSL').innerText = sl;
-
-            document.getElementById('confidenceVal').innerText = "88.5%";
-            document.getElementById('tpVal').innerText = tp;
-            document.getElementById('slVal').innerText = sl;
-
-            const signalBadge = document.getElementById('signalDirBadge');
-            if (signalBadge) {
-                signalBadge.innerText = "BUY / BULLISH";
-                triggerStateBadgePulse(signalBadge);
-            }
-
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
-            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(meta.decimals), tp, sl);
-
-            updatePipMatrix(currentPrice);
-            calculatePositionSize();
-        }
-
-        function updatePipMatrix(price) {
-            const matrix = globalPipEngine.generatePipMatrix(currentPair, price, 'BUY');
-            const tbody = document.getElementById('pipMatrixTableBody');
-            if (!tbody) return;
-
-            tbody.innerHTML = matrix.map(m => `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="py-1 text-gray-300">+${m.pips} Pips</td>
-                    <td class="py-1 text-[#00ffcc] font-bold">${m.tp}</td>
-                    <td class="py-1 text-red-400 font-bold">${m.sl}</td>
-                </tr>
-            `).join('');
-
-            updateCustomPipTarget();
-        }
-
-        function updateCustomPipTarget() {
-            const pips = parseFloat(document.getElementById('customPipInput').value) || 0;
-            const currentPriceStr = document.getElementById('smcEngineEntry').innerText;
-            if (currentPriceStr === '--') return;
-            const res = globalPipEngine.calculateExactPipTarget(currentPair, parseFloat(currentPriceStr), pips, 'BUY');
-            document.getElementById('customPipResult').innerText = res.exactPrice;
-        }
-
-        function calculatePositionSize() {
-            const acc = parseFloat(document.getElementById('calcAccountSize').value) || 0;
-            const risk = parseFloat(document.getElementById('calcRiskPct').value) || 0;
-            const lot = ((acc * (risk / 100)) / 100).toFixed(2);
-            document.getElementById('calcLotSizeResult').innerText = `${lot} Lots`;
-        }
-
-        function onPairChange() {
-            currentPair = document.getElementById('mainPairSelect').value;
-            document.getElementById('chartCardTitle').innerText = `${currentPair} - On-Demand Data Stream`;
-            fetchAndRenderOnDemand();
-        }
-
-        function setTimeframe(tf, btn) {
-            currentTimeframe = tf;
-            document.querySelectorAll('.tf-btn').forEach(b => {
-                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
-                const timerSpan = b.querySelector('.tf-timer');
-                if (timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-gray-400";
-            });
-            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
-            const activeTimer = btn.querySelector('.tf-timer');
-            if (activeTimer) activeTimer.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
-
-            fetchAndRenderOnDemand();
-        }
-
-        function triggerManualRefresh() {
-            autoReloadSeconds = 40;
-            fetchAndRenderOnDemand();
-            showToast("Manual telemetry scan initiated...");
-        }
-
-        function executeTradeAlert() {
-            showToast(`Order Dispatched for ${currentPair} @ ${document.getElementById('smcEngineEntry').innerText}`);
-        }
     </script>
 </body>
 </html>
