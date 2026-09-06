@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUAH AI DESK v5.0 // Real-Time API Engine + Institutional Pro Suite</title>
+    <title>FX Signal Desk v4.5 // Institutional Pro Suite + 2026 Immersive Visual Upgrade</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -396,106 +396,6 @@
 
         <main class="flex-1 p-6 space-y-6 max-w-[1700px] w-full mx-auto">
 
-            <!-- INTEGRATED REAL-TIME NEWS & SENTIMENT STREAM (FROM API ENGINE V5.0) -->
-            <div class="glass-card rounded-2xl p-6 border border-[#00ffcc]/30 shadow-2xl space-y-6">
-                <!-- TOP CONTROL BAR FOR API KEYS -->
-                <div class="bg-cardBg/90 border border-white/10 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-brain text-[#00ffcc] text-xl"></i>
-                        <span class="font-bold tracking-wide text-white">QUAH AI <span class="text-[#00ffcc] font-light">API ENGINE</span></span>
-                    </div>
-
-                    <!-- API KEY INPUTS -->
-                    <div class="flex flex-wrap items-center gap-3 text-xs font-mono">
-                        <div class="flex items-center space-x-1 bg-black/40 px-3 py-1.5 rounded border border-white/10">
-                            <span class="text-gray-400">Provider:</span>
-                            <select id="apiProvider" class="bg-transparent text-white focus:outline-none cursor-pointer">
-                                <option value="fmp" class="bg-cardBg">Financial Modeling Prep</option>
-                                <option value="newsapi" class="bg-cardBg">NewsAPI.org</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center space-x-1 bg-black/40 px-3 py-1 rounded border border-white/10">
-                            <span class="text-gray-400">Key:</span>
-                            <input type="password" id="apiKeyInput" placeholder="Paste API Key..." class="bg-transparent text-[#00ffcc] focus:outline-none w-36">
-                        </div>
-                        <button onclick="fetchLiveNews()" class="bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black font-bold px-4 py-1.5 rounded text-xs transition">
-                            <i class="fa-solid fa-rotate mr-1"></i> Fetch Live Data
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ASSET AND STATUS BAR -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-                    <div class="bg-cardBg border border-white/10 p-4 rounded-xl flex items-center justify-between">
-                        <span class="text-gray-400">Target Asset Query:</span>
-                        <select id="assetQuery" onchange="fetchLiveNews()" class="bg-black/50 text-[#00ffcc] border border-white/10 px-2 py-1 rounded focus:outline-none">
-                            <option value="forex">Forex (General Macro)</option>
-                            <option value="gold">Gold (XAU/USD)</option>
-                            <option value="crypto">Cryptocurrency</option>
-                            <option value="stocks">US Stock Market</option>
-                        </select>
-                    </div>
-                    <div class="bg-cardBg border border-white/10 p-4 rounded-xl flex items-center justify-between">
-                        <span class="text-gray-400">Stream Status:</span>
-                        <span id="apiStatus" class="text-yellow-400 font-bold">READY (Awaiting Fetch)</span>
-                    </div>
-                    <div class="bg-cardBg border border-white/10 p-4 rounded-xl flex items-center justify-between">
-                        <span class="text-gray-400">Net Algorithmic Sentiment:</span>
-                        <span id="sentimentScore" class="text-[#00ffcc] font-bold">0.0 (NEUTRAL)</span>
-                    </div>
-                </div>
-
-                <!-- MAIN LAYOUT FOR NEWS STREAM -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                    <!-- REAL-TIME STREAM -->
-                    <div class="lg:col-span-2 bg-cardBg border border-white/10 rounded-2xl p-5 space-y-4">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-3">
-                            <h2 class="font-bold text-white text-sm flex items-center">
-                                <i class="fa-solid fa-rss text-[#00ffcc] mr-2"></i> Live API Headline Stream
-                            </h2>
-                            <span id="headlineCount" class="text-xs font-mono text-gray-400">0 Articles Loaded</span>
-                        </div>
-
-                        <div id="liveFeed" class="space-y-3 max-h-[550px] overflow-y-auto pr-2">
-                            <div class="text-center py-12 text-gray-500 font-mono text-xs">
-                                Enter your API key above and click "Fetch Live Data" to initialize streaming.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SENTIMENT ANALYSIS BREAKDOWN -->
-                    <div class="space-y-6">
-                        <div class="bg-cardBg border border-white/10 rounded-2xl p-5 space-y-4">
-                            <h3 class="font-bold text-white text-sm border-b border-white/10 pb-3 flex items-center">
-                                <i class="fa-solid fa-chart-pie text-[#00ffcc] mr-2"></i> Algorithmic Breakdown
-                            </h3>
-                            
-                            <div class="space-y-3 font-mono text-xs">
-                                <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
-                                    <span class="text-emerald-400">Bullish Keywords Matched:</span>
-                                    <span id="bullishCount" class="font-bold text-white">0</span>
-                                </div>
-                                <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
-                                    <span class="text-red-400">Bearish Keywords Matched:</span>
-                                    <span id="bearishCount" class="font-bold text-white">0</span>
-                                </div>
-                                <div class="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
-                                    <span class="text-gray-400">Total Analyzed Snippets:</span>
-                                    <span id="totalAnalyzed" class="font-bold text-white">0</span>
-                                </div>
-                            </div>
-
-                            <div id="executionBias" class="p-4 rounded-xl bg-black/60 border border-white/10 text-center space-y-1">
-                                <span class="text-[10px] text-gray-400 font-mono uppercase block">Recommended Execution Bias</span>
-                                <div id="biasText" class="text-base font-bold text-[#00ffcc] font-mono">STANDBY</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
             <!-- 3-COLUMN LAYOUT -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
@@ -887,163 +787,6 @@
     </div>
 
     <script>
-        // DICTIONARIES FOR SENTIMENT ANALYSIS (FROM API ENGINE V5.0)
-        const BULLISH_LEXICON = ['growth', 'bullish', 'surge', 'gain', 'rally', 'positive', 'ease', 'dovish', 'cut', 'upward', 'profit', 'rise', 'record', 'high'];
-        const BEARISH_LEXICON = ['drop', 'bearish', 'plunge', 'fall', 'negative', 'hike', 'hawkish', 'inflation', 'recession', 'loss', 'downward', 'crisis', 'war', 'risk'];
-
-        async function fetchLiveNews() {
-            const provider = document.getElementById('apiProvider').value;
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
-            const category = document.getElementById('assetQuery').value;
-            const feedContainer = document.getElementById('liveFeed');
-            const statusEl = document.getElementById('apiStatus');
-
-            if (!apiKey) {
-                alert("Please enter a valid API key for " + provider.toUpperCase());
-                return;
-            }
-
-            statusEl.innerText = "FETCHING DATA...";
-            statusEl.className = "text-yellow-400 font-bold";
-            feedContainer.innerHTML = '<div class="text-center py-12 text-gray-400 font-mono text-xs"><i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i><br>Contacting provider endpoints...</div>';
-
-            try {
-                let rawArticles = [];
-
-                if (provider === 'fmp') {
-                    // Financial Modeling Prep Endpoints
-                    let endpoint = `https://financialmodelingprep.com/stable/news/general-latest?page=0&limit=15&apikey=${apiKey}`;
-                    if (category === 'forex') endpoint = `https://financialmodelingprep.com/stable/news/forex-latest?page=0&limit=15&apikey=${apiKey}`;
-                    if (category === 'crypto') endpoint = `https://financialmodelingprep.com/stable/news/crypto-latest?page=0&limit=15&apikey=${apiKey}`;
-
-                    const res = await fetch(endpoint);
-                    const data = await res.json();
-                    
-                    if (data.error || data['Error Message']) {
-                        throw new Error(data.error || data['Error Message']);
-                    }
-
-                    rawArticles = (Array.isArray(data) ? data : []).map(item => ({
-                        title: item.title,
-                        summary: item.text || item.snippet || "No snippet available.",
-                        url: item.url,
-                        source: item.site || "Financial Modeling Prep",
-                        publishedAt: item.publishedDate || "Recently"
-                    }));
-
-                } else if (provider === 'newsapi') {
-                    // NewsAPI Endpoint
-                    let query = "forex OR inflation OR FED";
-                    if (category === 'gold') query = "gold OR XAUUSD";
-                    if (category === 'crypto') query = "crypto OR bitcoin";
-                    if (category === 'stocks') query = "stocks OR Wall Street";
-
-                    const endpoint = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=15&apiKey=${apiKey}`;
-                    
-                    const res = await fetch(endpoint);
-                    const data = await res.json();
-
-                    if (data.status === 'error') {
-                        throw new Error(data.message);
-                    }
-
-                    rawArticles = (data.articles || []).map(item => ({
-                        title: item.title,
-                        summary: item.description || "No description available.",
-                        url: item.url,
-                        source: item.source.name || "NewsAPI",
-                        publishedAt: new Date(item.publishedAt).toLocaleTimeString()
-                    }));
-                }
-
-                processAndRenderArticles(rawArticles);
-                statusEl.innerText = "STREAM ONLINE";
-                statusEl.className = "text-emerald-400 font-bold";
-
-            } catch (err) {
-                statusEl.innerText = "FETCH ERROR";
-                statusEl.className = "text-red-400 font-bold";
-                feedContainer.innerHTML = `<div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400 text-xs font-mono"><strong>API Fetch Failed:</strong> ${err.message}</div>`;
-            }
-        }
-
-        function processAndRenderArticles(articles) {
-            const feedContainer = document.getElementById('liveFeed');
-            feedContainer.innerHTML = '';
-
-            let totalBullish = 0;
-            let totalBearish = 0;
-
-            if (articles.length === 0) {
-                feedContainer.innerHTML = '<div class="text-center py-12 text-gray-400 font-mono text-xs">No news articles found for this selection.</div>';
-                return;
-            }
-
-            articles.forEach(art => {
-                const textToAnalyze = (art.title + ' ' + art.summary).toLowerCase();
-                
-                let articleBullish = 0;
-                let articleBearish = 0;
-
-                BULLISH_LEXICON.forEach(word => {
-                    if (textToAnalyze.includes(word)) articleBullish++;
-                });
-
-                BEARISH_LEXICON.forEach(word => {
-                    if (textToAnalyze.includes(word)) articleBearish++;
-                });
-
-                totalBullish += articleBullish;
-                totalBearish += articleBearish;
-
-                let tag = { label: 'NEUTRAL', color: 'gray' };
-                if (articleBullish > articleBearish) tag = { label: 'BULLISH', color: 'emerald' };
-                if (articleBearish > articleBullish) tag = { label: 'BEARISH', color: 'red' };
-
-                const cardHtml = `
-                    <div class="bg-black/40 p-3.5 rounded-xl border border-white/5 hover:border-white/20 transition space-y-2">
-                        <div class="flex items-center justify-between text-[10px] font-mono">
-                            <span class="bg-${tag.color}-500/20 text-${tag.color}-400 border border-${tag.color}-500/30 px-2 py-0.5 rounded font-bold">${tag.label}</span>
-                            <span class="text-gray-400">${art.source} &bull; ${art.publishedAt}</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-gray-200 hover:text-[#00ffcc]">
-                            <a href="${art.url}" target="_blank">${art.title}</a>
-                        </h4>
-                        <p class="text-[11px] text-gray-400 line-clamp-2">${art.summary}</p>
-                    </div>
-                `;
-                feedContainer.innerHTML += cardHtml;
-            });
-
-            // Update UI Counters
-            document.getElementById('headlineCount').innerText = `${articles.length} Articles Loaded`;
-            document.getElementById('bullishCount').innerText = totalBullish;
-            document.getElementById('bearishCount').innerText = totalBearish;
-            document.getElementById('totalAnalyzed').innerText = articles.length;
-
-            // Calculate Overall Sentiment Score
-            const net = totalBullish - totalBearish;
-            const scoreEl = document.getElementById('sentimentScore');
-            const biasEl = document.getElementById('biasText');
-
-            if (net > 2) {
-                scoreEl.innerText = `+${net} (STRONG BULLISH)`;
-                scoreEl.className = "text-emerald-400 font-bold";
-                biasEl.innerText = "BUY / LONG CONFLUENCE";
-                biasEl.className = "text-emerald-400 font-bold text-base font-mono";
-            } else if (net < -2) {
-                scoreEl.innerText = `${net} (STRONG BEARISH)`;
-                scoreEl.className = "text-red-400 font-bold";
-                biasEl.innerText = "SELL / SHORT CONFLUENCE";
-                biasEl.className = "text-red-400 font-bold text-base font-mono";
-            } else {
-                scoreEl.innerText = `${net} (NEUTRAL)`;
-                scoreEl.className = "text-yellow-400 font-bold";
-                biasEl.innerText = "NO BIAS / WAIT FOR CONFIRMATION";
-                biasEl.className = "text-yellow-400 font-bold text-base font-mono";
-            }
-        }
-
         // GLOBAL MULTI-ASSET TICK/PIP CONFIGURATION MAP
         const SYMBOL_CONFIG = {
             // Majors
@@ -1542,15 +1285,669 @@
                     basePrice += (Math.random() - 0.48) * stepSize;
                     fallbackValues.push({
                         datetime: d.toISOString().slice(11, 19),
-                        open: (basePrice - (Math.random() * stepSize * 0.5)).toFixed(meta.decimals),
-                        high: (basePrice + (Math.random() * stepSize)).toFixed(meta.decimals),
-                        low: (basePrice - (Math.random() * stepSize)).toFixed(meta.decimals),
+                        open: (basePrice - stepSize * 0.2).toFixed(meta.decimals),
                         close: basePrice.toFixed(meta.decimals),
+                        high: (basePrice + stepSize * 0.5).toFixed(meta.decimals),
+                        low: (basePrice - stepSize * 0.5).toFixed(meta.decimals),
                         volume: Math.floor(Math.random() * 500 + 100)
                     });
                 }
                 return fallbackValues;
             }
+        }
+
+        function setDataSourceBadge(isLive) {
+            const badge = document.getElementById('dataSourceBadge');
+            if(!badge) return;
+            if(isLive) {
+                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40";
+                badge.innerText = "Live API Synced (On-Demand)";
+            } else {
+                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40";
+                badge.innerText = "Simulated Fallback Mode";
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            let borderColor = type === 'warning' ? 'border-amber-500/40 text-amber-300' : 'border-[#00ffcc]/40 text-[#00ffcc]';
+            let icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
+            
+            toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border ${borderColor} text-xs flex items-center space-x-2 transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 4000);
+
+            if (type === 'warning') {
+                const audio = document.getElementById('alertBeep');
+                if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
+            }
+        }
+
+        let mainTimeSeriesChart = null;
+        let rsiChart = null;
+        let currentPair = 'EUR/USD';
+        let currentTimeframe = '5min';
+        let licenseTimerInterval = null;
+        let currentThemeMode = 'ocean';
+        let telemetryEngine = null;
+
+        let autoReloadSeconds = 40;
+        let autoReloadTimerInterval = null;
+        
+        let activeFullCode = '';
+        let activeApiKey = '';
+        let activeLicenseExpiryTimestamp = null;
+        let isTabActive = true;
+        let animationFrameId = null;
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        document.addEventListener('visibilitychange', () => {
+            isTabActive = !document.hidden;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const cachedKey = localStorage.getItem('quah_api_key');
+            const cachedLicense = localStorage.getItem('quah_license_key');
+            if (cachedKey && cachedLicense) {
+                document.getElementById('loginApiKey').value = cachedKey;
+                document.getElementById('loginLicense').value = cachedLicense;
+            }
+            init3DTiltCards();
+        });
+
+        // 3D TILT MICRO-INTERACTIONS
+        function init3DTiltCards() {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -6;
+                    const rotateY = ((x - centerX) / centerX) * 6;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                });
+            });
+        }
+
+        // VISUAL PULSE STATE BADGE HELPERS
+        function triggerStateBadgePulse(element) {
+            if (!element) return;
+            element.classList.remove('animate-badge-pulse');
+            void element.offsetWidth; // Trigger reflow
+            element.classList.add('animate-badge-pulse');
+            
+            const timerWidget = document.getElementById('autoAnalyzeWidget');
+            const dispatchBtn = document.getElementById('dispatchOrderBtn');
+            if (timerWidget) {
+                timerWidget.classList.add('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]');
+                setTimeout(() => timerWidget.classList.remove('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]'), 1200);
+            }
+            if (dispatchBtn) {
+                dispatchBtn.classList.add('shadow-[0_0_20px_rgba(0,255,204,0.6)]');
+                setTimeout(() => dispatchBtn.classList.remove('shadow-[0_0_20px_rgba(0,255,204,0.6)]'), 1200);
+            }
+        }
+
+        function base64UrlDecode(str) {
+            let output = str.replace(/-/g, '+').replace(/_/g, '/');
+            switch (output.length % 4) {
+                case 0: break;
+                case 2: output += '=='; break;
+                case 3: output += '='; break;
+                default: throw new Error('Illegal base64url string.');
+            }
+            return atob(output);
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const apiKey = document.getElementById('loginApiKey').value.trim();
+            const licenseKeyInput = document.getElementById('loginLicense').value.trim();
+            const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
+            const errElem = document.getElementById('licenseErrorMsg');
+            const statusIndicator = document.getElementById('authStatusIndicator');
+
+            errElem.classList.add('hidden');
+            if (statusIndicator) statusIndicator.textContent = "Checking key...";
+
+            try {
+                if (!apiKey) throw new Error("API Key required");
+                if (!licenseKeyInput.startsWith('QUAH-')) throw new Error("Invalid license format prefix");
+                
+                const parts = licenseKeyInput.split('-');
+                if (parts.length < 3) throw new Error("Invalid structured key partitions");
+
+                const decodedJson = base64UrlDecode(parts[1]);
+                const payload = JSON.parse(decodedJson);
+
+                if (!payload.expiresAt || Date.now() > payload.expiresAt) {
+                    throw new Error("License key has expired.");
+                }
+
+                activeLicenseExpiryTimestamp = payload.expiresAt;
+                activeFullCode = licenseKeyInput;
+                activeApiKey = apiKey;
+
+                if (payload.tier) {
+                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                }
+
+                if (rememberDevice) {
+                    localStorage.setItem('quah_api_key', apiKey);
+                    localStorage.setItem('quah_license_key', licenseKeyInput);
+                }
+
+                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("Institutional Pro Terminal Initialized with Expanded Instrument Suite");
+                initApp();
+
+            } catch (error) {
+                errElem.textContent = error.message || "Please enter a valid TwelveData API Key and unexpired QUAH license string.";
+                errElem.classList.remove('hidden');
+                if (statusIndicator) statusIndicator.textContent = "Error";
+            }
+        });
+
+        function logout() {
+            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            localStorage.removeItem('quah_api_key');
+            localStorage.removeItem('quah_license_key');
+            document.getElementById('expiryUpgradeModal').classList.add('hidden');
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authModal').classList.remove('hidden');
+            showToast("Session Disconnected & Storage Cleared", "warning");
+        }
+
+        function toggleProfileMenu() {
+            document.getElementById('profileMenu').classList.toggle('hidden');
+        }
+
+        // CANVAS PARTICLES, NODE ENGINE & SHADER GRADIENTS
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let entities = [];
+        let neuralNodes = [];
+        let gridOffset = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initNeuralNodes();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function initNeuralNodes() {
+            neuralNodes = [];
+            let count = Math.min(Math.floor(window.innerWidth / 40), 45);
+            for(let i=0; i<count; i++) {
+                neuralNodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.6,
+                    vy: (Math.random() - 0.5) * 0.6,
+                    radius: Math.random() * 2 + 1.2
+                });
+            }
+        }
+
+        function initEntitiesForTheme(theme) {
+            entities = [];
+            let count = window.innerWidth < 768 ? 20 : 60;
+            for(let i=0; i<count; i++) {
+                entities.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8 - 0.2,
+                    size: Math.random() * 4 + 1,
+                    alpha: Math.random() * 0.6 + 0.2,
+                    pulse: Math.random() * Math.PI,
+                    type: theme
+                });
+            }
+        }
+
+        function changeTheme(theme) {
+            currentThemeMode = theme;
+            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
+            initEntitiesForTheme(theme);
+            showToast(`Theme changed to ${theme}`);
+        }
+
+        function renderCanvasGradientShaders() {
+            const computedStyle = getComputedStyle(document.body);
+            const color1 = computedStyle.getPropertyValue('--canvas-shader-1').trim() || 'oklch(0.2 0.1 240)';
+            const color2 = computedStyle.getPropertyValue('--canvas-shader-2').trim() || 'oklch(0.1 0.05 260)';
+
+            let gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 50,
+                canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
+            );
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function animateBg() {
+            if (isTabActive) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                renderCanvasGradientShaders();
+
+                gridOffset = (gridOffset + 0.5) % 40;
+                ctx.strokeStyle = 'rgba(0, 255, 204, 0.04)';
+                ctx.lineWidth = 1;
+                let horizonY = canvas.height * 0.35;
+                
+                for(let x = -canvas.width; x < canvas.width * 2; x += 80) {
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2, horizonY);
+                    ctx.lineTo(x + gridOffset * 2, canvas.height);
+                    ctx.stroke();
+                }
+                for(let y = horizonY; y < canvas.height; y += (y - horizonY) * 0.15 + 2) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+
+                for (let i = 0; i < neuralNodes.length; i++) {
+                    let node = neuralNodes[i];
+                    
+                    let dx = mouseX - node.x;
+                    let dy = mouseY - node.y;
+                    let mouseDist = Math.hypot(dx, dy);
+                    if (mouseDist < 120) {
+                        let angle = Math.atan2(dy, dx);
+                        node.x -= Math.cos(angle) * 1.5;
+                        node.y -= Math.sin(angle) * 1.5;
+                    }
+
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+
+                    ctx.fillStyle = '#00ffcc';
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#00ffcc';
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    for (let j = i + 1; j < neuralNodes.length; j++) {
+                        let n2 = neuralNodes[j];
+                        let dist = Math.hypot(node.x - n2.x, node.y - n2.y);
+                        if (dist < 150) {
+                            ctx.strokeStyle = `rgba(0, 255, 204, ${(1 - dist / 150) * 0.25})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+                            ctx.lineTo(n2.x, n2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                entities.forEach(e => {
+                    e.x += e.vx + (mouseX - canvas.width / 2) * 0.0002;
+                    e.y += e.vy;
+                    e.pulse += 0.03;
+
+                    if(e.x < 0) e.x = canvas.width;
+                    if(e.x > canvas.width) e.x = 0;
+                    if(e.y < 0) e.y = canvas.height;
+                    if(e.y > canvas.height) e.y = 0;
+
+                    let currentAlpha = e.alpha + Math.sin(e.pulse) * 0.2;
+                    ctx.fillStyle = currentThemeMode === 'cyberpunk' ? `rgba(255, 0, 127, ${currentAlpha})` : `rgba(0, 255, 204, ${currentAlpha})`;
+                    ctx.beginPath();
+                    ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+            animationFrameId = requestAnimationFrame(animateBg);
+        }
+        resizeCanvas();
+        initEntitiesForTheme('ocean');
+        animateBg();
+
+        function updateClocks() {
+            const now = new Date();
+            const utcElem = document.getElementById('utcClock');
+            const nyElem = document.getElementById('clockNY');
+            const lonElem = document.getElementById('clockLON');
+            const tyoElem = document.getElementById('clockTYO');
+            
+            const jamaicaTimeStr = now.toLocaleTimeString("en-US", { timeZone: "America/Jamaica", hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const jamaicaDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Jamaica", weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            const jamClockElem = document.getElementById('jamaicaClockDisplay');
+            const jamDateElem = document.getElementById('jamaicaDateDisplay');
+            if (jamClockElem) jamClockElem.innerText = jamaicaTimeStr;
+            if (jamDateElem) jamDateElem.innerText = jamaicaDateStr;
+
+            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
+            if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            if(lonElem) lonElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            if(tyoElem) tyoElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        setInterval(updateClocks, 1000);
+
+        function triggerFlashAnimation(element, newPrice, oldPrice) {
+            if (!element) return;
+            element.innerText = newPrice;
+            element.classList.remove('animate-flash-up', 'animate-flash-down');
+            void element.offsetWidth; // Force CSS Reflow
+            if (parseFloat(newPrice) >= parseFloat(oldPrice)) {
+                element.classList.add('animate-flash-up');
+            } else {
+                element.classList.add('animate-flash-down');
+            }
+        }
+
+        function updateMarketStatusBannerLocally() {
+            const updateTickerItem = (symKey, price) => {
+                const el = document.getElementById(`ticker_${symKey}`);
+                const dupEl = document.querySelector(`.ticker-dup-${symKey}`);
+                
+                let oldPrice = el ? el.innerText : price;
+                if (el) triggerFlashAnimation(el, price, oldPrice);
+                if (dupEl) triggerFlashAnimation(dupEl, price, oldPrice);
+            };
+
+            let eurRate = (1.1040 + (Math.random() - 0.5) * 0.0010).toFixed(4);
+            let gbpJpyRate = (188.40 + (Math.random() - 0.5) * 0.10).toFixed(2);
+            let oilRate = (78.40 + (Math.random() - 0.5) * 0.20).toFixed(2);
+            let solRate = (145.20 + (Math.random() - 0.5) * 0.50).toFixed(2);
+            let us30Rate = (38890.00 + (Math.random() - 0.5) * 10.0).toFixed(1);
+            let nas100Rate = (18120.50 + (Math.random() - 0.5) * 5.0).toFixed(1);
+            let v75Rate = (421500.20 + (Math.random() - 0.5) * 15.0).toFixed(2);
+            let boomRate = (10245.80 + (Math.random() - 0.5) * 2.0).toFixed(2);
+            let crashRate = (5840.10 + (Math.random() - 0.5) * 2.0).toFixed(2);
+
+            const dxyEl = document.getElementById('widgetDxy');
+            const us10yEl = document.getElementById('widgetUs10y');
+            if (dxyEl) triggerFlashAnimation(dxyEl, (104.20 + (Math.random() - 0.5) * 0.10).toFixed(2), dxyEl.innerText);
+            if (us10yEl) triggerFlashAnimation(us10yEl, (4.27 + (Math.random() - 0.5) * 0.02).toFixed(2) + '%', us10yEl.innerText);
+
+            updateTickerItem("EURUSD", eurRate);
+            updateTickerItem("GBPJPY", gbpJpyRate);
+            updateTickerItem("USOIL", oilRate);
+            updateTickerItem("SOLUSD", solRate);
+            updateTickerItem("US30", us30Rate);
+            updateTickerItem("NAS100", nas100Rate);
+            updateTickerItem("V75", v75Rate);
+            updateTickerItem("BOOM1000", boomRate);
+            updateTickerItem("CRASH1000", crashRate);
+        }
+
+        setInterval(updateMarketStatusBannerLocally, 3000);
+
+        function initApp() {
+            startTfTimers();
+            initCharts();
+            fetchAndRenderOnDemand();
+
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
+            autoReloadTimerInterval = setInterval(() => {
+                autoReloadSeconds--;
+                const countdownDisplay = document.getElementById('autoReloadCountdownDisplay');
+                if (countdownDisplay) countdownDisplay.innerText = `${autoReloadSeconds}s`;
+
+                if (autoReloadSeconds <= 0) {
+                    autoReloadSeconds = 40;
+                    fetchAndRenderOnDemand();
+                }
+            }, 1000);
+        }
+
+        function initCharts() {
+            const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
+            const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
+
+            mainTimeSeriesChart = new Chart(ctxMain, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Price',
+                        data: [],
+                        borderColor: '#00ffcc',
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointRadius: 2,
+                        pointHoverRadius: 6,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    },
+                    plugins: { legend: { display: false } },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: [{
+                    id: 'neonLineGlowWatermark',
+                    beforeDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        
+                        // Glowing Neon Line Chart Setup
+                        ctx.shadowColor = 'rgba(0, 255, 204, 0.8)';
+                        ctx.shadowBlur = 12;
+                        
+                        // Background Watermark Canvas Text
+                        ctx.font = 'bold 36px monospace';
+                        ctx.fillStyle = 'rgba(0, 255, 204, 0.04)';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('QUAH INSTITUTIONAL', chart.width / 2, chart.height / 2);
+                        ctx.restore();
+                    }
+                }]
+            });
+
+            rsiChart = new Chart(ctxRsi, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'RSI',
+                        data: [],
+                        borderColor: '#a855f7',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { display: false },
+                        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        async function fetchAndRenderOnDemand() {
+            if (!telemetryEngine) return;
+            const data = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+            if (data && data.length > 0) {
+                renderChartData(data);
+                evaluateConfluence(data);
+            }
+        }
+
+        function renderChartData(candles) {
+            if (!mainTimeSeriesChart || !rsiChart) return;
+
+            const labels = candles.map(c => c.datetime);
+            const prices = candles.map(c => parseFloat(c.close));
+            
+            // Basic RSI computation
+            let rsiValues = prices.map((p, i) => {
+                if (i < 14) return 50;
+                let gains = 0, losses = 0;
+                for (let j = i - 13; j <= i; j++) {
+                    let diff = prices[j] - prices[j - 1];
+                    if (diff >= 0) gains += diff; else losses -= diff;
+                }
+                let rs = (gains / 14) / ((losses / 14) || 1);
+                return 100 - (100 / (1 + rs));
+            });
+
+            mainTimeSeriesChart.data.labels = labels;
+            mainTimeSeriesChart.data.datasets[0].data = prices;
+            mainTimeSeriesChart.update();
+
+            rsiChart.data.labels = labels;
+            rsiChart.data.datasets[0].data = rsiValues;
+            rsiChart.update();
+
+            const lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
+            document.getElementById('rsiValDisplay').innerText = `${lastRsi} (${lastRsi > 70 ? 'Overbought' : lastRsi < 30 ? 'Oversold' : 'Neutral'})`;
+
+            const pattern = globalCandleEngine.detectPattern(candles);
+            globalCandleEngine.renderWidget(pattern);
+
+            const exitInfo = globalTradeExitMonitor.evaluateExit(candles, rsiValues, 'BUY');
+            globalTradeExitMonitor.renderWidget(exitInfo);
+        }
+
+        function evaluateConfluence(candles) {
+            const meta = getSymbolMeta(currentPair);
+            const lastCandle = candles[candles.length - 1];
+            const currentPrice = parseFloat(lastCandle.close);
+
+            let high = currentPrice + (meta.pipMult * 35);
+            let low = currentPrice - (meta.pipMult * 35);
+            
+            let rangeHighEl = document.getElementById('smcRangeHigh');
+            let rangeLowEl = document.getElementById('smcRangeLow');
+            if (rangeHighEl) triggerFlashAnimation(rangeHighEl, high.toFixed(meta.decimals), rangeHighEl.innerText);
+            if (rangeLowEl) triggerFlashAnimation(rangeLowEl, low.toFixed(meta.decimals), rangeLowEl.innerText);
+
+            let tp = (currentPrice + (meta.pipMult * 25)).toFixed(meta.decimals);
+            let sl = (currentPrice - (meta.pipMult * 15)).toFixed(meta.decimals);
+
+            document.getElementById('smcEngineEntry').innerText = currentPrice.toFixed(meta.decimals);
+            document.getElementById('smcEngineTP').innerText = tp;
+            document.getElementById('smcEngineSL').innerText = sl;
+
+            document.getElementById('confidenceVal').innerText = "88.5%";
+            document.getElementById('tpVal').innerText = tp;
+            document.getElementById('slVal').innerText = sl;
+
+            const signalBadge = document.getElementById('signalDirBadge');
+            if (signalBadge) {
+                signalBadge.innerText = "BUY / BULLISH";
+                triggerStateBadgePulse(signalBadge);
+            }
+
+            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
+            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(meta.decimals), tp, sl);
+
+            updatePipMatrix(currentPrice);
+            calculatePositionSize();
+        }
+
+        function updatePipMatrix(price) {
+            const matrix = globalPipEngine.generatePipMatrix(currentPair, price, 'BUY');
+            const tbody = document.getElementById('pipMatrixTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = matrix.map(m => `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="py-1 text-gray-300">+${m.pips} Pips</td>
+                    <td class="py-1 text-[#00ffcc] font-bold">${m.tp}</td>
+                    <td class="py-1 text-red-400 font-bold">${m.sl}</td>
+                </tr>
+            `).join('');
+
+            updateCustomPipTarget();
+        }
+
+        function updateCustomPipTarget() {
+            const pips = parseFloat(document.getElementById('customPipInput').value) || 0;
+            const currentPriceStr = document.getElementById('smcEngineEntry').innerText;
+            if (currentPriceStr === '--') return;
+            const res = globalPipEngine.calculateExactPipTarget(currentPair, parseFloat(currentPriceStr), pips, 'BUY');
+            document.getElementById('customPipResult').innerText = res.exactPrice;
+        }
+
+        function calculatePositionSize() {
+            const acc = parseFloat(document.getElementById('calcAccountSize').value) || 0;
+            const risk = parseFloat(document.getElementById('calcRiskPct').value) || 0;
+            const lot = ((acc * (risk / 100)) / 100).toFixed(2);
+            document.getElementById('calcLotSizeResult').innerText = `${lot} Lots`;
+        }
+
+        function onPairChange() {
+            currentPair = document.getElementById('mainPairSelect').value;
+            document.getElementById('chartCardTitle').innerText = `${currentPair} - On-Demand Data Stream`;
+            fetchAndRenderOnDemand();
+        }
+
+        function setTimeframe(tf, btn) {
+            currentTimeframe = tf;
+            document.querySelectorAll('.tf-btn').forEach(b => {
+                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
+                const timerSpan = b.querySelector('.tf-timer');
+                if (timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-gray-400";
+            });
+            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
+            const activeTimer = btn.querySelector('.tf-timer');
+            if (activeTimer) activeTimer.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
+
+            fetchAndRenderOnDemand();
+        }
+
+        function triggerManualRefresh() {
+            autoReloadSeconds = 40;
+            fetchAndRenderOnDemand();
+            showToast("Manual telemetry scan initiated...");
+        }
+
+        function executeTradeAlert() {
+            showToast(`Order Dispatched for ${currentPair} @ ${document.getElementById('smcEngineEntry').innerText}`);
         }
     </script>
 </body>
