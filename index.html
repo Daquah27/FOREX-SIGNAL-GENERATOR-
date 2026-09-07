@@ -171,6 +171,7 @@
             <div class="space-y-3 text-left">
                 <label class="block text-[11px] uppercase font-semibold text-gray-400">Apply Renewal / Upgrade License String</label>
                 <textarea id="upgradeLicenseInput" rows="3" placeholder="Paste new QUAH-encoded license key here..." class="w-full bg-darkBg/60 border border-white/10 rounded px-3 py-2 font-mono text-xs text-[#00ffcc] focus:outline-none focus:border-[#00ffcc]"></textarea>
+                <p id="upgradeErrorMsg" class="text-[10px] text-red-400 mt-1 hidden"></p>
             </div>
 
             <div class="flex items-center space-x-3">
@@ -241,7 +242,7 @@
                 </div>
                 <!-- 40S AUTO-RELOAD TIMER DISPLAY -->
                 <div id="autoAnalyzeWidget" class="flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 transition-all duration-500">
-                    <i class="fa-solid fa-[#00ffcc] fa-arrows-rotate text-[#00ffcc] animate-spin"></i>
+                    <i class="fa-solid fa-arrows-rotate text-[#00ffcc] animate-spin"></i>
                     <span>Auto-Analyze: <strong id="autoReloadCountdownDisplay" class="text-[#00ffcc]">40s</strong></span>
                 </div>
                 <div class="hidden md:flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300">
@@ -1419,6 +1420,22 @@
             return atob(output);
         }
 
+        function parseAndValidateLicenseKey(licenseString) {
+            if (!licenseString || !licenseString.startsWith('QUAH-')) {
+                throw new Error("Invalid license key prefix format.");
+            }
+            const parts = licenseString.split('-');
+            if (parts.length < 3) {
+                throw new Error("Invalid key structure.");
+            }
+            const decodedJson = base64UrlDecode(parts[1]);
+            const payload = JSON.parse(decodedJson);
+            if (!payload.expiresAt || Date.now() >= payload.expiresAt) {
+                throw new Error("License key has expired.");
+            }
+            return payload;
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const apiKey = document.getElementById('loginApiKey').value.trim();
@@ -1431,18 +1448,8 @@
             if (statusIndicator) statusIndicator.textContent = "Checking key...";
 
             try {
-                if (!apiKey) throw new Error("API Key required");
-                if (!licenseKeyInput.startsWith('QUAH-')) throw new Error("Invalid license format prefix");
-                
-                const parts = licenseKeyInput.split('-');
-                if (parts.length < 3) throw new Error("Invalid structured key partitions");
-
-                const decodedJson = base64UrlDecode(parts[1]);
-                const payload = JSON.parse(decodedJson);
-
-                if (!payload.expiresAt || Date.now() > payload.expiresAt) {
-                    throw new Error("License key has expired.");
-                }
+                if (!apiKey) throw new Error("API Key required.");
+                const payload = parseAndValidateLicenseKey(licenseKeyInput);
 
                 activeLicenseExpiryTimestamp = payload.expiresAt;
                 activeFullCode = licenseKeyInput;
@@ -1470,6 +1477,33 @@
             }
         });
 
+        function submitLicenseUpgrade() {
+            const upgradeInput = document.getElementById('upgradeLicenseInput').value.trim();
+            const errDisplay = document.getElementById('upgradeErrorMsg');
+            if (errDisplay) errDisplay.classList.add('hidden');
+
+            try {
+                const payload = parseAndValidateLicenseKey(upgradeInput);
+                activeLicenseExpiryTimestamp = payload.expiresAt;
+                activeFullCode = upgradeInput;
+                localStorage.setItem('quah_license_key', upgradeInput);
+
+                if (payload.tier) {
+                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                }
+
+                document.getElementById('expiryUpgradeModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("License successfully renewed!");
+                fetchAndRenderOnDemand();
+            } catch (err) {
+                if (errDisplay) {
+                    errDisplay.innerText = err.message || "Invalid or expired renewal key.";
+                    errDisplay.classList.remove('hidden');
+                }
+            }
+        }
+
         function logout() {
             if (licenseTimerInterval) clearInterval(licenseTimerInterval);
             if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
@@ -1480,6 +1514,36 @@
             document.getElementById('appContainer').classList.add('hidden');
             document.getElementById('authModal').classList.remove('hidden');
             showToast("Session Disconnected & Storage Cleared", "warning");
+        }
+
+        function handleLicenseExpiration() {
+            showToast("Pro Session Terminated: Key Expired", "warning");
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('expiryUpgradeModal').classList.remove('hidden');
+        }
+
+        function updateLicenseCountdown() {
+            if (!activeLicenseExpiryTimestamp) return;
+
+            const now = Date.now();
+            const diff = activeLicenseExpiryTimestamp - now;
+
+            const display = document.getElementById('licenseCountdownDisplay');
+
+            if (diff <= 0) {
+                if (display) display.innerText = "EXPIRED";
+                handleLicenseExpiration();
+                return;
+            }
+
+            const totalSecs = Math.floor(diff / 1000);
+            const hours = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = totalSecs % 60;
+
+            if (display) {
+                display.innerText = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
         }
 
         function toggleProfileMenu() {
@@ -1627,8 +1691,7 @@
                     if(e.y < 0) e.y = canvas.height;
                     if(e.y > canvas.height) e.y = 0;
 
-                    let currentAlpha = e.alpha + Math.sin(e.pulse) * 0.2;
-                    ctx.fillStyle = currentThemeMode === 'cyberpunk' ? `rgba(255, 0, 127, ${currentAlpha})` : `rgba(0, 255, 204, ${currentAlpha})`;
+                    ctx.fillStyle = `rgba(0, 255, 204, ${e.alpha + Math.sin(e.pulse) * 0.15})`;
                     ctx.beginPath();
                     ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
                     ctx.fill();
@@ -1636,288 +1699,81 @@
             }
             animationFrameId = requestAnimationFrame(animateBg);
         }
-        resizeCanvas();
-        initEntitiesForTheme('ocean');
-        animateBg();
 
-        function updateClocks() {
-            const now = new Date();
-            const utcElem = document.getElementById('utcClock');
-            const nyElem = document.getElementById('clockNY');
-            const lonElem = document.getElementById('clockLON');
-            const tyoElem = document.getElementById('clockTYO');
-            
-            const jamaicaTimeStr = now.toLocaleTimeString("en-US", { timeZone: "America/Jamaica", hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const jamaicaDateStr = now.toLocaleDateString("en-US", { timeZone: "America/Jamaica", weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-            const jamClockElem = document.getElementById('jamaicaClockDisplay');
-            const jamDateElem = document.getElementById('jamaicaDateDisplay');
-            if (jamClockElem) jamClockElem.innerText = jamaicaTimeStr;
-            if (jamDateElem) jamDateElem.innerText = jamaicaDateStr;
+        function startClocks() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('utcClock').innerText = now.toISOString().slice(11, 19) + " UTC";
 
-            if(utcElem) utcElem.innerText = now.toUTCString().slice(17, 25) + ' UTC';
-            if(nyElem) nyElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(lonElem) lonElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Europe/London"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            if(tyoElem) tyoElem.innerText = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"})).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }
-        setInterval(updateClocks, 1000);
+                // Jamaica Local Time (UTC-5)
+                const jamOptions = { timeZone: 'America/Jamaica', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const jamDateOptions = { timeZone: 'America/Jamaica', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+                document.getElementById('jamaicaClockDisplay').innerText = new Intl.DateTimeFormat('en-US', jamOptions).format(now);
+                document.getElementById('jamaicaDateDisplay').innerText = new Intl.DateTimeFormat('en-US', jamDateOptions).format(now);
 
-        function triggerFlashAnimation(element, newPrice, oldPrice) {
-            if (!element) return;
-            element.innerText = newPrice;
-            element.classList.remove('animate-flash-up', 'animate-flash-down');
-            void element.offsetWidth; // Force CSS Reflow
-            if (parseFloat(newPrice) >= parseFloat(oldPrice)) {
-                element.classList.add('animate-flash-up');
-            } else {
-                element.classList.add('animate-flash-down');
-            }
-        }
-
-        function updateMarketStatusBannerLocally() {
-            const updateTickerItem = (symKey, price) => {
-                const el = document.getElementById(`ticker_${symKey}`);
-                const dupEl = document.querySelector(`.ticker-dup-${symKey}`);
-                
-                let oldPrice = el ? el.innerText : price;
-                if (el) triggerFlashAnimation(el, price, oldPrice);
-                if (dupEl) triggerFlashAnimation(dupEl, price, oldPrice);
-            };
-
-            let eurRate = (1.1040 + (Math.random() - 0.5) * 0.0010).toFixed(4);
-            let gbpJpyRate = (188.40 + (Math.random() - 0.5) * 0.10).toFixed(2);
-            let oilRate = (78.40 + (Math.random() - 0.5) * 0.20).toFixed(2);
-            let solRate = (145.20 + (Math.random() - 0.5) * 0.50).toFixed(2);
-            let us30Rate = (38890.00 + (Math.random() - 0.5) * 10.0).toFixed(1);
-            let nas100Rate = (18120.50 + (Math.random() - 0.5) * 5.0).toFixed(1);
-            let v75Rate = (421500.20 + (Math.random() - 0.5) * 15.0).toFixed(2);
-            let boomRate = (10245.80 + (Math.random() - 0.5) * 2.0).toFixed(2);
-            let crashRate = (5840.10 + (Math.random() - 0.5) * 2.0).toFixed(2);
-
-            const dxyEl = document.getElementById('widgetDxy');
-            const us10yEl = document.getElementById('widgetUs10y');
-            if (dxyEl) triggerFlashAnimation(dxyEl, (104.20 + (Math.random() - 0.5) * 0.10).toFixed(2), dxyEl.innerText);
-            if (us10yEl) triggerFlashAnimation(us10yEl, (4.27 + (Math.random() - 0.5) * 0.02).toFixed(2) + '%', us10yEl.innerText);
-
-            updateTickerItem("EURUSD", eurRate);
-            updateTickerItem("GBPJPY", gbpJpyRate);
-            updateTickerItem("USOIL", oilRate);
-            updateTickerItem("SOLUSD", solRate);
-            updateTickerItem("US30", us30Rate);
-            updateTickerItem("NAS100", nas100Rate);
-            updateTickerItem("V75", v75Rate);
-            updateTickerItem("BOOM1000", boomRate);
-            updateTickerItem("CRASH1000", crashRate);
-        }
-
-        setInterval(updateMarketStatusBannerLocally, 3000);
-
-        function initApp() {
-            startTfTimers();
-            initCharts();
-            fetchAndRenderOnDemand();
-
-            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
-            autoReloadTimerInterval = setInterval(() => {
-                autoReloadSeconds--;
-                const countdownDisplay = document.getElementById('autoReloadCountdownDisplay');
-                if (countdownDisplay) countdownDisplay.innerText = `${autoReloadSeconds}s`;
-
-                if (autoReloadSeconds <= 0) {
-                    autoReloadSeconds = 40;
-                    fetchAndRenderOnDemand();
-                }
+                // Financial World Clocks
+                document.getElementById('clockNY').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                document.getElementById('clockLON').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+                document.getElementById('clockTYO').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
             }, 1000);
         }
 
-        function initCharts() {
-            const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
-            const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
+        function calculateRSI(prices, period = 14) {
+            if (prices.length < period + 1) return Array(prices.length).fill(50);
+            let rsi = [];
+            let gains = 0, losses = 0;
 
-            mainTimeSeriesChart = new Chart(ctxMain, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Price',
-                        data: [],
-                        borderColor: '#00ffcc',
-                        borderWidth: 2,
-                        tension: 0.35,
-                        pointRadius: 2,
-                        pointHoverRadius: 6,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } }
-                    },
-                    plugins: { legend: { display: false } },
-                    animation: {
-                        duration: 800,
-                        easing: 'easeInOutQuad'
-                    }
-                },
-                plugins: [{
-                    id: 'neonLineGlowWatermark',
-                    beforeDraw: (chart) => {
-                        const ctx = chart.ctx;
-                        ctx.save();
-                        
-                        // Glowing Neon Line Chart Setup
-                        ctx.shadowColor = 'rgba(0, 255, 204, 0.8)';
-                        ctx.shadowBlur = 12;
-                        
-                        // Background Watermark Canvas Text
-                        ctx.font = 'bold 36px monospace';
-                        ctx.fillStyle = 'rgba(0, 255, 204, 0.04)';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText('QUAH INSTITUTIONAL', chart.width / 2, chart.height / 2);
-                        ctx.restore();
-                    }
-                }]
-            });
-
-            rsiChart = new Chart(ctxRsi, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'RSI',
-                        data: [],
-                        borderColor: '#a855f7',
-                        borderWidth: 1.5,
-                        tension: 0.3,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { display: false },
-                        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
-            const data = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
-            if (data && data.length > 0) {
-                renderChartData(data);
-                evaluateConfluence(data);
-            }
-        }
-
-        function renderChartData(candles) {
-            if (!mainTimeSeriesChart || !rsiChart) return;
-
-            const labels = candles.map(c => c.datetime);
-            const prices = candles.map(c => parseFloat(c.close));
-            
-            // Basic RSI computation
-            let rsiValues = prices.map((p, i) => {
-                if (i < 14) return 50;
-                let gains = 0, losses = 0;
-                for (let j = i - 13; j <= i; j++) {
-                    let diff = prices[j] - prices[j - 1];
-                    if (diff >= 0) gains += diff; else losses -= diff;
-                }
-                let rs = (gains / 14) / ((losses / 14) || 1);
-                return 100 - (100 / (1 + rs));
-            });
-
-            mainTimeSeriesChart.data.labels = labels;
-            mainTimeSeriesChart.data.datasets[0].data = prices;
-            mainTimeSeriesChart.update();
-
-            rsiChart.data.labels = labels;
-            rsiChart.data.datasets[0].data = rsiValues;
-            rsiChart.update();
-
-            const lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-            document.getElementById('rsiValDisplay').innerText = `${lastRsi} (${lastRsi > 70 ? 'Overbought' : lastRsi < 30 ? 'Oversold' : 'Neutral'})`;
-
-            const pattern = globalCandleEngine.detectPattern(candles);
-            globalCandleEngine.renderWidget(pattern);
-
-            const exitInfo = globalTradeExitMonitor.evaluateExit(candles, rsiValues, 'BUY');
-            globalTradeExitMonitor.renderWidget(exitInfo);
-        }
-
-        function evaluateConfluence(candles) {
-            const meta = getSymbolMeta(currentPair);
-            const lastCandle = candles[candles.length - 1];
-            const currentPrice = parseFloat(lastCandle.close);
-
-            let high = currentPrice + (meta.pipMult * 35);
-            let low = currentPrice - (meta.pipMult * 35);
-            
-            let rangeHighEl = document.getElementById('smcRangeHigh');
-            let rangeLowEl = document.getElementById('smcRangeLow');
-            if (rangeHighEl) triggerFlashAnimation(rangeHighEl, high.toFixed(meta.decimals), rangeHighEl.innerText);
-            if (rangeLowEl) triggerFlashAnimation(rangeLowEl, low.toFixed(meta.decimals), rangeLowEl.innerText);
-
-            let tp = (currentPrice + (meta.pipMult * 25)).toFixed(meta.decimals);
-            let sl = (currentPrice - (meta.pipMult * 15)).toFixed(meta.decimals);
-
-            document.getElementById('smcEngineEntry').innerText = currentPrice.toFixed(meta.decimals);
-            document.getElementById('smcEngineTP').innerText = tp;
-            document.getElementById('smcEngineSL').innerText = sl;
-
-            document.getElementById('confidenceVal').innerText = "88.5%";
-            document.getElementById('tpVal').innerText = tp;
-            document.getElementById('slVal').innerText = sl;
-
-            const signalBadge = document.getElementById('signalDirBadge');
-            if (signalBadge) {
-                signalBadge.innerText = "BUY / BULLISH";
-                triggerStateBadgePulse(signalBadge);
+            for (let i = 1; i <= period; i++) {
+                let diff = prices[i] - prices[i - 1];
+                if (diff >= 0) gains += diff;
+                else losses -= diff;
             }
 
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
-            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(meta.decimals), tp, sl);
+            let avgGain = gains / period;
+            let avgLoss = losses / period;
+            rsi.push(100 - (100 / (1 + (avgGain / (avgLoss || 1)))));
 
-            updatePipMatrix(currentPrice);
-            calculatePositionSize();
-        }
+            for (let i = period + 1; i < prices.length; i++) {
+                let diff = prices[i] - prices[i - 1];
+                let gain = diff >= 0 ? diff : 0;
+                let loss = diff < 0 ? -diff : 0;
 
-        function updatePipMatrix(price) {
-            const matrix = globalPipEngine.generatePipMatrix(currentPair, price, 'BUY');
-            const tbody = document.getElementById('pipMatrixTableBody');
-            if (!tbody) return;
+                avgGain = (avgGain * (period - 1) + gain) / period;
+                avgLoss = (avgLoss * (period - 1) + loss) / period;
+                rsi.push(100 - (100 / (1 + (avgGain / (avgLoss || 1)))));
+            }
 
-            tbody.innerHTML = matrix.map(m => `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="py-1 text-gray-300">+${m.pips} Pips</td>
-                    <td class="py-1 text-[#00ffcc] font-bold">${m.tp}</td>
-                    <td class="py-1 text-red-400 font-bold">${m.sl}</td>
-                </tr>
-            `).join('');
-
-            updateCustomPipTarget();
-        }
-
-        function updateCustomPipTarget() {
-            const pips = parseFloat(document.getElementById('customPipInput').value) || 0;
-            const currentPriceStr = document.getElementById('smcEngineEntry').innerText;
-            if (currentPriceStr === '--') return;
-            const res = globalPipEngine.calculateExactPipTarget(currentPair, parseFloat(currentPriceStr), pips, 'BUY');
-            document.getElementById('customPipResult').innerText = res.exactPrice;
+            while (rsi.length < prices.length) rsi.unshift(50);
+            return rsi;
         }
 
         function calculatePositionSize() {
-            const acc = parseFloat(document.getElementById('calcAccountSize').value) || 0;
-            const risk = parseFloat(document.getElementById('calcRiskPct').value) || 0;
-            const lot = ((acc * (risk / 100)) / 100).toFixed(2);
-            document.getElementById('calcLotSizeResult').innerText = `${lot} Lots`;
+            const size = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
+            const risk = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
+            const lots = ((size * (risk / 100)) / 100).toFixed(2);
+            document.getElementById('calcLotSizeResult').innerText = `${lots} Lots`;
+        }
+
+        function updateCustomPipTarget() {
+            const pips = parseFloat(document.getElementById('customPipInput').value) || 20;
+            const meta = getSymbolMeta(currentPair);
+            const entry = meta.base;
+            const target = globalPipEngine.calculateExactPipTarget(currentPair, entry, pips, 'BUY');
+            document.getElementById('customPipResult').innerText = target.exactPrice;
+        }
+
+        function setTimeframe(tf, btn) {
+            currentTimeframe = tf;
+            document.querySelectorAll('.tf-btn').forEach(b => {
+                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
+                const span = b.querySelector('.tf-timer');
+                if (span) span.className = "tf-timer text-[9px] font-mono text-gray-400";
+            });
+            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
+            const span = btn.querySelector('.tf-timer');
+            if (span) span.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
+
+            fetchAndRenderOnDemand();
         }
 
         function onPairChange() {
@@ -1926,28 +1782,217 @@
             fetchAndRenderOnDemand();
         }
 
-        function setTimeframe(tf, btn) {
-            currentTimeframe = tf;
-            document.querySelectorAll('.tf-btn').forEach(b => {
-                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
-                const timerSpan = b.querySelector('.tf-timer');
-                if (timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-gray-400";
-            });
-            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
-            const activeTimer = btn.querySelector('.tf-timer');
-            if (activeTimer) activeTimer.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
-
-            fetchAndRenderOnDemand();
-        }
-
         function triggerManualRefresh() {
             autoReloadSeconds = 40;
             fetchAndRenderOnDemand();
-            showToast("Manual telemetry scan initiated...");
+        }
+
+        async function fetchAndRenderOnDemand() {
+            if (!telemetryEngine) return;
+
+            const candles = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+            if (!candles || candles.length === 0) return;
+
+            const meta = getSymbolMeta(currentPair);
+            const closes = candles.map(c => parseFloat(c.close));
+            const labels = candles.map(c => c.datetime || '');
+            const currentPrice = closes[closes.length - 1];
+
+            // Render Candlestick Pattern Engine
+            const pattern = globalCandleEngine.detectPattern(candles);
+            globalCandleEngine.renderWidget(pattern);
+
+            // Compute RSI
+            const rsiValues = calculateRSI(closes);
+            const latestRsi = rsiValues[rsiValues.length - 1].toFixed(1);
+            document.getElementById('rsiValDisplay').innerText = `${latestRsi} (${latestRsi > 70 ? 'Overbought' : latestRsi < 30 ? 'Oversold' : 'Neutral'})`;
+
+            // Evaluate Digital Exit Engine
+            const signalDir = latestRsi > 55 ? 'BUY' : 'SELL';
+            const exitAnalysis = globalTradeExitMonitor.evaluateExit(candles, rsiValues, signalDir);
+            globalTradeExitMonitor.renderWidget(exitAnalysis);
+
+            // Volume Analyzer Engine
+            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
+            const step = meta.pipMult * 25;
+            const tpPrice = (currentPrice + step).toFixed(meta.decimals);
+            const slPrice = (currentPrice - step * 0.5).toFixed(meta.decimals);
+            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(meta.decimals), tpPrice, slPrice);
+
+            // Structure Display Update
+            document.getElementById('smcRangeHigh').innerText = (currentPrice + meta.pipMult * 50).toFixed(meta.decimals);
+            document.getElementById('smcRangeLow').innerText = (currentPrice - meta.pipMult * 50).toFixed(meta.decimals);
+            document.getElementById('smcEngineEntry').innerText = currentPrice.toFixed(meta.decimals);
+            document.getElementById('smcEngineTP').innerText = tpPrice;
+            document.getElementById('smcEngineSL').innerText = slPrice;
+
+            document.getElementById('confidenceVal').innerText = `${Math.min(98, Math.floor(70 + Math.random() * 25))}%`;
+            document.getElementById('slVal').innerText = slPrice;
+            document.getElementById('tpVal').innerText = tpPrice;
+            document.getElementById('signalDirBadge').innerText = signalDir;
+
+            // Render Charts
+            renderMainChart(labels, closes);
+            renderRsiChart(labels, rsiValues);
+
+            // Render Pip Matrix
+            const matrix = globalPipEngine.generatePipMatrix(currentPair, currentPrice, signalDir);
+            const matrixBody = document.getElementById('pipMatrixTableBody');
+            if (matrixBody) {
+                matrixBody.innerHTML = matrix.map(m => `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="py-1 text-[#00ffcc] font-bold">+${m.pips} pips</td>
+                        <td class="py-1 text-emerald-400">${m.tp}</td>
+                        <td class="py-1 text-red-400">${m.sl}</td>
+                    </tr>
+                `).join('');
+            }
+            updateCustomPipTarget();
+
+            // Populate Multi-TF Matrix
+            const tfs = ['15m', '1h', '4h', '1d'];
+            const tfBody = document.getElementById('multiTfMatrixBody');
+            if (tfBody) {
+                tfBody.innerHTML = tfs.map(tf => {
+                    let dir = Math.random() > 0.4 ? 'BULLISH' : 'BEARISH';
+                    let col = dir === 'BULLISH' ? 'text-emerald-400' : 'text-red-400';
+                    return `
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-1.5 font-bold text-gray-300">${tf}</td>
+                            <td class="py-1.5 ${col} font-bold">${dir}</td>
+                            <td class="py-1.5 text-gray-300">${currentPrice.toFixed(meta.decimals)}</td>
+                            <td class="py-1.5 text-emerald-400">${(currentPrice + meta.pipMult * 40).toFixed(meta.decimals)}</td>
+                            <td class="py-1.5 text-red-400">${(currentPrice - meta.pipMult * 20).toFixed(meta.decimals)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        function renderMainChart(labels, data) {
+            const ctx = document.getElementById('mainTimeSeriesChart').getContext('2d');
+            if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
+
+            let grad = ctx.createLinearGradient(0, 0, 0, 300);
+            grad.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
+            grad.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
+
+            mainTimeSeriesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: currentPair,
+                        data: data,
+                        borderColor: '#00ffcc',
+                        borderWidth: 2,
+                        backgroundColor: grad,
+                        fill: true,
+                        tension: 0.25,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderRsiChart(labels, data) {
+            const ctx = document.getElementById('rsiSubChart').getContext('2d');
+            if (rsiChart) rsiChart.destroy();
+
+            rsiChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'RSI',
+                        data: data,
+                        borderColor: '#a855f7',
+                        borderWidth: 1.5,
+                        fill: false,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 } }
+                        }
+                    }
+                }
+            });
         }
 
         function executeTradeAlert() {
-            showToast(`Order Dispatched for ${currentPair} @ ${document.getElementById('smcEngineEntry').innerText}`);
+            showToast(`Order Dispatched: ${currentPair} @ ${document.getElementById('smcEngineEntry').innerText}`);
+            const logBody = document.getElementById('signalLogTableBody');
+            const now = new Date().toISOString().slice(11, 19);
+            const dir = document.getElementById('signalDirBadge').innerText;
+            const entry = document.getElementById('smcEngineEntry').innerText;
+            const tp = document.getElementById('tpVal').innerText;
+            const sl = document.getElementById('slVal').innerText;
+
+            const newRow = `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="py-2 text-gray-400">${now}</td>
+                    <td class="py-2 font-bold text-white">${currentPair}</td>
+                    <td class="py-2 font-bold ${dir === 'BUY' ? 'text-emerald-400' : 'text-red-400'}">${dir}</td>
+                    <td class="py-2 text-gray-300">E: ${entry} | TP: ${tp} | SL: ${sl}</td>
+                    <td class="py-2 text-[#00ffcc]">DISPATCHED</td>
+                </tr>
+            `;
+
+            if (logBody.innerText.includes('No requests sent yet')) {
+                logBody.innerHTML = newRow;
+            } else {
+                logBody.innerHTML = newRow + logBody.innerHTML;
+            }
+        }
+
+        function startAutoReloadTimer() {
+            autoReloadTimerInterval = setInterval(() => {
+                autoReloadSeconds--;
+                const display = document.getElementById('autoReloadCountdownDisplay');
+                if (display) display.innerText = `${autoReloadSeconds}s`;
+
+                if (autoReloadSeconds <= 0) {
+                    autoReloadSeconds = 40;
+                    fetchAndRenderOnDemand();
+                }
+            }, 1000);
+        }
+
+        function initApp() {
+            resizeCanvas();
+            initEntitiesForTheme(currentThemeMode);
+            animateBg();
+            startClocks();
+            startTfTimers();
+            startAutoReloadTimer();
+
+            // Run runtime license countdown and strict watcher every 1 second
+            licenseTimerInterval = setInterval(updateLicenseCountdown, 1000);
+            updateLicenseCountdown();
+
+            fetchAndRenderOnDemand();
         }
     </script>
 </body>
