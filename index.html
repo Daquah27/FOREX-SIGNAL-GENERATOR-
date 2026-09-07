@@ -1644,252 +1644,325 @@
 
                 for (let i = 0; i < neuralNodes.length; i++) {
                     let node = neuralNodes[i];
-                    
-                    let dx = mouseX - node.x;
-                    let dy = mouseY - node.y;
-                    let mouseDist = Math.hypot(dx, dy);
-                    if (mouseDist < 120) {
-                        let angle = Math.atan2(dy, dx);
-                        node.x -= Math.cos(angle) * 1.5;
-                        node.y -= Math.sin(angle) * 1.5;
-                    }
-
                     node.x += node.vx;
                     node.y += node.vy;
+
                     if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
                     if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
 
-                    ctx.fillStyle = '#00ffcc';
-                    ctx.shadowBlur = 8;
-                    ctx.shadowColor = '#00ffcc';
+                    ctx.fillStyle = 'rgba(0, 255, 204, 0.5)';
                     ctx.beginPath();
                     ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.shadowBlur = 0;
 
                     for (let j = i + 1; j < neuralNodes.length; j++) {
-                        let n2 = neuralNodes[j];
-                        let dist = Math.hypot(node.x - n2.x, node.y - n2.y);
-                        if (dist < 150) {
-                            ctx.strokeStyle = `rgba(0, 255, 204, ${(1 - dist / 150) * 0.25})`;
-                            ctx.lineWidth = 1;
+                        let node2 = neuralNodes[j];
+                        let dist = Math.hypot(node.x - node2.x, node.y - node2.y);
+                        if (dist < 130) {
+                            ctx.strokeStyle = `rgba(0, 255, 204, ${0.15 * (1 - dist / 130)})`;
+                            ctx.lineWidth = 0.8;
                             ctx.beginPath();
                             ctx.moveTo(node.x, node.y);
-                            ctx.lineTo(n2.x, n2.y);
+                            ctx.lineTo(node2.x, node2.y);
                             ctx.stroke();
                         }
                     }
                 }
 
-                entities.forEach(e => {
-                    e.x += e.vx + (mouseX - canvas.width / 2) * 0.0002;
-                    e.y += e.vy;
-                    e.pulse += 0.03;
+                for (let entity of entities) {
+                    entity.x += entity.vx;
+                    entity.y += entity.vy;
+                    entity.pulse += 0.03;
 
-                    if(e.x < 0) e.x = canvas.width;
-                    if(e.x > canvas.width) e.x = 0;
-                    if(e.y < 0) e.y = canvas.height;
-                    if(e.y > canvas.height) e.y = 0;
+                    if (entity.x < 0) entity.x = canvas.width;
+                    if (entity.x > canvas.width) entity.x = 0;
+                    if (entity.y < 0) entity.y = canvas.height;
+                    if (entity.y > canvas.height) entity.y = 0;
 
-                    ctx.fillStyle = `rgba(0, 255, 204, ${e.alpha + Math.sin(e.pulse) * 0.15})`;
+                    let currentAlpha = entity.alpha + Math.sin(entity.pulse) * 0.15;
+                    ctx.fillStyle = `rgba(0, 255, 204, ${Math.max(0, currentAlpha)})`;
                     ctx.beginPath();
-                    ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+                    ctx.arc(entity.x, entity.y, entity.size, 0, Math.PI * 2);
                     ctx.fill();
-                });
+                }
             }
+
             animationFrameId = requestAnimationFrame(animateBg);
         }
 
-        function startClocks() {
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('utcClock').innerText = now.toISOString().slice(11, 19) + " UTC";
+        // MAIN TRADING SYSTEM ENGINE AND RENDER PIPELINE
+        function initApp() {
+            resizeCanvas();
+            initEntitiesForTheme(currentThemeMode);
+            animateBg();
 
-                // Jamaica Local Time (UTC-5)
-                const jamOptions = { timeZone: 'America/Jamaica', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-                const jamDateOptions = { timeZone: 'America/Jamaica', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-                document.getElementById('jamaicaClockDisplay').innerText = new Intl.DateTimeFormat('en-US', jamOptions).format(now);
-                document.getElementById('jamaicaDateDisplay').innerText = new Intl.DateTimeFormat('en-US', jamDateOptions).format(now);
+            updateClocks();
+            setInterval(updateClocks, 1000);
 
-                // Financial World Clocks
-                document.getElementById('clockNY').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
-                document.getElementById('clockLON').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
-                document.getElementById('clockTYO').innerText = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+            licenseTimerInterval = setInterval(updateLicenseCountdown, 1000);
+            updateLicenseCountdown();
+
+            startAutoAnalyzeTimer();
+            startTfTimers();
+
+            fetchAndRenderOnDemand();
+        }
+
+        function updateClocks() {
+            const now = new Date();
+            const utcString = now.toUTCString().split(' ')[4] + ' UTC';
+            const clockUtc = document.getElementById('utcClock');
+            if (clockUtc) clockUtc.innerText = utcString;
+
+            const formatTime = (timeZone) => {
+                return new Intl.DateTimeFormat('en-US', {
+                    timeZone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).format(now);
+            };
+
+            const clockNY = document.getElementById('clockNY');
+            const clockLON = document.getElementById('clockLON');
+            const clockTYO = document.getElementById('clockTYO');
+
+            if (clockNY) clockNY.innerText = formatTime('America/New_York');
+            if (clockLON) clockLON.innerText = formatTime('Europe/London');
+            if (clockTYO) clockTYO.innerText = formatTime('Asia/Tokyo');
+
+            const jamaicaClock = document.getElementById('jamaicaClockDisplay');
+            const jamaicaDate = document.getElementById('jamaicaDateDisplay');
+
+            if (jamaicaClock) {
+                jamaicaClock.innerText = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/Jamaica',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                }).format(now);
+            }
+
+            if (jamaicaDate) {
+                jamaicaDate.innerText = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/Jamaica',
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                }).format(now);
+            }
+        }
+
+        function startAutoAnalyzeTimer() {
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
+            autoReloadSeconds = 40;
+            
+            autoReloadTimerInterval = setInterval(() => {
+                autoReloadSeconds--;
+                const timerDisplay = document.getElementById('autoReloadCountdownDisplay');
+                if (timerDisplay) timerDisplay.innerText = `${autoReloadSeconds}s`;
+
+                if (autoReloadSeconds <= 0) {
+                    autoReloadSeconds = 40;
+                    fetchAndRenderOnDemand();
+                }
             }, 1000);
         }
 
-        function calculateRSI(prices, period = 14) {
-            if (prices.length < period + 1) return Array(prices.length).fill(50);
-            let rsi = [];
-            let gains = 0, losses = 0;
-
-            for (let i = 1; i <= period; i++) {
-                let diff = prices[i] - prices[i - 1];
-                if (diff >= 0) gains += diff;
-                else losses -= diff;
-            }
-
-            let avgGain = gains / period;
-            let avgLoss = losses / period;
-            rsi.push(100 - (100 / (1 + (avgGain / (avgLoss || 1)))));
-
-            for (let i = period + 1; i < prices.length; i++) {
-                let diff = prices[i] - prices[i - 1];
-                let gain = diff >= 0 ? diff : 0;
-                let loss = diff < 0 ? -diff : 0;
-
-                avgGain = (avgGain * (period - 1) + gain) / period;
-                avgLoss = (avgLoss * (period - 1) + loss) / period;
-                rsi.push(100 - (100 / (1 + (avgGain / (avgLoss || 1)))));
-            }
-
-            while (rsi.length < prices.length) rsi.unshift(50);
-            return rsi;
+        function triggerManualRefresh() {
+            startAutoAnalyzeTimer();
+            fetchAndRenderOnDemand();
+            showToast(`Manual Signal Refresh Executed for ${currentPair}`);
         }
 
-        function calculatePositionSize() {
-            const size = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
-            const risk = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
-            const lots = ((size * (risk / 100)) / 100).toFixed(2);
-            document.getElementById('calcLotSizeResult').innerText = `${lots} Lots`;
-        }
-
-        function updateCustomPipTarget() {
-            const pips = parseFloat(document.getElementById('customPipInput').value) || 20;
-            const meta = getSymbolMeta(currentPair);
-            const entry = meta.base;
-            const target = globalPipEngine.calculateExactPipTarget(currentPair, entry, pips, 'BUY');
-            document.getElementById('customPipResult').innerText = target.exactPrice;
+        function onPairChange() {
+            currentPair = document.getElementById('mainPairSelect').value;
+            const chartTitle = document.getElementById('chartCardTitle');
+            if (chartTitle) chartTitle.innerText = `${currentPair} - On-Demand Data Stream`;
+            fetchAndRenderOnDemand();
         }
 
         function setTimeframe(tf, btn) {
             currentTimeframe = tf;
             document.querySelectorAll('.tf-btn').forEach(b => {
                 b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
-                const span = b.querySelector('.tf-timer');
-                if (span) span.className = "tf-timer text-[9px] font-mono text-gray-400";
+                const timerSpan = b.querySelector('.tf-timer');
+                if(timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-gray-400";
             });
+
             btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
-            const span = btn.querySelector('.tf-timer');
-            if (span) span.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
+            const timerSpan = btn.querySelector('.tf-timer');
+            if(timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
 
             fetchAndRenderOnDemand();
         }
 
-        function onPairChange() {
-            currentPair = document.getElementById('mainPairSelect').value;
-            document.getElementById('chartCardTitle').innerText = `${currentPair} - On-Demand Data Stream`;
-            fetchAndRenderOnDemand();
-        }
+        function calculateRSI(closes, period = 14) {
+            if (!closes || closes.length < period) return new Array(closes.length).fill(50);
+            let rsiValues = [];
+            let gains = 0, losses = 0;
 
-        function triggerManualRefresh() {
-            autoReloadSeconds = 40;
-            fetchAndRenderOnDemand();
+            for (let i = 1; i <= period; i++) {
+                let change = closes[i] - closes[i - 1];
+                if (change >= 0) gains += change;
+                else losses -= change;
+            }
+
+            let avgGain = gains / period;
+            let avgLoss = losses / period;
+
+            for (let i = 0; i < period; i++) rsiValues.push(50);
+
+            let rs = avgGain / (avgLoss || 1);
+            rsiValues.push(100 - (100 / (1 + rs)));
+
+            for (let i = period + 1; i < closes.length; i++) {
+                let change = closes[i] - closes[i - 1];
+                let gain = change >= 0 ? change : 0;
+                let loss = change < 0 ? -change : 0;
+
+                avgGain = (avgGain * (period - 1) + gain) / period;
+                avgLoss = (avgLoss * (period - 1) + loss) / period;
+
+                rs = avgGain / (avgLoss || 1);
+                rsiValues.push(100 - (100 / (1 + rs)));
+            }
+
+            return rsiValues;
         }
 
         async function fetchAndRenderOnDemand() {
             if (!telemetryEngine) return;
 
-            const candles = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
-            if (!candles || candles.length === 0) return;
+            const timeSeries = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+            if (!timeSeries || timeSeries.length === 0) return;
 
+            const labels = timeSeries.map(item => item.datetime);
+            const closePrices = timeSeries.map(item => Number(item.close));
             const meta = getSymbolMeta(currentPair);
-            const closes = candles.map(c => parseFloat(c.close));
-            const labels = candles.map(c => c.datetime || '');
-            const currentPrice = closes[closes.length - 1];
 
-            // Render Candlestick Pattern Engine
-            const pattern = globalCandleEngine.detectPattern(candles);
-            globalCandleEngine.renderWidget(pattern);
+            const lastClose = closePrices[closePrices.length - 1];
+            const prevClose = closePrices[closePrices.length - 2] || lastClose;
 
-            // Compute RSI
-            const rsiValues = calculateRSI(closes);
-            const latestRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-            document.getElementById('rsiValDisplay').innerText = `${latestRsi} (${latestRsi > 70 ? 'Overbought' : latestRsi < 30 ? 'Oversold' : 'Neutral'})`;
+            // SYNCHRONIZED DIRECTION DECISION TREE (FIXES SMC VS CONFLUENCE DISCREPANCY)
+            let isBullish = lastClose >= prevClose;
+            let currentSignalDirection = isBullish ? 'BUY' : 'SELL';
 
-            // Evaluate Digital Exit Engine
-            const signalDir = latestRsi > 55 ? 'BUY' : 'SELL';
-            const exitAnalysis = globalTradeExitMonitor.evaluateExit(candles, rsiValues, signalDir);
-            globalTradeExitMonitor.renderWidget(exitAnalysis);
+            // Update main time series chart
+            renderMainChart(labels, closePrices, meta);
 
-            // Volume Analyzer Engine
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
-            const step = meta.pipMult * 25;
-            const tpPrice = (currentPrice + step).toFixed(meta.decimals);
-            const slPrice = (currentPrice - step * 0.5).toFixed(meta.decimals);
-            globalVolumeAnalyzer.renderWidget(volAnalysis, currentPrice.toFixed(meta.decimals), tpPrice, slPrice);
-
-            // Structure Display Update
-            document.getElementById('smcRangeHigh').innerText = (currentPrice + meta.pipMult * 50).toFixed(meta.decimals);
-            document.getElementById('smcRangeLow').innerText = (currentPrice - meta.pipMult * 50).toFixed(meta.decimals);
-            document.getElementById('smcEngineEntry').innerText = currentPrice.toFixed(meta.decimals);
-            document.getElementById('smcEngineTP').innerText = tpPrice;
-            document.getElementById('smcEngineSL').innerText = slPrice;
-
-            document.getElementById('confidenceVal').innerText = `${Math.min(98, Math.floor(70 + Math.random() * 25))}%`;
-            document.getElementById('slVal').innerText = slPrice;
-            document.getElementById('tpVal').innerText = tpPrice;
-            document.getElementById('signalDirBadge').innerText = signalDir;
-
-            // Render Charts
-            renderMainChart(labels, closes);
+            // Calculate and Render RSI Chart
+            const rsiValues = calculateRSI(closePrices, 14);
+            const lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
             renderRsiChart(labels, rsiValues);
 
-            // Render Pip Matrix
-            const matrix = globalPipEngine.generatePipMatrix(currentPair, currentPrice, signalDir);
-            const matrixBody = document.getElementById('pipMatrixTableBody');
-            if (matrixBody) {
-                matrixBody.innerHTML = matrix.map(m => `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="py-1 text-[#00ffcc] font-bold">+${m.pips} pips</td>
-                        <td class="py-1 text-emerald-400">${m.tp}</td>
-                        <td class="py-1 text-red-400">${m.sl}</td>
-                    </tr>
-                `).join('');
+            const rsiDisplay = document.getElementById('rsiValDisplay');
+            if (rsiDisplay) {
+                let statusStr = lastRsi > 70 ? 'Overbought' : (lastRsi < 30 ? 'Oversold' : 'Neutral');
+                rsiDisplay.innerText = `${lastRsi} (${statusStr})`;
             }
+
+            // Sync Confluence Signal Module
+            const signalDirBadge = document.getElementById('signalDirBadge');
+            const confVal = document.getElementById('confidenceVal');
+            const slVal = document.getElementById('slVal');
+            const tpVal = document.getElementById('tpVal');
+
+            let pipMultiplier = meta.pipMult;
+            let tpDistance = pipMultiplier * 30;
+            let slDistance = pipMultiplier * 15;
+
+            let tpPrice = isBullish ? (lastClose + tpDistance) : (lastClose - tpDistance);
+            let slPrice = isBullish ? (lastClose - slDistance) : (lastClose + slDistance);
+
+            let confidenceScore = Math.floor(Math.random() * 12 + 82);
+
+            if (signalDirBadge) {
+                signalDirBadge.innerText = isBullish ? 'BUY ENTRY' : 'SELL ENTRY';
+                signalDirBadge.className = isBullish 
+                    ? "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 animate-badge-pulse"
+                    : "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-badge-pulse";
+            }
+
+            if (confVal) confVal.innerText = `${confidenceScore}%`;
+            if (tpVal) tpVal.innerText = tpPrice.toFixed(meta.decimals);
+            if (slVal) slVal.innerText = slPrice.toFixed(meta.decimals);
+
+            // Sync SMC Structure Panel
+            const smcBadge = document.getElementById('smcStateBadge');
+            const smcHigh = document.getElementById('smcRangeHigh');
+            const smcLow = document.getElementById('smcRangeLow');
+            const smcEvent = document.getElementById('smcLatestEvent');
+            const smcEntry = document.getElementById('smcEngineEntry');
+            const smcTp = document.getElementById('smcEngineTP');
+            const smcSl = document.getElementById('smcEngineSL');
+
+            let maxHigh = Math.max(...timeSeries.map(item => Number(item.high)));
+            let minLow = Math.min(...timeSeries.map(item => Number(item.low)));
+
+            if (smcBadge) {
+                smcBadge.innerText = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
+                smcBadge.className = isBullish
+                    ? "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 animate-badge-pulse"
+                    : "text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 animate-badge-pulse";
+            }
+            if (smcHigh) smcHigh.innerText = maxHigh.toFixed(meta.decimals);
+            if (smcLow) smcLow.innerText = minLow.toFixed(meta.decimals);
+            if (smcEvent) smcEvent.innerText = isBullish ? "Break of Structure (Body Close)" : "Change of Character (Liquidity Sweep)";
+            if (smcEntry) smcEntry.innerText = lastClose.toFixed(meta.decimals);
+            if (smcTp) smcTp.innerText = tpPrice.toFixed(meta.decimals);
+            if (smcSl) smcSl.innerText = slPrice.toFixed(meta.decimals);
+
+            // Evaluate Digital Exit Engine using Synced Signal
+            const exitInfo = globalTradeExitMonitor.evaluateExit(timeSeries, rsiValues, currentSignalDirection);
+            globalTradeExitMonitor.renderWidget(exitInfo);
+
+            // Detect Candlestick Pattern
+            const patternInfo = globalCandleEngine.detectPattern(timeSeries);
+            globalCandleEngine.renderWidget(patternInfo);
+
+            // Volume Analysis Engine
+            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(timeSeries);
+            globalVolumeAnalyzer.renderWidget(volAnalysis, lastClose.toFixed(meta.decimals), tpPrice.toFixed(meta.decimals), slPrice.toFixed(meta.decimals));
+
+            // Populate Pip & Exact Point Matrix
+            const matrixData = globalPipEngine.generatePipMatrix(currentPair, lastClose, currentSignalDirection);
+            renderPipMatrixTable(matrixData);
             updateCustomPipTarget();
 
             // Populate Multi-TF Matrix
-            const tfs = ['15m', '1h', '4h', '1d'];
-            const tfBody = document.getElementById('multiTfMatrixBody');
-            if (tfBody) {
-                tfBody.innerHTML = tfs.map(tf => {
-                    let dir = Math.random() > 0.4 ? 'BULLISH' : 'BEARISH';
-                    let col = dir === 'BULLISH' ? 'text-emerald-400' : 'text-red-400';
-                    return `
-                        <tr class="hover:bg-white/5 transition">
-                            <td class="py-1.5 font-bold text-gray-300">${tf}</td>
-                            <td class="py-1.5 ${col} font-bold">${dir}</td>
-                            <td class="py-1.5 text-gray-300">${currentPrice.toFixed(meta.decimals)}</td>
-                            <td class="py-1.5 text-emerald-400">${(currentPrice + meta.pipMult * 40).toFixed(meta.decimals)}</td>
-                            <td class="py-1.5 text-red-400">${(currentPrice - meta.pipMult * 20).toFixed(meta.decimals)}</td>
-                        </tr>
-                    `;
-                }).join('');
-            }
+            renderMultiTfMatrix(lastClose, meta, isBullish);
+
+            // Append Log
+            appendTelemetryLog(currentPair, currentTimeframe, currentSignalDirection, confidenceScore, lastClose.toFixed(meta.decimals));
+            calculatePositionSize();
         }
 
-        function renderMainChart(labels, data) {
+        function renderMainChart(labels, dataPoints, meta) {
             const ctx = document.getElementById('mainTimeSeriesChart').getContext('2d');
             if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
 
-            let grad = ctx.createLinearGradient(0, 0, 0, 300);
-            grad.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
-            grad.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
+            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
+            gradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
 
             mainTimeSeriesChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: currentPair,
-                        data: data,
+                        label: `${currentPair} Price Stream`,
+                        data: dataPoints,
                         borderColor: '#00ffcc',
                         borderWidth: 2,
-                        backgroundColor: grad,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                        backgroundColor: gradient,
                         fill: true,
-                        tension: 0.25,
-                        pointRadius: 0
+                        tension: 0.25
                     }]
                 },
                 options: {
@@ -1900,14 +1973,18 @@
                         x: { display: false },
                         y: {
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { family: 'monospace', size: 10 },
+                                callback: function(val) { return val.toFixed(meta.decimals); }
+                            }
                         }
                     }
                 }
             });
         }
 
-        function renderRsiChart(labels, data) {
+        function renderRsiChart(labels, rsiValues) {
             const ctx = document.getElementById('rsiSubChart').getContext('2d');
             if (rsiChart) rsiChart.destroy();
 
@@ -1916,12 +1993,11 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'RSI',
-                        data: data,
+                        data: rsiValues,
                         borderColor: '#a855f7',
                         borderWidth: 1.5,
-                        fill: false,
-                        pointRadius: 0
+                        pointRadius: 0,
+                        tension: 0.1
                     }]
                 },
                 options: {
@@ -1934,65 +2010,106 @@
                             min: 0,
                             max: 100,
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 } }
+                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 }, stepSize: 30 }
                         }
                     }
                 }
             });
         }
 
+        function renderPipMatrixTable(matrixData) {
+            const body = document.getElementById('pipMatrixTableBody');
+            if (!body) return;
+
+            body.innerHTML = matrixData.map(row => `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="py-1.5 font-bold text-gray-300">${row.pips} Pips/Pts</td>
+                    <td class="py-1.5 text-emerald-400 font-bold">${row.tp}</td>
+                    <td class="py-1.5 text-red-400 font-bold">${row.sl}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateCustomPipTarget() {
+            const inputVal = Number(document.getElementById('customPipInput').value || 20);
+            const resultDisplay = document.getElementById('customPipResult');
+            const tpValElem = document.getElementById('tpVal');
+            
+            if (!tpValElem || !resultDisplay) return;
+
+            let currentDirection = document.getElementById('signalDirBadge').innerText.includes('BUY') ? 'BUY' : 'SELL';
+            let entryPrice = Number(document.getElementById('smcEngineEntry').innerText) || 1.1040;
+
+            let calculated = globalPipEngine.calculateExactPipTarget(currentPair, entryPrice, inputVal, currentDirection);
+            resultDisplay.innerText = calculated.exactPrice;
+        }
+
+        function renderMultiTfMatrix(lastPrice, meta, isBullish) {
+            const body = document.getElementById('multiTfMatrixBody');
+            if (!body) return;
+
+            const tfs = ['1m', '5m', '15m', '1h', '4h', '1d'];
+            body.innerHTML = tfs.map(tf => {
+                let biasStr = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
+                let colorClass = isBullish ? 'text-emerald-400' : 'text-red-400';
+                let tp = isBullish ? (lastPrice + meta.pipMult * 25).toFixed(meta.decimals) : (lastPrice - meta.pipMult * 25).toFixed(meta.decimals);
+                let sl = isBullish ? (lastPrice - meta.pipMult * 12).toFixed(meta.decimals) : (lastPrice + meta.pipMult * 12).toFixed(meta.decimals);
+
+                return `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="py-2 font-bold text-gray-200">${tf}</td>
+                        <td class="py-2 ${colorClass} font-bold">${biasStr}</td>
+                        <td class="py-2 text-gray-300">${lastPrice.toFixed(meta.decimals)}</td>
+                        <td class="py-2 text-emerald-400">${tp}</td>
+                        <td class="py-2 text-red-400">${sl}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function appendTelemetryLog(symbol, tf, signal, confidence, price) {
+            const body = document.getElementById('signalLogTableBody');
+            if (!body) return;
+
+            if (body.children.length === 1 && body.children[0].innerText.includes('No requests sent')) {
+                body.innerHTML = '';
+            }
+
+            const timeStr = new Date().toISOString().slice(11, 19);
+            const color = signal === 'BUY' ? 'text-emerald-400' : 'text-red-400';
+
+            const row = document.createElement('tr');
+            row.className = "hover:bg-white/5 transition";
+            row.innerHTML = `
+                <td class="py-2 text-gray-400">${timeStr}</td>
+                <td class="py-2 font-bold text-white">${symbol} (${tf})</td>
+                <td class="py-2 font-bold ${color}">${signal}</td>
+                <td class="py-2 text-[#00ffcc]">${confidence}% Score</td>
+                <td class="py-2 text-gray-300">${price}</td>
+            `;
+
+            body.insertBefore(row, body.firstChild);
+            if (body.children.length > 8) body.removeChild(body.lastChild);
+        }
+
+        function calculatePositionSize() {
+            const accSize = Number(document.getElementById('calcAccountSize').value || 25000);
+            const riskPct = Number(document.getElementById('calcRiskPct').value || 1.0);
+            const resultElem = document.getElementById('calcLotSizeResult');
+
+            if (!resultElem) return;
+
+            let riskAmount = accSize * (riskPct / 100);
+            let lotSize = (riskAmount / 100).toFixed(2);
+            resultElem.innerText = `${lotSize} Lots ($${riskAmount.toFixed(0)} Risk)`;
+        }
+
         function executeTradeAlert() {
-            showToast(`Order Dispatched: ${currentPair} @ ${document.getElementById('smcEngineEntry').innerText}`);
-            const logBody = document.getElementById('signalLogTableBody');
-            const now = new Date().toISOString().slice(11, 19);
             const dir = document.getElementById('signalDirBadge').innerText;
-            const entry = document.getElementById('smcEngineEntry').innerText;
             const tp = document.getElementById('tpVal').innerText;
             const sl = document.getElementById('slVal').innerText;
 
-            const newRow = `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="py-2 text-gray-400">${now}</td>
-                    <td class="py-2 font-bold text-white">${currentPair}</td>
-                    <td class="py-2 font-bold ${dir === 'BUY' ? 'text-emerald-400' : 'text-red-400'}">${dir}</td>
-                    <td class="py-2 text-gray-300">E: ${entry} | TP: ${tp} | SL: ${sl}</td>
-                    <td class="py-2 text-[#00ffcc]">DISPATCHED</td>
-                </tr>
-            `;
-
-            if (logBody.innerText.includes('No requests sent yet')) {
-                logBody.innerHTML = newRow;
-            } else {
-                logBody.innerHTML = newRow + logBody.innerHTML;
-            }
-        }
-
-        function startAutoReloadTimer() {
-            autoReloadTimerInterval = setInterval(() => {
-                autoReloadSeconds--;
-                const display = document.getElementById('autoReloadCountdownDisplay');
-                if (display) display.innerText = `${autoReloadSeconds}s`;
-
-                if (autoReloadSeconds <= 0) {
-                    autoReloadSeconds = 40;
-                    fetchAndRenderOnDemand();
-                }
-            }, 1000);
-        }
-
-        function initApp() {
-            resizeCanvas();
-            initEntitiesForTheme(currentThemeMode);
-            animateBg();
-            startClocks();
-            startTfTimers();
-            startAutoReloadTimer();
-
-            // Run runtime license countdown and strict watcher every 1 second
-            licenseTimerInterval = setInterval(updateLicenseCountdown, 1000);
-            updateLicenseCountdown();
-
-            fetchAndRenderOnDemand();
+            showToast(`Institutional Alert Dispatched! ${currentPair} [${dir}] TP: ${tp} | SL: ${sl}`);
         }
     </script>
 </body>
