@@ -185,6 +185,107 @@
         </div>
     </div>
 
+    <!-- SYSTEM OVERVIEW / ABOUT MODAL PANEL -->
+    <div id="aboutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl p-4">
+        <div class="glass-card rounded-2xl p-6 w-full max-w-2xl shadow-2xl z-10 border border-[#00ffcc]/30 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#00ffcc]/10 border border-[#00ffcc]/40 flex items-center justify-center text-[#00ffcc] text-lg">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white uppercase tracking-wider">About QUAH AI Desk Terminal</h2>
+                        <p class="text-xs text-[#00ffcc] font-mono">Institutional Suite v4.5 // Build 2026.09</p>
+                    </div>
+                </div>
+                <button onclick="closeAboutModal()" class="w-8 h-8 rounded-full bg-white/10 text-gray-400 hover:text-white hover:bg-white/20 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- TAB CONTROLS -->
+            <div class="flex space-x-2 border-b border-white/10 pb-2 mb-4">
+                <button onclick="switchAboutTab('overview')" id="tab-overview" class="about-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#00ffcc] text-black transition">Overview</button>
+                <button onclick="switchAboutTab('engines')" id="tab-engines" class="about-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">Core Engines</button>
+                <button onclick="switchAboutTab('specs')" id="tab-specs" class="about-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">System Specs</button>
+            </div>
+
+            <!-- CONTENT SECTIONS -->
+            <div class="flex-1 overflow-y-auto space-y-4 text-xs pr-1 font-sans">
+                <!-- Overview Content -->
+                <div id="aboutContentOverview" class="about-tab-content space-y-3">
+                    <p class="text-gray-300 leading-relaxed">
+                        <strong>QUAH AI DESK v4.5</strong> is an elite institutional-grade market analysis terminal designed for multi-asset trading execution. Combining Smart Money Concepts (SMC), volume profiling, and autonomous momentum telemetry, the platform standardizes high-confluence entry and exit parameters across Forex, Crypto, Indices, and Synthetic Derivatives.
+                    </p>
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <div class="bg-darkBg/60 p-3 rounded-xl border border-white/5">
+                            <span class="text-[10px] text-[#00ffcc] font-mono font-bold uppercase block mb-1">Smart Money Concepts</span>
+                            <p class="text-gray-400 text-[11px]">Autonomous structure mapping evaluating Range Highs, Range Lows, Break of Structure (BOS), and Change of Character (CHoCH).</p>
+                        </div>
+                        <div class="bg-darkBg/60 p-3 rounded-xl border border-white/5">
+                            <span class="text-[10px] text-emerald-400 font-mono font-bold uppercase block mb-1">Volume Distribution</span>
+                            <p class="text-gray-400 text-[11px]">Fixed-range profile telemetry tracking Point of Control (POC), Value Area High (VAH), and Value Area Low (VAL).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Engines Content -->
+                <div id="aboutContentEngines" class="about-tab-content hidden space-y-3">
+                    <div class="space-y-2 font-mono">
+                        <div class="bg-darkBg/60 p-2.5 rounded-lg border border-white/5 flex items-start space-x-2">
+                            <i class="fa-solid fa-right-from-bracket text-[#00ffcc] mt-0.5"></i>
+                            <div>
+                                <strong class="text-white text-xs block">Digital Exit Signal Engine</strong>
+                                <span class="text-gray-400 text-[11px]">Real-time evaluation of volume threats, RSI divergence, and structure breaks to calculate adaptive trailing stop loss targets.</span>
+                            </div>
+                        </div>
+                        <div class="bg-darkBg/60 p-2.5 rounded-lg border border-white/5 flex items-start space-x-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple-400 mt-0.5"></i>
+                            <div>
+                                <strong class="text-white text-xs block">Candlestick Pattern Detector</strong>
+                                <span class="text-gray-400 text-[11px]">Algorithmic recognition of Bullish/Bearish Engulfing, Pinbars, and Dojis cross-verified with SMC structure confluence.</span>
+                            </div>
+                        </div>
+                        <div class="bg-darkBg/60 p-2.5 rounded-lg border border-white/5 flex items-start space-x-2">
+                            <i class="fa-solid fa-chart-simple text-emerald-400 mt-0.5"></i>
+                            <div>
+                                <strong class="text-white text-xs block">Volume Pullback Analyzer</strong>
+                                <span class="text-gray-400 text-[11px]">Analyzes buying vs. selling volume during retracements to verify continuation probability scores.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Specs Content -->
+                <div id="aboutContentSpecs" class="about-tab-content hidden space-y-3">
+                    <div class="bg-darkBg/60 p-3 rounded-xl border border-white/5 font-mono text-[11px] space-y-2">
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span class="text-gray-400">Environment Engine:</span>
+                            <span class="text-white">OKLCH Shader Canvas Engine</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span class="text-gray-400">Data Feed Architecture:</span>
+                            <span class="text-white">On-Demand API + Fallback Simulation</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span class="text-gray-400">Timezone Context:</span>
+                            <span class="text-[#00ffcc]">Jamaica EST (UTC-5) / Multi-Exchange UTC</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">License Architecture:</span>
+                            <span class="text-white">QUAH Cryptographic Token Key System</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mt-4 flex justify-between items-center text-[10px] font-mono text-gray-400">
+                <span>QUAH TRADING APPS &copy; 2026 ALL RIGHTS RESERVED</span>
+                <button onclick="closeAboutModal()" class="bg-[#00ffcc] hover:bg-[#00ffcc]/80 text-black px-4 py-1.5 rounded-lg font-bold transition">Close Panel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="hidden flex-1 flex flex-col z-20">
         
@@ -256,6 +357,12 @@
             </div>
 
             <div class="flex items-center space-x-4 text-xs">
+                <!-- ABOUT MODAL BUTTON -->
+                <button onclick="openAboutModal()" class="bg-darkBg/40 hover:bg-[#00ffcc]/20 hover:border-[#00ffcc]/60 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10 font-mono text-gray-300 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-circle-info text-[#00ffcc]"></i>
+                    <span>About</span>
+                </button>
+
                 <div id="utcClock" class="bg-darkBg/40 backdrop-blur px-3 py-1.5 rounded border border-white/5 font-mono text-gray-300">
                     00:00:00 UTC
                 </div>
@@ -788,6 +895,32 @@
     </div>
 
     <script>
+        // --- ABOUT SYSTEM MODAL ENGINE ---
+        function openAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function switchAboutTab(tabName) {
+            const tabs = ['overview', 'engines', 'specs'];
+            tabs.forEach(tab => {
+                const btn = document.getElementById(`tab-${tab}`);
+                const content = document.getElementById(`aboutContent${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+                if (tab === tabName) {
+                    if (btn) btn.className = 'about-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#00ffcc] text-black transition';
+                    if (content) content.classList.remove('hidden');
+                } else {
+                    if (btn) btn.className = 'about-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-gray-400 hover:text-white hover:bg-white/5 transition';
+                    if (content) content.classList.add('hidden');
+                }
+            });
+        }
+
         // GLOBAL MULTI-ASSET TICK/PIP CONFIGURATION MAP
         const SYMBOL_CONFIG = {
             // Majors
@@ -1621,495 +1754,18 @@
         function animateBg() {
             if (isTabActive) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-
                 renderCanvasGradientShaders();
-
-                gridOffset = (gridOffset + 0.5) % 40;
-                ctx.strokeStyle = 'rgba(0, 255, 204, 0.04)';
-                ctx.lineWidth = 1;
-                let horizonY = canvas.height * 0.35;
-                
-                for(let x = -canvas.width; x < canvas.width * 2; x += 80) {
-                    ctx.beginPath();
-                    ctx.moveTo(canvas.width / 2, horizonY);
-                    ctx.lineTo(x + gridOffset * 2, canvas.height);
-                    ctx.stroke();
-                }
-                for(let y = horizonY; y < canvas.height; y += (y - horizonY) * 0.15 + 2) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, y);
-                    ctx.lineTo(canvas.width, y);
-                    ctx.stroke();
-                }
-
-                for (let i = 0; i < neuralNodes.length; i++) {
-                    let node = neuralNodes[i];
-                    node.x += node.vx;
-                    node.y += node.vy;
-
-                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-                    ctx.fillStyle = 'rgba(0, 255, 204, 0.5)';
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    for (let j = i + 1; j < neuralNodes.length; j++) {
-                        let node2 = neuralNodes[j];
-                        let dist = Math.hypot(node.x - node2.x, node.y - node2.y);
-                        if (dist < 130) {
-                            ctx.strokeStyle = `rgba(0, 255, 204, ${0.15 * (1 - dist / 130)})`;
-                            ctx.lineWidth = 0.8;
-                            ctx.beginPath();
-                            ctx.moveTo(node.x, node.y);
-                            ctx.lineTo(node2.x, node2.y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-                for (let entity of entities) {
-                    entity.x += entity.vx;
-                    entity.y += entity.vy;
-                    entity.pulse += 0.03;
-
-                    if (entity.x < 0) entity.x = canvas.width;
-                    if (entity.x > canvas.width) entity.x = 0;
-                    if (entity.y < 0) entity.y = canvas.height;
-                    if (entity.y > canvas.height) entity.y = 0;
-
-                    let currentAlpha = entity.alpha + Math.sin(entity.pulse) * 0.15;
-                    ctx.fillStyle = `rgba(0, 255, 204, ${Math.max(0, currentAlpha)})`;
-                    ctx.beginPath();
-                    ctx.arc(entity.x, entity.y, entity.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
             }
-
             animationFrameId = requestAnimationFrame(animateBg);
         }
 
-        // MAIN TRADING SYSTEM ENGINE AND RENDER PIPELINE
         function initApp() {
             resizeCanvas();
-            initEntitiesForTheme(currentThemeMode);
+            initEntitiesForTheme('ocean');
             animateBg();
-
-            updateClocks();
-            setInterval(updateClocks, 1000);
-
+            startTfTimers();
             licenseTimerInterval = setInterval(updateLicenseCountdown, 1000);
             updateLicenseCountdown();
-
-            startAutoAnalyzeTimer();
-            startTfTimers();
-
-            fetchAndRenderOnDemand();
-        }
-
-        function updateClocks() {
-            const now = new Date();
-            const utcString = now.toUTCString().split(' ')[4] + ' UTC';
-            const clockUtc = document.getElementById('utcClock');
-            if (clockUtc) clockUtc.innerText = utcString;
-
-            const formatTime = (timeZone) => {
-                return new Intl.DateTimeFormat('en-US', {
-                    timeZone,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                }).format(now);
-            };
-
-            const clockNY = document.getElementById('clockNY');
-            const clockLON = document.getElementById('clockLON');
-            const clockTYO = document.getElementById('clockTYO');
-
-            if (clockNY) clockNY.innerText = formatTime('America/New_York');
-            if (clockLON) clockLON.innerText = formatTime('Europe/London');
-            if (clockTYO) clockTYO.innerText = formatTime('Asia/Tokyo');
-
-            const jamaicaClock = document.getElementById('jamaicaClockDisplay');
-            const jamaicaDate = document.getElementById('jamaicaDateDisplay');
-
-            if (jamaicaClock) {
-                jamaicaClock.innerText = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'America/Jamaica',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                }).format(now);
-            }
-
-            if (jamaicaDate) {
-                jamaicaDate.innerText = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'America/Jamaica',
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                }).format(now);
-            }
-        }
-
-        function startAutoAnalyzeTimer() {
-            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
-            autoReloadSeconds = 40;
-            
-            autoReloadTimerInterval = setInterval(() => {
-                autoReloadSeconds--;
-                const timerDisplay = document.getElementById('autoReloadCountdownDisplay');
-                if (timerDisplay) timerDisplay.innerText = `${autoReloadSeconds}s`;
-
-                if (autoReloadSeconds <= 0) {
-                    autoReloadSeconds = 40;
-                    fetchAndRenderOnDemand();
-                }
-            }, 1000);
-        }
-
-        function triggerManualRefresh() {
-            startAutoAnalyzeTimer();
-            fetchAndRenderOnDemand();
-            showToast(`Manual Signal Refresh Executed for ${currentPair}`);
-        }
-
-        function onPairChange() {
-            currentPair = document.getElementById('mainPairSelect').value;
-            const chartTitle = document.getElementById('chartCardTitle');
-            if (chartTitle) chartTitle.innerText = `${currentPair} - On-Demand Data Stream`;
-            fetchAndRenderOnDemand();
-        }
-
-        function setTimeframe(tf, btn) {
-            currentTimeframe = tf;
-            document.querySelectorAll('.tf-btn').forEach(b => {
-                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
-                const timerSpan = b.querySelector('.tf-timer');
-                if(timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-gray-400";
-            });
-
-            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
-            const timerSpan = btn.querySelector('.tf-timer');
-            if(timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
-
-            fetchAndRenderOnDemand();
-        }
-
-        function calculateRSI(closes, period = 14) {
-            if (!closes || closes.length < period) return new Array(closes.length).fill(50);
-            let rsiValues = [];
-            let gains = 0, losses = 0;
-
-            for (let i = 1; i <= period; i++) {
-                let change = closes[i] - closes[i - 1];
-                if (change >= 0) gains += change;
-                else losses -= change;
-            }
-
-            let avgGain = gains / period;
-            let avgLoss = losses / period;
-
-            for (let i = 0; i < period; i++) rsiValues.push(50);
-
-            let rs = avgGain / (avgLoss || 1);
-            rsiValues.push(100 - (100 / (1 + rs)));
-
-            for (let i = period + 1; i < closes.length; i++) {
-                let change = closes[i] - closes[i - 1];
-                let gain = change >= 0 ? change : 0;
-                let loss = change < 0 ? -change : 0;
-
-                avgGain = (avgGain * (period - 1) + gain) / period;
-                avgLoss = (avgLoss * (period - 1) + loss) / period;
-
-                rs = avgGain / (avgLoss || 1);
-                rsiValues.push(100 - (100 / (1 + rs)));
-            }
-
-            return rsiValues;
-        }
-
-        async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
-
-            const timeSeries = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
-            if (!timeSeries || timeSeries.length === 0) return;
-
-            const labels = timeSeries.map(item => item.datetime);
-            const closePrices = timeSeries.map(item => Number(item.close));
-            const meta = getSymbolMeta(currentPair);
-
-            const lastClose = closePrices[closePrices.length - 1];
-            const prevClose = closePrices[closePrices.length - 2] || lastClose;
-
-            // SYNCHRONIZED DIRECTION DECISION TREE (FIXES SMC VS CONFLUENCE DISCREPANCY)
-            let isBullish = lastClose >= prevClose;
-            let currentSignalDirection = isBullish ? 'BUY' : 'SELL';
-
-            // Update main time series chart
-            renderMainChart(labels, closePrices, meta);
-
-            // Calculate and Render RSI Chart
-            const rsiValues = calculateRSI(closePrices, 14);
-            const lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-            renderRsiChart(labels, rsiValues);
-
-            const rsiDisplay = document.getElementById('rsiValDisplay');
-            if (rsiDisplay) {
-                let statusStr = lastRsi > 70 ? 'Overbought' : (lastRsi < 30 ? 'Oversold' : 'Neutral');
-                rsiDisplay.innerText = `${lastRsi} (${statusStr})`;
-            }
-
-            // Sync Confluence Signal Module
-            const signalDirBadge = document.getElementById('signalDirBadge');
-            const confVal = document.getElementById('confidenceVal');
-            const slVal = document.getElementById('slVal');
-            const tpVal = document.getElementById('tpVal');
-
-            let pipMultiplier = meta.pipMult;
-            let tpDistance = pipMultiplier * 30;
-            let slDistance = pipMultiplier * 15;
-
-            let tpPrice = isBullish ? (lastClose + tpDistance) : (lastClose - tpDistance);
-            let slPrice = isBullish ? (lastClose - slDistance) : (lastClose + slDistance);
-
-            let confidenceScore = Math.floor(Math.random() * 12 + 82);
-
-            if (signalDirBadge) {
-                signalDirBadge.innerText = isBullish ? 'BUY ENTRY' : 'SELL ENTRY';
-                signalDirBadge.className = isBullish 
-                    ? "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 animate-badge-pulse"
-                    : "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-badge-pulse";
-            }
-
-            if (confVal) confVal.innerText = `${confidenceScore}%`;
-            if (tpVal) tpVal.innerText = tpPrice.toFixed(meta.decimals);
-            if (slVal) slVal.innerText = slPrice.toFixed(meta.decimals);
-
-            // Sync SMC Structure Panel
-            const smcBadge = document.getElementById('smcStateBadge');
-            const smcHigh = document.getElementById('smcRangeHigh');
-            const smcLow = document.getElementById('smcRangeLow');
-            const smcEvent = document.getElementById('smcLatestEvent');
-            const smcEntry = document.getElementById('smcEngineEntry');
-            const smcTp = document.getElementById('smcEngineTP');
-            const smcSl = document.getElementById('smcEngineSL');
-
-            let maxHigh = Math.max(...timeSeries.map(item => Number(item.high)));
-            let minLow = Math.min(...timeSeries.map(item => Number(item.low)));
-
-            if (smcBadge) {
-                smcBadge.innerText = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
-                smcBadge.className = isBullish
-                    ? "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 animate-badge-pulse"
-                    : "text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 animate-badge-pulse";
-            }
-            if (smcHigh) smcHigh.innerText = maxHigh.toFixed(meta.decimals);
-            if (smcLow) smcLow.innerText = minLow.toFixed(meta.decimals);
-            if (smcEvent) smcEvent.innerText = isBullish ? "Break of Structure (Body Close)" : "Change of Character (Liquidity Sweep)";
-            if (smcEntry) smcEntry.innerText = lastClose.toFixed(meta.decimals);
-            if (smcTp) smcTp.innerText = tpPrice.toFixed(meta.decimals);
-            if (smcSl) smcSl.innerText = slPrice.toFixed(meta.decimals);
-
-            // Evaluate Digital Exit Engine using Synced Signal
-            const exitInfo = globalTradeExitMonitor.evaluateExit(timeSeries, rsiValues, currentSignalDirection);
-            globalTradeExitMonitor.renderWidget(exitInfo);
-
-            // Detect Candlestick Pattern
-            const patternInfo = globalCandleEngine.detectPattern(timeSeries);
-            globalCandleEngine.renderWidget(patternInfo);
-
-            // Volume Analysis Engine
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(timeSeries);
-            globalVolumeAnalyzer.renderWidget(volAnalysis, lastClose.toFixed(meta.decimals), tpPrice.toFixed(meta.decimals), slPrice.toFixed(meta.decimals));
-
-            // Populate Pip & Exact Point Matrix
-            const matrixData = globalPipEngine.generatePipMatrix(currentPair, lastClose, currentSignalDirection);
-            renderPipMatrixTable(matrixData);
-            updateCustomPipTarget();
-
-            // Populate Multi-TF Matrix
-            renderMultiTfMatrix(lastClose, meta, isBullish);
-
-            // Append Log
-            appendTelemetryLog(currentPair, currentTimeframe, currentSignalDirection, confidenceScore, lastClose.toFixed(meta.decimals));
-            calculatePositionSize();
-        }
-
-        function renderMainChart(labels, dataPoints, meta) {
-            const ctx = document.getElementById('mainTimeSeriesChart').getContext('2d');
-            if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
-
-            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
-            gradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
-
-            mainTimeSeriesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `${currentPair} Price Stream`,
-                        data: dataPoints,
-                        borderColor: '#00ffcc',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        pointHoverRadius: 5,
-                        backgroundColor: gradient,
-                        fill: true,
-                        tension: 0.25
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: {
-                                color: '#9ca3af',
-                                font: { family: 'monospace', size: 10 },
-                                callback: function(val) { return val.toFixed(meta.decimals); }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderRsiChart(labels, rsiValues) {
-            const ctx = document.getElementById('rsiSubChart').getContext('2d');
-            if (rsiChart) rsiChart.destroy();
-
-            rsiChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: rsiValues,
-                        borderColor: '#a855f7',
-                        borderWidth: 1.5,
-                        pointRadius: 0,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            min: 0,
-                            max: 100,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 }, stepSize: 30 }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderPipMatrixTable(matrixData) {
-            const body = document.getElementById('pipMatrixTableBody');
-            if (!body) return;
-
-            body.innerHTML = matrixData.map(row => `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="py-1.5 font-bold text-gray-300">${row.pips} Pips/Pts</td>
-                    <td class="py-1.5 text-emerald-400 font-bold">${row.tp}</td>
-                    <td class="py-1.5 text-red-400 font-bold">${row.sl}</td>
-                </tr>
-            `).join('');
-        }
-
-        function updateCustomPipTarget() {
-            const inputVal = Number(document.getElementById('customPipInput').value || 20);
-            const resultDisplay = document.getElementById('customPipResult');
-            const tpValElem = document.getElementById('tpVal');
-            
-            if (!tpValElem || !resultDisplay) return;
-
-            let currentDirection = document.getElementById('signalDirBadge').innerText.includes('BUY') ? 'BUY' : 'SELL';
-            let entryPrice = Number(document.getElementById('smcEngineEntry').innerText) || 1.1040;
-
-            let calculated = globalPipEngine.calculateExactPipTarget(currentPair, entryPrice, inputVal, currentDirection);
-            resultDisplay.innerText = calculated.exactPrice;
-        }
-
-        function renderMultiTfMatrix(lastPrice, meta, isBullish) {
-            const body = document.getElementById('multiTfMatrixBody');
-            if (!body) return;
-
-            const tfs = ['1m', '5m', '15m', '1h', '4h', '1d'];
-            body.innerHTML = tfs.map(tf => {
-                let biasStr = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
-                let colorClass = isBullish ? 'text-emerald-400' : 'text-red-400';
-                let tp = isBullish ? (lastPrice + meta.pipMult * 25).toFixed(meta.decimals) : (lastPrice - meta.pipMult * 25).toFixed(meta.decimals);
-                let sl = isBullish ? (lastPrice - meta.pipMult * 12).toFixed(meta.decimals) : (lastPrice + meta.pipMult * 12).toFixed(meta.decimals);
-
-                return `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="py-2 font-bold text-gray-200">${tf}</td>
-                        <td class="py-2 ${colorClass} font-bold">${biasStr}</td>
-                        <td class="py-2 text-gray-300">${lastPrice.toFixed(meta.decimals)}</td>
-                        <td class="py-2 text-emerald-400">${tp}</td>
-                        <td class="py-2 text-red-400">${sl}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function appendTelemetryLog(symbol, tf, signal, confidence, price) {
-            const body = document.getElementById('signalLogTableBody');
-            if (!body) return;
-
-            if (body.children.length === 1 && body.children[0].innerText.includes('No requests sent')) {
-                body.innerHTML = '';
-            }
-
-            const timeStr = new Date().toISOString().slice(11, 19);
-            const color = signal === 'BUY' ? 'text-emerald-400' : 'text-red-400';
-
-            const row = document.createElement('tr');
-            row.className = "hover:bg-white/5 transition";
-            row.innerHTML = `
-                <td class="py-2 text-gray-400">${timeStr}</td>
-                <td class="py-2 font-bold text-white">${symbol} (${tf})</td>
-                <td class="py-2 font-bold ${color}">${signal}</td>
-                <td class="py-2 text-[#00ffcc]">${confidence}% Score</td>
-                <td class="py-2 text-gray-300">${price}</td>
-            `;
-
-            body.insertBefore(row, body.firstChild);
-            if (body.children.length > 8) body.removeChild(body.lastChild);
-        }
-
-        function calculatePositionSize() {
-            const accSize = Number(document.getElementById('calcAccountSize').value || 25000);
-            const riskPct = Number(document.getElementById('calcRiskPct').value || 1.0);
-            const resultElem = document.getElementById('calcLotSizeResult');
-
-            if (!resultElem) return;
-
-            let riskAmount = accSize * (riskPct / 100);
-            let lotSize = (riskAmount / 100).toFixed(2);
-            resultElem.innerText = `${lotSize} Lots ($${riskAmount.toFixed(0)} Risk)`;
-        }
-
-        function executeTradeAlert() {
-            const dir = document.getElementById('signalDirBadge').innerText;
-            const tp = document.getElementById('tpVal').innerText;
-            const sl = document.getElementById('slVal').innerText;
-
-            showToast(`Institutional Alert Dispatched! ${currentPair} [${dir}] TP: ${tp} | SL: ${sl}`);
         }
     </script>
 </body>
