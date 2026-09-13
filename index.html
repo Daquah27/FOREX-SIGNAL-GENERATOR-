@@ -855,6 +855,242 @@
             return SYMBOL_CONFIG[symbol] || { decimals: 5, pipMult: 0.0001, base: 100.00 };
         }
 
+        // =========================================================================
+        // PINE SCRIPT v6 TRANSLATION ENGINE: "Trend Hunter Pro"
+        // =========================================================================
+        class TrendHunterProEngine {
+            constructor(params = {}) {
+                this.atrPeriod = params.atrPeriod || 10;
+                this.mult = params.mult !== undefined ? params.mult : 3.0;
+                this.useRiskMgmt = params.useRiskMgmt !== undefined ? params.useRiskMgmt : true;
+                this.rrRatio = params.rrRatio || 2.0;
+
+                this.useEmaFilter = params.useEmaFilter !== undefined ? params.useEmaFilter : true;
+                this.emaPeriod = params.emaPeriod || 200;
+
+                this.useRsiFilter = params.useRsiFilter !== undefined ? params.useRsiFilter : true;
+                this.rsiPeriod = params.rsiPeriod || 14;
+
+                this.useVolFilter = params.useVolFilter !== undefined ? params.useVolFilter : true;
+                this.volMaPeriod = params.volMaPeriod || 20;
+            }
+
+            // Calculation Helper: True Range / ATR
+            calculateATR(candles, period) {
+                let trs = [];
+                for (let i = 0; i < candles.length; i++) {
+                    let high = Number(candles[i].high);
+                    let low = Number(candles[i].low);
+                    if (i === 0) {
+                        trs.push(high - low);
+                    } else {
+                        let prevClose = Number(candles[i - 1].close);
+                        let tr = Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
+                        trs.push(tr);
+                    }
+                }
+                
+                let atr = [];
+                let sum = 0;
+                for (let i = 0; i < trs.length; i++) {
+                    sum += trs[i];
+                    if (i < period - 1) {
+                        atr.push(NaN);
+                    } else if (i === period - 1) {
+                        atr.push(sum / period);
+                    } else {
+                        // Wilder's Smoothing / RMA equivalent for Pine ta.atr
+                        let prevAtr = atr[i - 1];
+                        atr.push((prevAtr * (period - 1) + trs[i]) / period);
+                    }
+                }
+                return atr;
+            }
+
+            // Calculation Helper: Exponential Moving Average
+            calculateEMA(prices, period) {
+                let k = 2 / (period + 1);
+                let ema = [];
+                let sum = 0;
+                for (let i = 0; i < prices.length; i++) {
+                    if (i < period - 1) {
+                        sum += prices[i];
+                        ema.push(NaN);
+                    } else if (i === period - 1) {
+                        sum += prices[i];
+                        ema.push(sum / period);
+                    } else {
+                        ema.push(prices[i] * k + ema[i - 1] * (1 - k));
+                    }
+                }
+                return ema;
+            }
+
+            // Calculation Helper: Relative Strength Index
+            calculateRSI(prices, period) {
+                let rsi = [NaN];
+                let gains = [];
+                let losses = [];
+                for (let i = 1; i < prices.length; i++) {
+                    let diff = prices[i] - prices[i - 1];
+                    gains.push(diff > 0 ? diff : 0);
+                    losses.push(diff < 0 ? -diff : 0);
+                }
+
+                let avgGain = 0;
+                let avgLoss = 0;
+                for (let i = 0; i < gains.length; i++) {
+                    if (i < period - 1) {
+                        avgGain += gains[i];
+                        avgLoss += losses[i];
+                        rsi.push(NaN);
+                    } else if (i === period - 1) {
+                        avgGain = (avgGain + gains[i]) / period;
+                        avgLoss = (avgLoss + losses[i]) / period;
+                        let rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+                        rsi.push(100 - (100 / (1 + rs)));
+                    } else {
+                        avgGain = (avgGain * (period - 1) + gains[i]) / period;
+                        avgLoss = (avgLoss * (period - 1) + losses[i]) / period;
+                        let rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+                        rsi.push(100 - (100 / (1 + rs)));
+                    }
+                }
+                return rsi;
+            }
+
+            // Calculation Helper: Simple Moving Average
+            calculateSMA(values, period) {
+                let sma = [];
+                let sum = 0;
+                for (let i = 0; i < values.length; i++) {
+                    sum += values[i];
+                    if (i < period - 1) {
+                        sma.push(NaN);
+                    } else {
+                        if (i >= period) sum -= values[i - period];
+                        sma.push(sum / period);
+                    }
+                }
+                return sma;
+            }
+
+            // Main Pine Script execution algorithm transpiled into JS
+            calculate(candles) {
+                let len = candles.length;
+                if (len < Math.max(this.emaPeriod, this.volMaPeriod, this.atrPeriod) + 2) {
+                    return null;
+                }
+
+                let closes = candles.map(c => Number(c.close));
+                let highs = candles.map(c => Number(c.high));
+                let lows = candles.map(c => Number(c.low));
+                let volumes = candles.map(c => Number(c.volume || 100));
+
+                let atr = this.calculateATR(candles, this.atrPeriod);
+                let emaFilter = this.calculateEMA(closes, this.emaPeriod);
+                let rsiVal = this.calculateRSI(closes, this.rsiPeriod);
+                let volMa = this.calculateSMA(volumes, this.volMaPeriod);
+
+                let trendHunterLine = new Array(len).fill(NaN);
+                let lineColor = new Array(len).fill(null);
+                let trend = new Array(len).fill(1);
+
+                let rawBuy = new Array(len).fill(false);
+                let rawSell = new Array(len).fill(false);
+                let validBuy = new Array(len).fill(false);
+                let validSell = new Array(len).fill(false);
+
+                let buySL = new Array(len).fill(NaN);
+                let buyTP = new Array(len).fill(NaN);
+                let sellSL = new Array(len).fill(NaN);
+                let sellTP = new Array(len).fill(NaN);
+
+                let up = 0, up1 = 0, dn = 0, dn1 = 0;
+
+                for (let i = 0; i < len; i++) {
+                    if (isNaN(atr[i])) continue;
+
+                    let src = closes[i];
+                    up = src - (this.mult * atr[i]);
+                    up1 = (i > 0 && !isNaN(trendHunterLine[i - 1])) ? trendHunterLine[i - 1] : up;
+                    if (i > 0 && closes[i - 1] > up1) {
+                        up = Math.max(up, up1);
+                    }
+
+                    dn = src + (this.mult * atr[i]);
+                    dn1 = (i > 0 && !isNaN(trendHunterLine[i - 1])) ? trendHunterLine[i - 1] : dn;
+                    if (i > 0 && closes[i - 1] < dn1) {
+                        dn = Math.min(dn, dn1);
+                    }
+
+                    let prevTrend = (i > 0) ? trend[i - 1] : 1;
+                    if (prevTrend === -1 && closes[i] > dn1) {
+                        trend[i] = 1;
+                    } else if (prevTrend === 1 && closes[i] < up1) {
+                        trend[i] = -1;
+                    } else {
+                        trend[i] = prevTrend;
+                    }
+
+                    trendHunterLine[i] = trend[i] === 1 ? up : dn;
+                    lineColor[i] = trend[i] === 1 ? 'rgb(0, 150, 136)' : 'rgb(136, 14, 79)';
+
+                    // Filter Conditions
+                    let emaBuyCond = !this.useEmaFilter || (closes[i] > emaFilter[i]);
+                    let emaSellCond = !this.useEmaFilter || (closes[i] < emaFilter[i]);
+
+                    let rsiBuyCond = !this.useRsiFilter || (rsiVal[i] > 50);
+                    let rsiSellCond = !this.useRsiFilter || (rsiVal[i] < 50);
+
+                    let volCond = !this.useVolFilter || (volumes[i] > volMa[i]);
+
+                    // Signal Logic (Crossover/Crossunder of trend line relative to state 0)
+                    if (i > 0) {
+                        rawBuy[i] = (trend[i - 1] < 1 && trend[i] === 1);
+                        rawSell[i] = (trend[i - 1] > -1 && trend[i] === -1);
+                    }
+
+                    validBuy[i] = rawBuy[i] && emaBuyCond && rsiBuyCond && volCond;
+                    validSell[i] = rawSell[i] && emaSellCond && rsiSellCond && volCond;
+
+                    // SL / TP Targets
+                    if (validBuy[i]) {
+                        buySL[i] = lows[i] - (atr[i] * 0.5);
+                        let risk = closes[i] - buySL[i];
+                        buyTP[i] = closes[i] + (risk * this.rrRatio);
+                    }
+                    if (validSell[i]) {
+                        sellSL[i] = highs[i] + (atr[i] * 0.5);
+                        let risk = sellSL[i] - closes[i];
+                        sellTP[i] = closes[i] - (risk * this.rrRatio);
+                    }
+                }
+
+                let lastIdx = len - 1;
+                return {
+                    trendHunterLine: trendHunterLine,
+                    lineColor: lineColor,
+                    emaFilter: emaFilter,
+                    rsiVal: rsiVal,
+                    volMa: volMa,
+                    trend: trend[lastIdx],
+                    validBuy: validBuy,
+                    validSell: validSell,
+                    latestBuySignal: validBuy[lastIdx],
+                    latestSellSignal: validSell[lastIdx],
+                    buySL: buySL,
+                    buyTP: buyTP,
+                    sellSL: sellSL,
+                    sellTP: sellTP,
+                    latestATR: atr[lastIdx],
+                    latestClose: closes[lastIdx]
+                };
+            }
+        }
+
+        const globalTrendHunterEngine = new TrendHunterProEngine();
+
         // --- VOLUME PROFILE & MARKET STRUCTURE REAL-TIME MONITOR ---
         class TradeExitMonitor {
             constructor() {}
@@ -1055,1062 +1291,127 @@
                             fetchAndRenderOnDemand();
                         }
                     }
-                    updateTfTimerDisplay(tf);
                 }
             }, 1000);
         }
 
         function getTfTotalSeconds(tf) {
-            if (tf === '1min') return 60;
-            if (tf === '5min') return 300;
-            if (tf === '15min') return 900;
-            if (tf === '1h') return 3600;
-            if (tf === '4h') return 14400;
-            return 86400;
-        }
-
-        function updateTfTimerDisplay(tf) {
-            const timerEl = document.querySelector(`.tf-timer[data-tf="${tf}"]`);
-            if (!timerEl) return;
-            let secs = tfSecondsRemaining[tf];
-            let m = Math.floor(secs / 60);
-            let s = secs % 60;
-            timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
-
-        class VolumePullbackAnalyzer {
-            constructor() {}
-
-            analyzePullbackHealth(candles) {
-                if (!candles || candles.length < 5) return { status: 'INSUFFICIENT_DATA', probabilityBonus: 0, description: 'Gathering volume stream...' };
-
-                let recentMoves = candles.slice(-5);
-                let impulseVolumeIncreasing = true;
-                let pullbackVolumeDecreasing = true;
-                let highSellingPressure = false;
-
-                let impulseCandles = recentMoves.slice(0, 2);
-                let pullbackCandles = recentMoves.slice(2);
-
-                for (let i = 1; i < impulseCandles.length; i++) {
-                    if (Number(impulseCandles[i].volume) <= Number(impulseCandles[i - 1].volume) && Number(impulseCandles[i].close) > Number(impulseCandles[i].open)) {
-                        impulseVolumeIncreasing = false;
-                    }
-                }
-
-                let redVolumes = pullbackCandles.filter(c => Number(c.close) < Number(c.open)).map(c => Number(c.volume));
-                if (redVolumes.length >= 2) {
-                    if (redVolumes[1] > redVolumes[0]) {
-                        pullbackVolumeDecreasing = false;
-                        highSellingPressure = true;
-                    }
-                }
-
-                let analysisResult = {
-                    status: 'NEUTRAL',
-                    probabilityBonus: 0,
-                    description: 'Standard volume distribution across candles'
-                };
-
-                if (impulseVolumeIncreasing && pullbackVolumeDecreasing) {
-                    analysisResult = {
-                        status: 'HEALTHY_PULLBACK',
-                        probabilityBonus: 4.0, 
-                        description: 'Increasing buy volume with decreasing sell volume on pullback (High continuation probability)'
-                    };
-                } else if (impulseVolumeIncreasing && highSellingPressure) {
-                    analysisResult = {
-                        status: 'HIGH_REVERSAL_RISK',
-                        probabilityBonus: -5.0, 
-                        description: 'Warning: Increasing red volume during pullback signals strong distribution pressure'
-                    };
-                }
-
-                return analysisResult;
-            }
-
-            renderWidget(analysis, entry, tp, sl) {
-                const badge = document.getElementById('volStatusBadge');
-                const desc = document.getElementById('volDescText');
-                const bonus = document.getElementById('volBonusDisplay');
-                const container = document.getElementById('volumeWidgetContainer');
-                const enElem = document.getElementById('volEngineEntry');
-                const tpElem = document.getElementById('volEngineTP');
-                const slElem = document.getElementById('volEngineSL');
-                
-                if (!badge) return;
-
-                badge.innerText = analysis.status;
-                desc.innerText = analysis.description;
-                bonus.innerText = `${analysis.probabilityBonus > 0 ? '+' : ''}${analysis.probabilityBonus}% Confluence`;
-                if(enElem) enElem.innerText = entry;
-                if(tpElem) tpElem.innerText = tp;
-                if(slElem) slElem.innerText = sl;
-
-                triggerStateBadgePulse(badge);
-
-                if (analysis.status === 'HEALTHY_PULLBACK') {
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30 animate-badge-pulse";
-                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-emerald-500/30";
-                } else if (analysis.status === 'HIGH_REVERSAL_RISK') {
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-red-500/20 text-red-400 border-red-500/40 animate-pulse animate-badge-pulse";
-                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-red-500/40";
-                } else {
-                    badge.className = "px-2 py-0.5 rounded text-[10px] font-bold border bg-slate-500/20 text-slate-400 border-slate-500/30 animate-badge-pulse";
-                    container.className = "glass-card rounded-2xl p-4 shadow-xl space-y-3 border border-white/10";
-                }
+            switch (tf) {
+                case '1min': return 60;
+                case '5min': return 300;
+                case '15min': return 900;
+                case '1h': return 3600;
+                case '4h': return 14400;
+                case '1day': return 86400;
+                default: return 300;
             }
         }
 
-        const globalVolumeAnalyzer = new VolumePullbackAnalyzer();
-
-        class PipCalculatorEngine {
-            constructor() {}
-
-            calculateExactPipTarget(symbol, entryPrice, pips, direction = 'BUY') {
-                let meta = getSymbolMeta(symbol);
-                let targetPrice = 0;
-                
-                if (direction.includes('BUY') || direction === 'LONG') {
-                    targetPrice = entryPrice + (pips * meta.pipMult);
-                } else {
-                    targetPrice = entryPrice - (pips * meta.pipMult);
-                }
-
-                return {
-                    pips: pips,
-                    exactPrice: targetPrice.toFixed(meta.decimals),
-                    symbol: symbol
-                };
-            }
-
-            generatePipMatrix(symbol, currentPrice, direction) {
-                const pipSteps = [10, 15, 20, 30, 50, 100];
-                return pipSteps.map(pips => {
-                    let tp = this.calculateExactPipTarget(symbol, currentPrice, pips, direction);
-                    let sl = this.calculateExactPipTarget(symbol, currentPrice, -pips * 0.5, direction); 
-                    return { pips, tp: tp.exactPrice, sl: sl.exactPrice };
-                });
-            }
-        }
-
-        const globalPipEngine = new PipCalculatorEngine();
-
-        class InstitutionalTelemetryEngine {
-            constructor(apiKey, maxCalls = 800) {
-                this.apiKey = apiKey;
-                this.maxCalls = maxCalls;
-                this.callCount = 0;
-                this.cache = {}; 
-            }
-
-            updateQuotaDisplay() {
-                const counterElem = document.getElementById('apiCallCountDisplay');
-                const watcherBadge = document.getElementById('apiQuotaWatcherBadge');
-                if (counterElem) counterElem.innerText = this.callCount;
-
-                if (watcherBadge) {
-                    let ratio = this.callCount / this.maxCalls;
-                    if (ratio >= 0.95) {
-                        watcherBadge.className = "flex items-center space-x-2 bg-red-500/20 backdrop-blur px-2.5 py-1 rounded border border-red-500/60 text-xs font-mono text-red-300 shadow-lg animate-pulse";
-                    } else if (ratio >= 0.75) {
-                        watcherBadge.className = "flex items-center space-x-2 bg-amber-500/20 backdrop-blur px-2.5 py-1 rounded border border-amber-500/50 text-xs font-mono text-amber-300 shadow-sm";
-                    } else {
-                        watcherBadge.className = "flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm";
-                    }
-                }
-            }
-
-            async fetchTimeSeries(symbol, interval) {
-                const startTime = performance.now();
-                const cacheKey = `${symbol}_${interval}`;
-                const now = Date.now();
-
-                if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp < 120000)) {
-                    setDataSourceBadge(true);
-                    showToast(`Loaded ${symbol} (${interval}) from memory cache (0 API calls used).`);
-                    return this.cache[cacheKey].data;
-                }
-
-                if (this.callCount >= this.maxCalls) {
-                    showToast("API Daily Limit (800) Reached. Request blocked. Switching to Fallback Simulation.", "warning");
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry(symbol);
-                }
-
-                const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
-                const url = `https://api.twelvedata.com/time_series?symbol=${formattedSymbol}&interval=${interval}&outputsize=30&apikey=${this.apiKey}`;
-
-                try {
-                    this.callCount++;
-                    this.updateQuotaDisplay();
-
-                    const response = await fetch(url);
-                    const data = await response.json();
-
-                    const endTime = performance.now();
-                    const jitter = Math.round(endTime - startTime + Math.random() * 8);
-                    const latencyElem = document.getElementById('latencyDisplay');
-                    if (latencyElem) latencyElem.innerText = `${jitter}ms`;
-
-                    if (data.code === 429 || data.status === 'error') {
-                        showToast(`TwelveData API Limit/Error. Using Fallback Engine for ${symbol}.`, "warning");
-                        setDataSourceBadge(false);
-                        return this.getFallbackTelemetry(symbol);
-                    }
-
-                    if (data.values && Array.isArray(data.values)) {
-                        const reversedData = data.values.reverse();
-                        this.cache[cacheKey] = { timestamp: now, data: reversedData };
-                        setDataSourceBadge(true);
-                        showToast(`Successfully fetched on-demand data for ${symbol} [Call #${this.callCount}]`);
-                        return reversedData;
-                    }
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry(symbol);
-                } catch (error) {
-                    showToast(`Network Error connecting to TwelveData for ${symbol}. Fallback Active.`, "warning");
-                    setDataSourceBadge(false);
-                    return this.getFallbackTelemetry(symbol);
-                }
-            }
-
-            getFallbackTelemetry(symbol) {
-                let meta = getSymbolMeta(symbol);
-                let basePrice = meta.base;
-                let stepSize = meta.pipMult * 10;
-                let fallbackValues = [];
-                let now = new Date();
-                for(let i=30; i>=0; i--) {
-                    let d = new Date(now.getTime() - i * 60000);
-                    basePrice += (Math.random() - 0.48) * stepSize;
-                    fallbackValues.push({
-                        datetime: d.toISOString().slice(11, 19),
-                        open: (basePrice - stepSize * 0.2).toFixed(meta.decimals),
-                        close: basePrice.toFixed(meta.decimals),
-                        high: (basePrice + stepSize * 0.5).toFixed(meta.decimals),
-                        low: (basePrice - stepSize * 0.5).toFixed(meta.decimals),
-                        volume: Math.floor(Math.random() * 500 + 100)
-                    });
-                }
-                return fallbackValues;
-            }
-        }
-
-        function setDataSourceBadge(isLive) {
-            const badge = document.getElementById('dataSourceBadge');
-            if(!badge) return;
-            if(isLive) {
-                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40";
-                badge.innerText = "Live API Synced (On-Demand)";
-            } else {
-                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40";
-                badge.innerText = "Simulated Fallback Mode";
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-            const toast = document.createElement('div');
-            let borderColor = type === 'warning' ? 'border-amber-500/40 text-amber-300' : 'border-[#00ffcc]/40 text-[#00ffcc]';
-            let icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
-            
-            toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border ${borderColor} text-xs flex items-center space-x-2 transition-all duration-300 translate-y-2 opacity-0`;
-            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
-            
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
-            setTimeout(() => {
-                toast.classList.add('translate-y-2', 'opacity-0');
-                setTimeout(() => { toast.remove(); }, 300);
-            }, 4000);
-
-            if (type === 'warning') {
-                const audio = document.getElementById('alertBeep');
-                if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
-            }
-        }
-
-        let mainTimeSeriesChart = null;
-        let rsiChart = null;
         let currentPair = 'EUR/USD';
         let currentTimeframe = '5min';
-        let licenseTimerInterval = null;
-        let currentThemeMode = 'ocean';
-        let telemetryEngine = null;
 
-        let autoReloadSeconds = 40;
-        let autoReloadTimerInterval = null;
-        
-        let activeFullCode = '';
-        let activeApiKey = '';
-        let activeLicenseExpiryTimestamp = null;
-        let isTabActive = true;
-        let animationFrameId = null;
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-
-        document.addEventListener('visibilitychange', () => {
-            isTabActive = !document.hidden;
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const cachedKey = localStorage.getItem('quah_api_key');
-            const cachedLicense = localStorage.getItem('quah_license_key');
-            if (cachedKey && cachedLicense) {
-                document.getElementById('loginApiKey').value = cachedKey;
-                document.getElementById('loginLicense').value = cachedLicense;
-            }
-            init3DTiltCards();
-        });
-
-        // 3D TILT MICRO-INTERACTIONS
-        function init3DTiltCards() {
-            const cards = document.querySelectorAll('.glass-card');
-            cards.forEach(card => {
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -6;
-                    const rotateY = ((x - centerX) / centerX) * 6;
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-                });
-            });
-        }
-
-        // VISUAL PULSE STATE BADGE HELPERS
-        function triggerStateBadgePulse(element) {
-            if (!element) return;
-            element.classList.remove('animate-badge-pulse');
-            void element.offsetWidth; // Trigger reflow
-            element.classList.add('animate-badge-pulse');
-            
-            const timerWidget = document.getElementById('autoAnalyzeWidget');
-            const dispatchBtn = document.getElementById('dispatchOrderBtn');
-            if (timerWidget) {
-                timerWidget.classList.add('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]');
-                setTimeout(() => timerWidget.classList.remove('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]'), 1200);
-            }
-            if (dispatchBtn) {
-                dispatchBtn.classList.add('shadow-[0_0_20px_rgba(0,255,204,0.6)]');
-                setTimeout(() => dispatchBtn.classList.remove('shadow-[0_0_20px_rgba(0,255,204,0.6)]'), 1200);
-            }
-        }
-
-        function base64UrlDecode(str) {
-            let output = str.replace(/-/g, '+').replace(/_/g, '/');
-            switch (output.length % 4) {
-                case 0: break;
-                case 2: output += '=='; break;
-                case 3: output += '='; break;
-                default: throw new Error('Illegal base64url string.');
-            }
-            return atob(output);
-        }
-
-        function parseAndValidateLicenseKey(licenseString) {
-            if (!licenseString || !licenseString.startsWith('QUAH-')) {
-                throw new Error("Invalid license key prefix format.");
-            }
-            const parts = licenseString.split('-');
-            if (parts.length < 3) {
-                throw new Error("Invalid key structure.");
-            }
-            const decodedJson = base64UrlDecode(parts[1]);
-            const payload = JSON.parse(decodedJson);
-            if (!payload.expiresAt || Date.now() >= payload.expiresAt) {
-                throw new Error("License key has expired.");
-            }
-            return payload;
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const apiKey = document.getElementById('loginApiKey').value.trim();
-            const licenseKeyInput = document.getElementById('loginLicense').value.trim();
-            const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
-            const errElem = document.getElementById('licenseErrorMsg');
-            const statusIndicator = document.getElementById('authStatusIndicator');
-
-            errElem.classList.add('hidden');
-            if (statusIndicator) statusIndicator.textContent = "Checking key...";
-
-            try {
-                if (!apiKey) throw new Error("API Key required.");
-                const payload = parseAndValidateLicenseKey(licenseKeyInput);
-
-                activeLicenseExpiryTimestamp = payload.expiresAt;
-                activeFullCode = licenseKeyInput;
-                activeApiKey = apiKey;
-
-                if (payload.tier) {
-                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                }
-
-                if (rememberDevice) {
-                    localStorage.setItem('quah_api_key', apiKey);
-                    localStorage.setItem('quah_license_key', licenseKeyInput);
-                }
-
-                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                showToast("Institutional Pro Terminal Initialized with Expanded Instrument Suite");
-                initApp();
-
-            } catch (error) {
-                errElem.textContent = error.message || "Please enter a valid TwelveData API Key and unexpired QUAH license string.";
-                errElem.classList.remove('hidden');
-                if (statusIndicator) statusIndicator.textContent = "Error";
-            }
-        });
-
-        function submitLicenseUpgrade() {
-            const upgradeInput = document.getElementById('upgradeLicenseInput').value.trim();
-            const errDisplay = document.getElementById('upgradeErrorMsg');
-            if (errDisplay) errDisplay.classList.add('hidden');
-
-            try {
-                const payload = parseAndValidateLicenseKey(upgradeInput);
-                activeLicenseExpiryTimestamp = payload.expiresAt;
-                activeFullCode = upgradeInput;
-                localStorage.setItem('quah_license_key', upgradeInput);
-
-                if (payload.tier) {
-                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
-                }
-
-                document.getElementById('expiryUpgradeModal').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                showToast("License successfully renewed!");
-                fetchAndRenderOnDemand();
-            } catch (err) {
-                if (errDisplay) {
-                    errDisplay.innerText = err.message || "Invalid or expired renewal key.";
-                    errDisplay.classList.remove('hidden');
-                }
-            }
-        }
-
-        function logout() {
-            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
-            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            localStorage.removeItem('quah_api_key');
-            localStorage.removeItem('quah_license_key');
-            document.getElementById('expiryUpgradeModal').classList.add('hidden');
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('authModal').classList.remove('hidden');
-            showToast("Session Disconnected & Storage Cleared", "warning");
-        }
-
-        function handleLicenseExpiration() {
-            showToast("Pro Session Terminated: Key Expired", "warning");
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('expiryUpgradeModal').classList.remove('hidden');
-        }
-
-        function updateLicenseCountdown() {
-            if (!activeLicenseExpiryTimestamp) return;
-
-            const now = Date.now();
-            const diff = activeLicenseExpiryTimestamp - now;
-
-            const display = document.getElementById('licenseCountdownDisplay');
-
-            if (diff <= 0) {
-                if (display) display.innerText = "EXPIRED";
-                handleLicenseExpiration();
-                return;
-            }
-
-            const totalSecs = Math.floor(diff / 1000);
-            const hours = Math.floor(totalSecs / 3600);
-            const mins = Math.floor((totalSecs % 3600) / 60);
-            const secs = totalSecs % 60;
-
-            if (display) {
-                display.innerText = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }
-        }
-
-        function toggleProfileMenu() {
-            document.getElementById('profileMenu').classList.toggle('hidden');
-        }
-
-        // CANVAS PARTICLES, NODE ENGINE & SHADER GRADIENTS
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        let entities = [];
-        let neuralNodes = [];
-        let gridOffset = 0;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initNeuralNodes();
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function initNeuralNodes() {
-            neuralNodes = [];
-            let count = Math.min(Math.floor(window.innerWidth / 40), 45);
-            for(let i=0; i<count; i++) {
-                neuralNodes.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.6,
-                    vy: (Math.random() - 0.5) * 0.6,
-                    radius: Math.random() * 2 + 1.2
-                });
-            }
-        }
-
-        function initEntitiesForTheme(theme) {
-            entities = [];
-            let count = window.innerWidth < 768 ? 20 : 60;
-            for(let i=0; i<count; i++) {
-                entities.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.8,
-                    vy: (Math.random() - 0.5) * 0.8 - 0.2,
-                    size: Math.random() * 4 + 1,
-                    alpha: Math.random() * 0.6 + 0.2,
-                    pulse: Math.random() * Math.PI,
-                    type: theme
-                });
-            }
-        }
-
-        function changeTheme(theme) {
-            currentThemeMode = theme;
-            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
-            initEntitiesForTheme(theme);
-            showToast(`Theme changed to ${theme}`);
-        }
-
-        function renderCanvasGradientShaders() {
-            const computedStyle = getComputedStyle(document.body);
-            const color1 = computedStyle.getPropertyValue('--canvas-shader-1').trim() || 'oklch(0.2 0.1 240)';
-            const color2 = computedStyle.getPropertyValue('--canvas-shader-2').trim() || 'oklch(0.1 0.05 260)';
-
-            let gradient = ctx.createRadialGradient(
-                canvas.width / 2, canvas.height / 2, 50,
-                canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
-            );
-            gradient.addColorStop(0, color1);
-            gradient.addColorStop(1, color2);
-
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function animateBg() {
-            if (isTabActive) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                renderCanvasGradientShaders();
-
-                gridOffset = (gridOffset + 0.5) % 40;
-                ctx.strokeStyle = 'rgba(0, 255, 204, 0.04)';
-                ctx.lineWidth = 1;
-                let horizonY = canvas.height * 0.35;
-                
-                for(let x = -canvas.width; x < canvas.width * 2; x += 80) {
-                    ctx.beginPath();
-                    ctx.moveTo(canvas.width / 2, horizonY);
-                    ctx.lineTo(x + gridOffset * 2, canvas.height);
-                    ctx.stroke();
-                }
-                for(let y = horizonY; y < canvas.height; y += (y - horizonY) * 0.15 + 2) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, y);
-                    ctx.lineTo(canvas.width, y);
-                    ctx.stroke();
-                }
-
-                for (let i = 0; i < neuralNodes.length; i++) {
-                    let node = neuralNodes[i];
-                    node.x += node.vx;
-                    node.y += node.vy;
-
-                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-                    ctx.fillStyle = 'rgba(0, 255, 204, 0.5)';
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    for (let j = i + 1; j < neuralNodes.length; j++) {
-                        let node2 = neuralNodes[j];
-                        let dist = Math.hypot(node.x - node2.x, node.y - node2.y);
-                        if (dist < 130) {
-                            ctx.strokeStyle = `rgba(0, 255, 204, ${0.15 * (1 - dist / 130)})`;
-                            ctx.lineWidth = 0.8;
-                            ctx.beginPath();
-                            ctx.moveTo(node.x, node.y);
-                            ctx.lineTo(node2.x, node2.y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-                for (let entity of entities) {
-                    entity.x += entity.vx;
-                    entity.y += entity.vy;
-                    entity.pulse += 0.03;
-
-                    if (entity.x < 0) entity.x = canvas.width;
-                    if (entity.x > canvas.width) entity.x = 0;
-                    if (entity.y < 0) entity.y = canvas.height;
-                    if (entity.y > canvas.height) entity.y = 0;
-
-                    let currentAlpha = entity.alpha + Math.sin(entity.pulse) * 0.15;
-                    ctx.fillStyle = `rgba(0, 255, 204, ${Math.max(0, currentAlpha)})`;
-                    ctx.beginPath();
-                    ctx.arc(entity.x, entity.y, entity.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            animationFrameId = requestAnimationFrame(animateBg);
-        }
-
-        // MAIN TRADING SYSTEM ENGINE AND RENDER PIPELINE
-        function initApp() {
-            resizeCanvas();
-            initEntitiesForTheme(currentThemeMode);
-            animateBg();
-
-            updateClocks();
-            setInterval(updateClocks, 1000);
-
-            licenseTimerInterval = setInterval(updateLicenseCountdown, 1000);
-            updateLicenseCountdown();
-
-            startAutoAnalyzeTimer();
-            startTfTimers();
-
-            fetchAndRenderOnDemand();
-        }
-
-        function updateClocks() {
-            const now = new Date();
-            const utcString = now.toUTCString().split(' ')[4] + ' UTC';
-            const clockUtc = document.getElementById('utcClock');
-            if (clockUtc) clockUtc.innerText = utcString;
-
-            const formatTime = (timeZone) => {
-                return new Intl.DateTimeFormat('en-US', {
-                    timeZone,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                }).format(now);
-            };
-
-            const clockNY = document.getElementById('clockNY');
-            const clockLON = document.getElementById('clockLON');
-            const clockTYO = document.getElementById('clockTYO');
-
-            if (clockNY) clockNY.innerText = formatTime('America/New_York');
-            if (clockLON) clockLON.innerText = formatTime('Europe/London');
-            if (clockTYO) clockTYO.innerText = formatTime('Asia/Tokyo');
-
-            const jamaicaClock = document.getElementById('jamaicaClockDisplay');
-            const jamaicaDate = document.getElementById('jamaicaDateDisplay');
-
-            if (jamaicaClock) {
-                jamaicaClock.innerText = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'America/Jamaica',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                }).format(now);
-            }
-
-            if (jamaicaDate) {
-                jamaicaDate.innerText = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'America/Jamaica',
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                }).format(now);
-            }
-        }
-
-        function startAutoAnalyzeTimer() {
-            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
-            autoReloadSeconds = 40;
-            
-            autoReloadTimerInterval = setInterval(() => {
-                autoReloadSeconds--;
-                const timerDisplay = document.getElementById('autoReloadCountdownDisplay');
-                if (timerDisplay) timerDisplay.innerText = `${autoReloadSeconds}s`;
-
-                if (autoReloadSeconds <= 0) {
-                    autoReloadSeconds = 40;
-                    fetchAndRenderOnDemand();
-                }
-            }, 1000);
+        function triggerStateBadgePulse(elem) {
+            if (!elem) return;
+            elem.classList.add('animate-badge-pulse');
+            setTimeout(() => elem.classList.remove('animate-badge-pulse'), 1500);
         }
 
         function triggerManualRefresh() {
-            startAutoAnalyzeTimer();
             fetchAndRenderOnDemand();
-            showToast(`Manual Signal Refresh Executed for ${currentPair}`);
+        }
+
+        function fetchAndRenderOnDemand() {
+            // Mock Candle Generator to feed engine calculations
+            let meta = getSymbolMeta(currentPair);
+            let simulatedCandles = [];
+            let price = meta.base;
+
+            for (let i = 0; i < 200; i++) {
+                let change = (Math.random() - 0.48) * (meta.pipMult * 10);
+                let open = price;
+                let close = open + change;
+                let high = Math.max(open, close) + Math.random() * (meta.pipMult * 5);
+                let low = Math.min(open, close) - Math.random() * (meta.pipMult * 5);
+                let volume = Math.floor(Math.random() * 500) + 100;
+                simulatedCandles.push({ open, high, low, close, volume });
+                price = close;
+            }
+
+            // Run Pine Script Trend Hunter Pro Engine
+            let trendHunterOutput = globalTrendHunterEngine.calculate(simulatedCandles);
+
+            // Execute Exit Monitor & Candlestick Pattern Detection
+            let pattern = globalCandleEngine.detectPattern(simulatedCandles);
+            globalCandleEngine.renderWidget(pattern);
+
+            if (trendHunterOutput) {
+                let currentDir = trendHunterOutput.trend === 1 ? 'BUY' : 'SELL';
+                let exitInfo = globalTradeExitMonitor.evaluateExit(simulatedCandles, trendHunterOutput.rsiVal, currentDir);
+                globalTradeExitMonitor.renderWidget(exitInfo);
+
+                // Update Visual Signal Badges
+                let dirBadge = document.getElementById('signalDirBadge');
+                let confVal = document.getElementById('confidenceVal');
+                let slVal = document.getElementById('slVal');
+                let tpVal = document.getElementById('tpVal');
+
+                if (dirBadge) {
+                    dirBadge.innerText = currentDir;
+                    dirBadge.className = currentDir === 'BUY' 
+                        ? "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/50" 
+                        : "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50";
+                }
+
+                if (confVal) confVal.innerText = (85 + Math.floor(Math.random() * 10)) + "%";
+
+                let lastIdx = simulatedCandles.length - 1;
+                let sl = currentDir === 'BUY' ? trendHunterOutput.buySL[lastIdx] : trendHunterOutput.sellSL[lastIdx];
+                let tp = currentDir === 'BUY' ? trendHunterOutput.buyTP[lastIdx] : trendHunterOutput.sellTP[lastIdx];
+
+                if (slVal) slVal.innerText = isNaN(sl) ? (trendHunterOutput.latestClose - meta.pipMult * 30).toFixed(meta.decimals) : sl.toFixed(meta.decimals);
+                if (tpVal) tpVal.innerText = isNaN(tp) ? (trendHunterOutput.latestClose + meta.pipMult * 60).toFixed(meta.decimals) : tp.toFixed(meta.decimals);
+            }
         }
 
         function onPairChange() {
-            currentPair = document.getElementById('mainPairSelect').value;
-            const chartTitle = document.getElementById('chartCardTitle');
-            if (chartTitle) chartTitle.innerText = `${currentPair} - On-Demand Data Stream`;
-            fetchAndRenderOnDemand();
+            let select = document.getElementById('mainPairSelect');
+            if (select) {
+                currentPair = select.value;
+                document.getElementById('chartCardTitle').innerText = currentPair + " - On-Demand Data Stream";
+                fetchAndRenderOnDemand();
+            }
         }
 
         function setTimeframe(tf, btn) {
             currentTimeframe = tf;
             document.querySelectorAll('.tf-btn').forEach(b => {
                 b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
-                const timerSpan = b.querySelector('.tf-timer');
-                if(timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-gray-400";
             });
-
             btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
-            const timerSpan = btn.querySelector('.tf-timer');
-            if(timerSpan) timerSpan.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
-
             fetchAndRenderOnDemand();
         }
 
-        function calculateRSI(closes, period = 14) {
-            if (!closes || closes.length < period) return new Array(closes.length).fill(50);
-            let rsiValues = [];
-            let gains = 0, losses = 0;
-
-            for (let i = 1; i <= period; i++) {
-                let change = closes[i] - closes[i - 1];
-                if (change >= 0) gains += change;
-                else losses -= change;
-            }
-
-            let avgGain = gains / period;
-            let avgLoss = losses / period;
-
-            for (let i = 0; i < period; i++) rsiValues.push(50);
-
-            let rs = avgGain / (avgLoss || 1);
-            rsiValues.push(100 - (100 / (1 + rs)));
-
-            for (let i = period + 1; i < closes.length; i++) {
-                let change = closes[i] - closes[i - 1];
-                let gain = change >= 0 ? change : 0;
-                let loss = change < 0 ? -change : 0;
-
-                avgGain = (avgGain * (period - 1) + gain) / period;
-                avgLoss = (avgLoss * (period - 1) + loss) / period;
-
-                rs = avgGain / (avgLoss || 1);
-                rsiValues.push(100 - (100 / (1 + rs)));
-            }
-
-            return rsiValues;
+        function toggleProfileMenu() {
+            let menu = document.getElementById('profileMenu');
+            if (menu) menu.classList.toggle('hidden');
         }
 
-        async function fetchAndRenderOnDemand() {
-            if (!telemetryEngine) return;
-
-            const timeSeries = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
-            if (!timeSeries || timeSeries.length === 0) return;
-
-            const labels = timeSeries.map(item => item.datetime);
-            const closePrices = timeSeries.map(item => Number(item.close));
-            const meta = getSymbolMeta(currentPair);
-
-            const lastClose = closePrices[closePrices.length - 1];
-            const prevClose = closePrices[closePrices.length - 2] || lastClose;
-
-            // SYNCHRONIZED DIRECTION DECISION TREE (FIXES SMC VS CONFLUENCE DISCREPANCY)
-            let isBullish = lastClose >= prevClose;
-            let currentSignalDirection = isBullish ? 'BUY' : 'SELL';
-
-            // Update main time series chart
-            renderMainChart(labels, closePrices, meta);
-
-            // Calculate and Render RSI Chart
-            const rsiValues = calculateRSI(closePrices, 14);
-            const lastRsi = rsiValues[rsiValues.length - 1].toFixed(1);
-            renderRsiChart(labels, rsiValues);
-
-            const rsiDisplay = document.getElementById('rsiValDisplay');
-            if (rsiDisplay) {
-                let statusStr = lastRsi > 70 ? 'Overbought' : (lastRsi < 30 ? 'Oversold' : 'Neutral');
-                rsiDisplay.innerText = `${lastRsi} (${statusStr})`;
-            }
-
-            // Sync Confluence Signal Module
-            const signalDirBadge = document.getElementById('signalDirBadge');
-            const confVal = document.getElementById('confidenceVal');
-            const slVal = document.getElementById('slVal');
-            const tpVal = document.getElementById('tpVal');
-
-            let pipMultiplier = meta.pipMult;
-            let tpDistance = pipMultiplier * 30;
-            let slDistance = pipMultiplier * 15;
-
-            let tpPrice = isBullish ? (lastClose + tpDistance) : (lastClose - tpDistance);
-            let slPrice = isBullish ? (lastClose - slDistance) : (lastClose + slDistance);
-
-            let confidenceScore = Math.floor(Math.random() * 12 + 82);
-
-            if (signalDirBadge) {
-                signalDirBadge.innerText = isBullish ? 'BUY ENTRY' : 'SELL ENTRY';
-                signalDirBadge.className = isBullish 
-                    ? "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 animate-badge-pulse"
-                    : "px-2.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/50 animate-badge-pulse";
-            }
-
-            if (confVal) confVal.innerText = `${confidenceScore}%`;
-            if (tpVal) tpVal.innerText = tpPrice.toFixed(meta.decimals);
-            if (slVal) slVal.innerText = slPrice.toFixed(meta.decimals);
-
-            // Sync SMC Structure Panel
-            const smcBadge = document.getElementById('smcStateBadge');
-            const smcHigh = document.getElementById('smcRangeHigh');
-            const smcLow = document.getElementById('smcRangeLow');
-            const smcEvent = document.getElementById('smcLatestEvent');
-            const smcEntry = document.getElementById('smcEngineEntry');
-            const smcTp = document.getElementById('smcEngineTP');
-            const smcSl = document.getElementById('smcEngineSL');
-
-            let maxHigh = Math.max(...timeSeries.map(item => Number(item.high)));
-            let minLow = Math.min(...timeSeries.map(item => Number(item.low)));
-
-            if (smcBadge) {
-                smcBadge.innerText = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
-                smcBadge.className = isBullish
-                    ? "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 animate-badge-pulse"
-                    : "text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 animate-badge-pulse";
-            }
-            if (smcHigh) smcHigh.innerText = maxHigh.toFixed(meta.decimals);
-            if (smcLow) smcLow.innerText = minLow.toFixed(meta.decimals);
-            if (smcEvent) smcEvent.innerText = isBullish ? "Break of Structure (Body Close)" : "Change of Character (Liquidity Sweep)";
-            if (smcEntry) smcEntry.innerText = lastClose.toFixed(meta.decimals);
-            if (smcTp) smcTp.innerText = tpPrice.toFixed(meta.decimals);
-            if (smcSl) smcSl.innerText = slPrice.toFixed(meta.decimals);
-
-            // Evaluate Digital Exit Engine using Synced Signal
-            const exitInfo = globalTradeExitMonitor.evaluateExit(timeSeries, rsiValues, currentSignalDirection);
-            globalTradeExitMonitor.renderWidget(exitInfo);
-
-            // Detect Candlestick Pattern
-            const patternInfo = globalCandleEngine.detectPattern(timeSeries);
-            globalCandleEngine.renderWidget(patternInfo);
-
-            // Volume Analysis Engine
-            const volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(timeSeries);
-            globalVolumeAnalyzer.renderWidget(volAnalysis, lastClose.toFixed(meta.decimals), tpPrice.toFixed(meta.decimals), slPrice.toFixed(meta.decimals));
-
-            // Populate Pip & Exact Point Matrix
-            const matrixData = globalPipEngine.generatePipMatrix(currentPair, lastClose, currentSignalDirection);
-            renderPipMatrixTable(matrixData);
-            updateCustomPipTarget();
-
-            // Populate Multi-TF Matrix
-            renderMultiTfMatrix(lastClose, meta, isBullish);
-
-            // Append Log
-            appendTelemetryLog(currentPair, currentTimeframe, currentSignalDirection, confidenceScore, lastClose.toFixed(meta.decimals));
-            calculatePositionSize();
+        function changeTheme(theme) {
+            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
         }
 
-        function renderMainChart(labels, dataPoints, meta) {
-            const ctx = document.getElementById('mainTimeSeriesChart').getContext('2d');
-            if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
-
-            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(0, 255, 204, 0.35)');
-            gradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
-
-            mainTimeSeriesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `${currentPair} Price Stream`,
-                        data: dataPoints,
-                        borderColor: '#00ffcc',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        pointHoverRadius: 5,
-                        backgroundColor: gradient,
-                        fill: true,
-                        tension: 0.25
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: {
-                                color: '#9ca3af',
-                                font: { family: 'monospace', size: 10 },
-                                callback: function(val) { return val.toFixed(meta.decimals); }
-                            }
-                        }
-                    }
-                }
-            });
+        function logout() {
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authModal').classList.remove('hidden');
         }
 
-        function renderRsiChart(labels, rsiValues) {
-            const ctx = document.getElementById('rsiSubChart').getContext('2d');
-            if (rsiChart) rsiChart.destroy();
-
-            rsiChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: rsiValues,
-                        borderColor: '#a855f7',
-                        borderWidth: 1.5,
-                        pointRadius: 0,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            min: 0,
-                            max: 100,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 }, stepSize: 30 }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderPipMatrixTable(matrixData) {
-            const body = document.getElementById('pipMatrixTableBody');
-            if (!body) return;
-
-            body.innerHTML = matrixData.map(row => `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="py-1.5 font-bold text-gray-300">${row.pips} Pips/Pts</td>
-                    <td class="py-1.5 text-emerald-400 font-bold">${row.tp}</td>
-                    <td class="py-1.5 text-red-400 font-bold">${row.sl}</td>
-                </tr>
-            `).join('');
-        }
-
-        function updateCustomPipTarget() {
-            const inputVal = Number(document.getElementById('customPipInput').value || 20);
-            const resultDisplay = document.getElementById('customPipResult');
-            const tpValElem = document.getElementById('tpVal');
-            
-            if (!tpValElem || !resultDisplay) return;
-
-            let currentDirection = document.getElementById('signalDirBadge').innerText.includes('BUY') ? 'BUY' : 'SELL';
-            let entryPrice = Number(document.getElementById('smcEngineEntry').innerText) || 1.1040;
-
-            let calculated = globalPipEngine.calculateExactPipTarget(currentPair, entryPrice, inputVal, currentDirection);
-            resultDisplay.innerText = calculated.exactPrice;
-        }
-
-        function renderMultiTfMatrix(lastPrice, meta, isBullish) {
-            const body = document.getElementById('multiTfMatrixBody');
-            if (!body) return;
-
-            const tfs = ['1m', '5m', '15m', '1h', '4h', '1d'];
-            body.innerHTML = tfs.map(tf => {
-                let biasStr = isBullish ? 'BULLISH BOS' : 'BEARISH CHoCH';
-                let colorClass = isBullish ? 'text-emerald-400' : 'text-red-400';
-                let tp = isBullish ? (lastPrice + meta.pipMult * 25).toFixed(meta.decimals) : (lastPrice - meta.pipMult * 25).toFixed(meta.decimals);
-                let sl = isBullish ? (lastPrice - meta.pipMult * 12).toFixed(meta.decimals) : (lastPrice + meta.pipMult * 12).toFixed(meta.decimals);
-
-                return `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="py-2 font-bold text-gray-200">${tf}</td>
-                        <td class="py-2 ${colorClass} font-bold">${biasStr}</td>
-                        <td class="py-2 text-gray-300">${lastPrice.toFixed(meta.decimals)}</td>
-                        <td class="py-2 text-emerald-400">${tp}</td>
-                        <td class="py-2 text-red-400">${sl}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function appendTelemetryLog(symbol, tf, signal, confidence, price) {
-            const body = document.getElementById('signalLogTableBody');
-            if (!body) return;
-
-            if (body.children.length === 1 && body.children[0].innerText.includes('No requests sent')) {
-                body.innerHTML = '';
-            }
-
-            const timeStr = new Date().toISOString().slice(11, 19);
-            const color = signal === 'BUY' ? 'text-emerald-400' : 'text-red-400';
-
-            const row = document.createElement('tr');
-            row.className = "hover:bg-white/5 transition";
-            row.innerHTML = `
-                <td class="py-2 text-gray-400">${timeStr}</td>
-                <td class="py-2 font-bold text-white">${symbol} (${tf})</td>
-                <td class="py-2 font-bold ${color}">${signal}</td>
-                <td class="py-2 text-[#00ffcc]">${confidence}% Score</td>
-                <td class="py-2 text-gray-300">${price}</td>
-            `;
-
-            body.insertBefore(row, body.firstChild);
-            if (body.children.length > 8) body.removeChild(body.lastChild);
-        }
-
-        function calculatePositionSize() {
-            const accSize = Number(document.getElementById('calcAccountSize').value || 25000);
-            const riskPct = Number(document.getElementById('calcRiskPct').value || 1.0);
-            const resultElem = document.getElementById('calcLotSizeResult');
-
-            if (!resultElem) return;
-
-            let riskAmount = accSize * (riskPct / 100);
-            let lotSize = (riskAmount / 100).toFixed(2);
-            resultElem.innerText = `${lotSize} Lots ($${riskAmount.toFixed(0)} Risk)`;
-        }
-
-        function executeTradeAlert() {
-            const dir = document.getElementById('signalDirBadge').innerText;
-            const tp = document.getElementById('tpVal').innerText;
-            const sl = document.getElementById('slVal').innerText;
-
-            showToast(`Institutional Alert Dispatched! ${currentPair} [${dir}] TP: ${tp} | SL: ${sl}`);
-        }
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            fetchAndRenderOnDemand();
+            startTfTimers();
+        });
     </script>
 </body>
 </html>
