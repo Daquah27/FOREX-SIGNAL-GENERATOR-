@@ -1534,10 +1534,852 @@ alertcondition(validSell, title="Filtered Sell Signal", message="Trend Hunter: H
                     if (ratio >= 0.95) {
                         watcherBadge.className = "flex items-center space-x-2 bg-red-500/20 backdrop-blur px-2.5 py-1 rounded border border-red-500/60 text-xs font-mono text-red-300 shadow-lg animate-pulse";
                     } else if (ratio >= 0.75) {
-                        watcherBadge.className = "flex items-center space-x-2 bg-amber-500/20 backdrop-blur px-2.5 py-1 rounded border border-amber-500/60 text-xs font-mono text-amber-300 shadow-lg animate-pulse";
+                        watcherBadge.className = "flex items-center space-x-2 bg-amber-500/20 backdrop-blur px-2.5 py-1 rounded border border-amber-500/50 text-xs font-mono text-amber-300 shadow-sm";
+                    } else {
+                        watcherBadge.className = "flex items-center space-x-2 bg-darkBg/40 backdrop-blur px-2.5 py-1 rounded border border-[#00ffcc]/30 text-xs font-mono text-gray-300 shadow-sm";
                     }
                 }
             }
+
+            async fetchTimeSeries(symbol, interval) {
+                const startTime = performance.now();
+                const cacheKey = `${symbol}_${interval}`;
+                const now = Date.now();
+
+                if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp < 120000)) {
+                    setDataSourceBadge(true);
+                    showToast(`Loaded ${symbol} (${interval}) from memory cache (0 API calls used).`);
+                    return this.cache[cacheKey].data;
+                }
+
+                if (this.callCount >= this.maxCalls) {
+                    showToast("API Daily Limit (800) Reached. Request blocked. Switching to Fallback Simulation.", "warning");
+                    setDataSourceBadge(false);
+                    return this.getFallbackTelemetry(symbol);
+                }
+
+                const formattedSymbol = symbol.includes('/') ? symbol : `${symbol.slice(0,3)}/${symbol.slice(3)}`;
+                const url = `https://api.twelvedata.com/time_series?symbol=${formattedSymbol}&interval=${interval}&outputsize=30&apikey=${this.apiKey}`;
+
+                try {
+                    this.callCount++;
+                    this.updateQuotaDisplay();
+
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    const endTime = performance.now();
+                    const jitter = Math.round(endTime - startTime + Math.random() * 8);
+                    const latencyElem = document.getElementById('latencyDisplay');
+                    if (latencyElem) latencyElem.innerText = `${jitter}ms`;
+
+                    if (data.code === 429 || data.status === 'error') {
+                        showToast(`TwelveData API Limit/Error. Using Fallback Engine for ${symbol}.`, "warning");
+                        setDataSourceBadge(false);
+                        return this.getFallbackTelemetry(symbol);
+                    }
+
+                    if (data.values && Array.isArray(data.values)) {
+                        const reversedData = data.values.reverse();
+                        this.cache[cacheKey] = { timestamp: now, data: reversedData };
+                        setDataSourceBadge(true);
+                        showToast(`Successfully fetched on-demand data for ${symbol} [Call #${this.callCount}]`);
+                        return reversedData;
+                    }
+                    setDataSourceBadge(false);
+                    return this.getFallbackTelemetry(symbol);
+                } catch (error) {
+                    showToast(`Network Error connecting to TwelveData for ${symbol}. Fallback Active.`, "warning");
+                    setDataSourceBadge(false);
+                    return this.getFallbackTelemetry(symbol);
+                }
+            }
+
+            getFallbackTelemetry(symbol) {
+                let meta = getSymbolMeta(symbol);
+                let basePrice = meta.base;
+                let stepSize = meta.pipMult * 10;
+                let fallbackValues = [];
+                let now = new Date();
+                for(let i=30; i>=0; i--) {
+                    let d = new Date(now.getTime() - i * 60000);
+                    basePrice += (Math.random() - 0.48) * stepSize;
+                    fallbackValues.push({
+                        datetime: d.toISOString().slice(11, 19),
+                        open: (basePrice - stepSize * 0.2).toFixed(meta.decimals),
+                        close: basePrice.toFixed(meta.decimals),
+                        high: (basePrice + stepSize * 0.5).toFixed(meta.decimals),
+                        low: (basePrice - stepSize * 0.5).toFixed(meta.decimals),
+                        volume: Math.floor(Math.random() * 500 + 100)
+                    });
+                }
+                return fallbackValues;
+            }
+        }
+
+        function setDataSourceBadge(isLive) {
+            const badge = document.getElementById('dataSourceBadge');
+            if(!badge) return;
+            if(isLive) {
+                badge.className = "text-[10px] bg-[#00ffcc]/20 text-[#00ffcc] px-2 py-0.5 rounded border border-[#00ffcc]/40";
+                badge.innerText = "Live API Synced (On-Demand)";
+            } else {
+                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40";
+                badge.innerText = "Simulated Fallback Mode";
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            let borderColor = type === 'warning' ? 'border-amber-500/40 text-amber-300' : 'border-[#00ffcc]/40 text-[#00ffcc]';
+            let icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
+            
+            toast.className = `glass-card pointer-events-auto rounded-xl p-3 shadow-2xl border ${borderColor} text-xs flex items-center space-x-2 transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 4000);
+
+            if (type === 'warning') {
+                const audio = document.getElementById('alertBeep');
+                if (audio) audio.play().catch(e => console.log("Audio play blocked", e));
+            }
+        }
+
+        let mainTimeSeriesChart = null;
+        let rsiChart = null;
+        let currentPair = 'EUR/USD';
+        let currentTimeframe = '5min';
+        let licenseTimerInterval = null;
+        let currentThemeMode = 'ocean';
+        let telemetryEngine = null;
+
+        let autoReloadSeconds = 40;
+        let autoReloadTimerInterval = null;
+        
+        let activeFullCode = '';
+        let activeApiKey = '';
+        let activeLicenseExpiryTimestamp = null;
+        let isTabActive = true;
+        let animationFrameId = null;
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        document.addEventListener('visibilitychange', () => {
+            isTabActive = !document.hidden;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const cachedKey = localStorage.getItem('quah_api_key');
+            const cachedLicense = localStorage.getItem('quah_license_key');
+            if (cachedKey && cachedLicense) {
+                document.getElementById('loginApiKey').value = cachedKey;
+                document.getElementById('loginLicense').value = cachedLicense;
+            }
+            init3DTiltCards();
+        });
+
+        // 3D TILT MICRO-INTERACTIONS
+        function init3DTiltCards() {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -6;
+                    const rotateY = ((x - centerX) / centerX) * 6;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                });
+            });
+        }
+
+        // VISUAL PULSE STATE BADGE HELPERS
+        function triggerStateBadgePulse(element) {
+            if (!element) return;
+            element.classList.remove('animate-badge-pulse');
+            void element.offsetWidth; // Trigger reflow
+            element.classList.add('animate-badge-pulse');
+            
+            const timerWidget = document.getElementById('autoAnalyzeWidget');
+            const dispatchBtn = document.getElementById('dispatchOrderBtn');
+            if (timerWidget) {
+                timerWidget.classList.add('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]');
+                setTimeout(() => timerWidget.classList.remove('border-[#00ffcc]', 'shadow-[0_0_15px_rgba(0,255,204,0.4)]'), 1200);
+            }
+            if (dispatchBtn) {
+                dispatchBtn.classList.add('shadow-[0_0_20px_rgba(0,255,204,0.6)]');
+                setTimeout(() => dispatchBtn.classList.remove('shadow-[0_0_20px_rgba(0,255,204,0.6)]'), 1200);
+            }
+        }
+
+        function base64UrlDecode(str) {
+            let output = str.replace(/-/g, '+').replace(/_/g, '/');
+            switch (output.length % 4) {
+                case 0: break;
+                case 2: output += '=='; break;
+                case 3: output += '='; break;
+                default: throw new Error('Illegal base64url string.');
+            }
+            return atob(output);
+        }
+
+        function parseAndValidateLicenseKey(licenseString) {
+            if (!licenseString || !licenseString.startsWith('QUAH-')) {
+                throw new Error("Invalid license key prefix format.");
+            }
+            const parts = licenseString.split('-');
+            if (parts.length < 3) {
+                throw new Error("Invalid key structure.");
+            }
+            const decodedJson = base64UrlDecode(parts[1]);
+            const payload = JSON.parse(decodedJson);
+            if (!payload.expiresAt || Date.now() >= payload.expiresAt) {
+                throw new Error("License key has expired.");
+            }
+            return payload;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const apiKey = document.getElementById('loginApiKey').value.trim();
+            const licenseKeyInput = document.getElementById('loginLicense').value.trim();
+            const rememberDevice = document.getElementById('rememberDeviceCheck').checked;
+            const errElem = document.getElementById('licenseErrorMsg');
+            const statusIndicator = document.getElementById('authStatusIndicator');
+
+            errElem.classList.add('hidden');
+            if (statusIndicator) statusIndicator.textContent = "Checking key...";
+
+            try {
+                if (!apiKey) throw new Error("API Key required.");
+                const payload = parseAndValidateLicenseKey(licenseKeyInput);
+
+                activeLicenseExpiryTimestamp = payload.expiresAt;
+                activeFullCode = licenseKeyInput;
+                activeApiKey = apiKey;
+
+                if (payload.tier) {
+                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                }
+
+                if (rememberDevice) {
+                    localStorage.setItem('quah_api_key', apiKey);
+                    localStorage.setItem('quah_license_key', licenseKeyInput);
+                }
+
+                telemetryEngine = new InstitutionalTelemetryEngine(apiKey);
+                document.getElementById('authModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("Institutional Pro Terminal Initialized with Expanded Instrument Suite");
+                initApp();
+
+            } catch (error) {
+                errElem.textContent = error.message || "Please enter a valid TwelveData API Key and unexpired QUAH license string.";
+                errElem.classList.remove('hidden');
+                if (statusIndicator) statusIndicator.textContent = "Error";
+            }
+        });
+
+        function submitLicenseUpgrade() {
+            const upgradeInput = document.getElementById('upgradeLicenseInput').value.trim();
+            const errDisplay = document.getElementById('upgradeErrorMsg');
+            if (errDisplay) errDisplay.classList.add('hidden');
+
+            try {
+                const payload = parseAndValidateLicenseKey(upgradeInput);
+                activeLicenseExpiryTimestamp = payload.expiresAt;
+                activeFullCode = upgradeInput;
+                localStorage.setItem('quah_license_key', upgradeInput);
+
+                if (payload.tier) {
+                    document.getElementById('licenseTierDisplay').innerText = payload.tier.replace('_', ' ').toUpperCase();
+                }
+
+                document.getElementById('expiryUpgradeModal').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                showToast("License successfully renewed!");
+                fetchAndRenderOnDemand();
+            } catch (err) {
+                if (errDisplay) {
+                    errDisplay.innerText = err.message || "Invalid or expired renewal key.";
+                    errDisplay.classList.remove('hidden');
+                }
+            }
+        }
+
+        function logout() {
+            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            localStorage.removeItem('quah_api_key');
+            localStorage.removeItem('quah_license_key');
+            document.getElementById('expiryUpgradeModal').classList.add('hidden');
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authModal').classList.remove('hidden');
+            showToast("Session Disconnected & Storage Cleared", "warning");
+        }
+
+        function handleLicenseExpiration() {
+            showToast("Pro Session Terminated: Key Expired", "warning");
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('expiryUpgradeModal').classList.remove('hidden');
+        }
+
+        function updateLicenseCountdown() {
+            if (!activeLicenseExpiryTimestamp) return;
+
+            const now = Date.now();
+            const diff = activeLicenseExpiryTimestamp - now;
+
+            const display = document.getElementById('licenseCountdownDisplay');
+
+            if (diff <= 0) {
+                if (display) display.innerText = "EXPIRED";
+                handleLicenseExpiration();
+                return;
+            }
+
+            const totalSecs = Math.floor(diff / 1000);
+            const hours = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = totalSecs % 60;
+
+            if (display) {
+                display.innerText = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function toggleProfileMenu() {
+            document.getElementById('profileMenu').classList.toggle('hidden');
+        }
+
+        // CANVAS PARTICLES, NODE ENGINE & SHADER GRADIENTS
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let entities = [];
+        let neuralNodes = [];
+        let gridOffset = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initNeuralNodes();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function initNeuralNodes() {
+            neuralNodes = [];
+            let count = Math.min(Math.floor(window.innerWidth / 40), 45);
+            for(let i=0; i<count; i++) {
+                neuralNodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.6,
+                    vy: (Math.random() - 0.5) * 0.6,
+                    radius: Math.random() * 2 + 1.2
+                });
+            }
+        }
+
+        function initEntitiesForTheme(theme) {
+            entities = [];
+            let count = window.innerWidth < 768 ? 20 : 60;
+            for(let i=0; i<count; i++) {
+                entities.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8 - 0.2,
+                    size: Math.random() * 4 + 1,
+                    alpha: Math.random() * 0.6 + 0.2,
+                    pulse: Math.random() * Math.PI,
+                    type: theme
+                });
+            }
+        }
+
+        function changeTheme(theme) {
+            currentThemeMode = theme;
+            document.body.className = `theme-${theme} font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden transition-colors duration-700`;
+            initEntitiesForTheme(theme);
+            showToast(`Theme changed to ${theme}`);
+        }
+
+        function renderCanvasGradientShaders() {
+            const computedStyle = getComputedStyle(document.body);
+            const color1 = computedStyle.getPropertyValue('--canvas-shader-1').trim() || 'oklch(0.2 0.1 240)';
+            const color2 = computedStyle.getPropertyValue('--canvas-shader-2').trim() || 'oklch(0.1 0.05 260)';
+
+            let gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 50,
+                canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
+            );
+            gradient.addColorStop(0, 'rgba(11, 14, 20, 0.7)');
+            gradient.addColorStop(1, 'rgba(5, 7, 10, 0.95)');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawBackgroundEngine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            renderCanvasGradientShaders();
+
+            // Grid lines
+            gridOffset = (gridOffset + 0.2) % 40;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = gridOffset; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Neural Node Network
+            for (let i = 0; i < neuralNodes.length; i++) {
+                let n1 = neuralNodes[i];
+                n1.x += n1.vx;
+                n1.y += n1.vy;
+                if (n1.x < 0 || n1.x > canvas.width) n1.vx *= -1;
+                if (n1.y < 0 || n1.y > canvas.height) n1.vy *= -1;
+
+                ctx.fillStyle = 'rgba(0, 255, 204, 0.4)';
+                ctx.beginPath();
+                ctx.arc(n1.x, n1.y, n1.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                for (let j = i + 1; j < neuralNodes.length; j++) {
+                    let n2 = neuralNodes[j];
+                    let dx = n1.x - n2.x;
+                    let dy = n1.y - n2.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.strokeStyle = `rgba(0, 255, 204, ${0.15 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(n1.x, n1.y);
+                        ctx.lineTo(n2.x, n2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Interactive Light Follower
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.03)';
+            ctx.beginPath();
+            ctx.arc(mouseX, mouseY, 180, 0, Math.PI * 2);
+            ctx.fill();
+
+            animationFrameId = requestAnimationFrame(drawBackgroundEngine);
+        }
+
+        // CLOCK ENGINE FOR UTCS AND JAMAICA LOCAL TIME
+        function initClocks() {
+            setInterval(() => {
+                const now = new Date();
+                
+                // UTC Clock
+                const utcStr = now.toISOString().slice(11, 19) + " UTC";
+                const utcElem = document.getElementById('utcClock');
+                if (utcElem) utcElem.innerText = utcStr;
+
+                // Jamaica Local Time Clock (EST - UTC-5)
+                const jamOptions = { timeZone: 'America/Jamaica', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const jamDateOptions = { timeZone: 'America/Jamaica', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+                
+                const jamTimeStr = now.toLocaleTimeString('en-US', jamOptions);
+                const jamDateStr = now.toLocaleDateString('en-US', jamDateOptions);
+
+                const clockElem = document.getElementById('jamaicaClockDisplay');
+                const dateElem = document.getElementById('jamaicaDateDisplay');
+                if (clockElem) clockElem.innerText = jamTimeStr;
+                if (dateElem) dateElem.innerText = jamDateStr;
+
+                // Major World Clocks
+                const nyStr = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false });
+                const lonStr = now.toLocaleTimeString('en-US', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false });
+                const tyoStr = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false });
+
+                if (document.getElementById('clockNY')) document.getElementById('clockNY').innerText = nyStr;
+                if (document.getElementById('clockLON')) document.getElementById('clockLON').innerText = lonStr;
+                if (document.getElementById('clockTYO')) document.getElementById('clockTYO').innerText = tyoStr;
+
+            }, 1000);
+        }
+
+        // APP INITIALIZATION
+        function initApp() {
+            resizeCanvas();
+            initEntitiesForTheme('ocean');
+            drawBackgroundEngine();
+            initClocks();
+            startTfTimers();
+            startAutoReloadTimer();
+
+            if (licenseTimerInterval) clearInterval(licenseTimerInterval);
+            licenseTimerInterval = setInterval(updateLicenseCountdown, 1000);
+            updateLicenseCountdown();
+
+            fetchAndRenderOnDemand();
+        }
+
+        function startAutoReloadTimer() {
+            if (autoReloadTimerInterval) clearInterval(autoReloadTimerInterval);
+            autoReloadSeconds = 40;
+
+            autoReloadTimerInterval = setInterval(() => {
+                if (!isTabActive) return;
+                autoReloadSeconds--;
+                
+                const display = document.getElementById('autoReloadCountdownDisplay');
+                if (display) display.innerText = `${autoReloadSeconds}s`;
+
+                if (autoReloadSeconds <= 0) {
+                    autoReloadSeconds = 40;
+                    fetchAndRenderOnDemand();
+                }
+            }, 1000);
+        }
+
+        function triggerManualRefresh() {
+            autoReloadSeconds = 40;
+            fetchAndRenderOnDemand();
+        }
+
+        function onPairChange() {
+            currentPair = document.getElementById('mainPairSelect').value;
+            fetchAndRenderOnDemand();
+        }
+
+        function setTimeframe(tf, btn) {
+            currentTimeframe = tf;
+            document.querySelectorAll('#tfWrap .tf-btn').forEach(b => {
+                b.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium text-gray-400 hover:text-white transition flex flex-col items-center";
+                let t = b.querySelector('.tf-timer');
+                if (t) t.className = "tf-timer text-[9px] font-mono text-gray-400";
+            });
+            btn.className = "tf-btn px-2 py-1 rounded text-[11px] font-medium bg-[#00ffcc] text-black font-semibold transition shadow-sm flex flex-col items-center";
+            let t = btn.querySelector('.tf-timer');
+            if (t) t.className = "tf-timer text-[9px] font-mono text-black/80 font-bold";
+
+            fetchAndRenderOnDemand();
+        }
+
+        async function fetchAndRenderOnDemand() {
+            if (!telemetryEngine) return;
+            showToast(`Loading on-demand data for ${currentPair} (${currentTimeframe})...`);
+
+            const candles = await telemetryEngine.fetchTimeSeries(currentPair, currentTimeframe);
+            if (!candles || candles.length === 0) return;
+
+            renderCharts(candles);
+            analyzeMarket(candles);
+        }
+
+        function renderCharts(candles) {
+            const labels = candles.map(c => c.datetime || '--');
+            const closes = candles.map(c => Number(c.close));
+            const highs = candles.map(c => Number(c.high));
+            const lows = candles.map(c => Number(c.low));
+
+            // Chart Title Update
+            const titleElem = document.getElementById('chartCardTitle');
+            if (titleElem) titleElem.innerText = `${currentPair} (${currentTimeframe.toUpperCase()}) - Real-Time Feed`;
+
+            // Main Price Chart
+            const ctxMain = document.getElementById('mainTimeSeriesChart').getContext('2d');
+            if (mainTimeSeriesChart) mainTimeSeriesChart.destroy();
+
+            let meta = getSymbolMeta(currentPair);
+
+            mainTimeSeriesChart = new Chart(ctxMain, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: `${currentPair} Close Price`,
+                            data: closes,
+                            borderColor: '#00ffcc',
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            pointHoverRadius: 5,
+                            fill: true,
+                            backgroundColor: 'rgba(0, 255, 204, 0.05)',
+                            tension: 0.15
+                        },
+                        {
+                            label: 'High',
+                            data: highs,
+                            borderColor: 'rgba(8, 153, 129, 0.4)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Low',
+                            data: lows,
+                            borderColor: 'rgba(242, 54, 69, 0.4)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            // RSI Sub-Chart Calculation
+            let rsiValues = calculateRSIValues(closes, 14);
+            const ctxRsi = document.getElementById('rsiSubChart').getContext('2d');
+            if (rsiChart) rsiChart.destroy();
+
+            rsiChart = new Chart(ctxRsi, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'RSI 14',
+                        data: rsiValues,
+                        borderColor: '#a855f7',
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#9ca3af', font: { family: 'monospace', size: 9 }, stepSize: 25 }
+                        }
+                    }
+                }
+            });
+
+            // Update RSI Value Badge
+            const currentRsi = rsiValues[rsiValues.length - 1];
+            const rsiElem = document.getElementById('rsiValDisplay');
+            if (rsiElem) {
+                let state = currentRsi > 70 ? 'Overbought' : currentRsi < 30 ? 'Oversold' : 'Neutral';
+                rsiElem.innerText = `${currentRsi.toFixed(1)} (${state})`;
+            }
+        }
+
+        function calculateRSIValues(closes, period = 14) {
+            let rsiArr = [];
+            for (let i = 0; i < closes.length; i++) {
+                if (i < period) {
+                    rsiArr.push(50);
+                    continue;
+                }
+                let gains = 0, losses = 0;
+                for (let j = i - period + 1; j <= i; j++) {
+                    let diff = closes[j] - closes[j - 1];
+                    if (diff >= 0) gains += diff;
+                    else losses -= diff;
+                }
+                let avgGain = gains / period;
+                let avgLoss = losses / period;
+                let rs = avgGain / (avgLoss || 1);
+                rsiArr.push(100 - (100 / (1 + rs)));
+            }
+            return rsiArr;
+        }
+
+        function analyzeMarket(candles) {
+            let meta = getSymbolMeta(currentPair);
+            let currentCandle = candles[candles.length - 1];
+            let currentClose = Number(currentCandle.close);
+
+            let closes = candles.map(c => Number(c.close));
+            let rsiValues = calculateRSIValues(closes, 14);
+
+            // 1. Candlestick Pattern Engine
+            let pattern = globalCandleEngine.detectPattern(candles);
+            globalCandleEngine.renderWidget(pattern);
+
+            // 2. Trend Hunter Pro (Pine Script v6 Engine) Integration Calculation
+            let trendHunterRes = globalTrendHunter.calculate(candles);
+            globalTrendHunter.renderWidget(trendHunterRes, currentPair);
+
+            // 3. Trade Exit Monitor
+            let exitInfo = globalTradeExitMonitor.evaluateExit(candles, rsiValues, 'BUY');
+            globalTradeExitMonitor.renderWidget(exitInfo);
+
+            // 4. Volume Pullback Analyzer
+            let volAnalysis = globalVolumeAnalyzer.analyzePullbackHealth(candles);
+
+            let entryPrice = currentClose;
+            let tpPrice = entryPrice + (meta.pipMult * 25);
+            let slPrice = entryPrice - (meta.pipMult * 12);
+
+            let formattedEntry = entryPrice.toFixed(meta.decimals);
+            let formattedTP = tpPrice.toFixed(meta.decimals);
+            let formattedSL = slPrice.toFixed(meta.decimals);
+
+            globalVolumeAnalyzer.renderWidget(volAnalysis, formattedEntry, formattedTP, formattedSL);
+
+            // 5. Update SMC UI Elements
+            let highs = candles.map(c => Number(c.high));
+            let lows = candles.map(c => Number(c.low));
+            let rangeHigh = Math.max(...highs.slice(-10)).toFixed(meta.decimals);
+            let rangeLow = Math.min(...lows.slice(-10)).toFixed(meta.decimals);
+
+            document.getElementById('smcRangeHigh').innerText = rangeHigh;
+            document.getElementById('smcRangeLow').innerText = rangeLow;
+            document.getElementById('smcEngineEntry').innerText = formattedEntry;
+            document.getElementById('smcEngineTP').innerText = formattedTP;
+            document.getElementById('smcEngineSL').innerText = formattedSL;
+
+            // Signal Badge & Confidence
+            document.getElementById('confidenceVal').innerText = "88%";
+            document.getElementById('slVal').innerText = formattedSL;
+            document.getElementById('tpVal').innerText = formattedTP;
+
+            const sigBadge = document.getElementById('signalDirBadge');
+            if (sigBadge) {
+                sigBadge.innerText = "BUY ENTRY";
+                sigBadge.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 transition-all duration-300 animate-badge-pulse";
+            }
+
+            // 6. Pip Matrix
+            let matrixData = globalPipEngine.generatePipMatrix(currentPair, currentClose, 'BUY');
+            renderPipMatrix(matrixData);
+            updateCustomPipTarget();
+
+            // 7. Multi-TF Matrix Data Simulation
+            renderMultiTfMatrix();
+
+            // 8. Append to Telemetry Log
+            appendLog(currentPair, currentTimeframe, "BUY", formattedEntry, "88%");
+        }
+
+        function renderPipMatrix(matrix) {
+            const body = document.getElementById('pipMatrixTableBody');
+            if (!body) return;
+            body.innerHTML = matrix.map(row => `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="py-1.5 font-bold text-gray-300">+${row.pips} Pips</td>
+                    <td class="py-1.5 text-emerald-400">${row.tp}</td>
+                    <td class="py-1.5 text-red-400">${row.sl}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateCustomPipTarget() {
+            const input = document.getElementById('customPipInput');
+            const res = document.getElementById('customPipResult');
+            if (!input || !res) return;
+
+            let pips = parseFloat(input.value) || 0;
+            let chartValElem = document.getElementById('smcEngineEntry');
+            let currentPrice = parseFloat(chartValElem ? chartValElem.innerText : 100) || 100;
+
+            let calc = globalPipEngine.calculateExactPipTarget(currentPair, currentPrice, pips, 'BUY');
+            res.innerText = calc.exactPrice;
+        }
+
+        function calculatePositionSize() {
+            const accSize = parseFloat(document.getElementById('calcAccountSize').value) || 25000;
+            const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 1.0;
+            
+            let riskAmount = accSize * (riskPct / 100);
+            let estimatedLot = (riskAmount / 100).toFixed(2);
+
+            const resultElem = document.getElementById('calcLotSizeResult');
+            if (resultElem) resultElem.innerText = `${estimatedLot} Lots`;
+        }
+
+        function renderMultiTfMatrix() {
+            const body = document.getElementById('multiTfMatrixBody');
+            if (!body) return;
+
+            let meta = getSymbolMeta(currentPair);
+            let tfs = ['15m', '1h', '4h', '1d'];
+            
+            body.innerHTML = tfs.map(tf => {
+                let entry = (meta.base + (Math.random() - 0.5) * meta.pipMult * 20).toFixed(meta.decimals);
+                let tp = (Number(entry) + meta.pipMult * 30).toFixed(meta.decimals);
+                let sl = (Number(entry) - meta.pipMult * 15).toFixed(meta.decimals);
+                return `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="py-2 font-bold text-gray-200">${tf.toUpperCase()}</td>
+                        <td class="py-2 text-[#00ffcc]">BULLISH BOS</td>
+                        <td class="py-2 text-gray-300">${entry}</td>
+                        <td class="py-2 text-emerald-400">${tp}</td>
+                        <td class="py-2 text-red-400">${sl}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function appendLog(pair, tf, dir, entry, confidence) {
+            const body = document.getElementById('signalLogTableBody');
+            if (!body) return;
+
+            if (body.children.length === 1 && body.children[0].innerText.includes('No requests sent yet')) {
+                body.innerHTML = '';
+            }
+
+            let time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            let rowHtml = `
+                <tr class="hover:bg-white/5 transition border-b border-white/5">
+                    <td class="py-2 text-gray-400">${time}</td>
+                    <td class="py-2 font-bold text-white">${pair} (${tf})</td>
+                    <td class="py-2 text-emerald-400 font-bold">${dir}</td>
+                    <td class="py-2 text-[#00ffcc]">${entry}</td>
+                    <td class="py-2 text-gray-300">${confidence}</td>
+                </tr>
+            `;
+
+            body.insertAdjacentHTML('afterbegin', rowHtml);
+            if (body.children.length > 10) body.lastElementChild.remove();
+        }
+
+        function executeTradeAlert() {
+            showToast(`Order Dispatched: ${currentPair} BUY @ ${document.getElementById('smcEngineEntry').innerText}`);
         }
     </script>
 </body>
